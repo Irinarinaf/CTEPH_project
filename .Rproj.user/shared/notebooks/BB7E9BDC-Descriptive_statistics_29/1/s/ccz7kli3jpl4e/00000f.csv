@@ -1,0 +1,12 @@
+"0","data_cat <- readRDS(""data/time_independent_factors241219_full.rds"") "
+"0",""
+"0","data_cat <- data_cat %>% "
+"0","  select(where(is.factor)) %>% "
+"0","  left_join(numeric_vars %>% select(USUBJID, TTCD_event), by = ""USUBJID"")"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"0","data_cat <- data_cat %>%"
+"0","  mutate_all(~ as.character(.) %>% na_if(""не знаю"") %>% na_if(""Не знаю"")) %>% "
+"0","   mutate_all(~ as.factor(.)) "
+"0",""
+"0",""

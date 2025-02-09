@@ -1,0 +1,742 @@
+---
+title: "Однофакторные модели кокса"
+author: "Касьянова Мария"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(gsheet)
+library(dplyr)
+library(tidyverse)
+
+library(survival)
+library(survminer)
+
+library(biostat3)
+library(casebase)
+library(gtsummary)
+library(rms)
+
+library(forestplot)
+library(forestmodel)
+
+library(lubridate)
+library(car)
+library(mice)
+library(reshape2)
+library(conflicted)
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("summarize", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("year", "lubridate")
+```
+
+## Добавление категориальных переменных, исправление уровней факторов:
+
+```{r}
+data_surv_new <- readRDS("data/time_independent_factors241219_full.rds")
+
+
+#Код для удаления категориальных факторов, у которых меньше 2 групп с хотя бы 5 записями
+drop_names <- c()
+for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))){
+  x <- data_surv_new%>%
+    group_by(.data[[i]])%>%
+    filter(n() > 5)%>% 
+    summarise(n = n())%>% 
+    na.omit()%>%
+    nrow()
+  if(x < 2){
+    drop_names <- c(drop_names, i)
+  }
+}
+
+
+data_surv_new <- data_surv_new%>%
+  select(!any_of(drop_names))
+            
+```
+
+## Модели для нового датасета, старый способ рисовать графики, лучше следующий
+
+```{r}
+
+vars_for_table <- colnames(data_surv_new%>%select(ends_with("Num0") | ends_with("Cat2")))
+
+length(vars_for_table)
+
+univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+
+
+
+
+vars_for_table <- colnames(data_surv_new%>%select(ends_with("Num1")))
+
+length(vars_for_table)
+
+univ_formulas <- sapply(vars_for_table[2:11], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+univ_formulas <- sapply(vars_for_table[12:22], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+
+
+vars_for_table <- colnames(data_surv_new%>%select(ends_with("Cat1")))
+                          
+                          
+length(vars_for_table)
+
+
+univ_formulas <- sapply(vars_for_table[2:9], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+univ_formulas <- sapply(vars_for_table[10:18], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+
+vars_for_table <- colnames(data_surv_new%>%select(ends_with("Cat0")))
+                          
+
+data_surv_new%>%select(ends_with("Cat0"))%>%summary()
+                          
+length(vars_for_table)
+
+
+univ_formulas <- sapply(vars_for_table[2:13], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+univ_formulas <- sapply(vars_for_table[14:17], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+univ_formulas <- sapply(vars_for_table[19:26], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+
+vars_for_table[18]
+```
+
+## Однофакторные модели для всех ковариат без импутации (график для лучших)
+
+```{r}
+vars_for_table <- colnames(data_surv_new%>%select(ends_with("Cat0")|ends_with("Cat1")|ends_with("Num0")|ends_with("Cat2")|ends_with("Num1")))
+                          
+length(vars_for_table)
+
+univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+table0 <- data.frame()
+test0 <- c()
+i <- 2
+
+for (model in univ_models){
+  table0 <- bind_rows(table0, tidy(model))
+  test <- cox.zph(model)
+  test0 <- c(test0, test$table[1, "p"])
+  names <- vars_for_table[i]
+  i <- i+1
+}
+
+
+#test <- cox.zph(model)
+#p_value <- test$table[1, 3]
+
+#ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+
+#ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  #theme_bw()
+
+
+table0 <- table0 %>%
+  mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          ),
+          raw_p_value = ifelse(p.value == "N.A.", NA, round(as.numeric(p.value), 2)),
+          adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
+        )
+
+# Данные для графика
+forest_data_plot <- table0 %>%
+  filter((lower_95 < 1 & upper_95 <1)|(lower_95 > 1 & upper_95 >1))%>% # оставляет только модели, у которых CI не включает 1 
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(p.value)
+
+# Таблица для подписи
+labeltext <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(term, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+
+forestplot::forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = "Forest Plot for the best Time-Independent Cox Models for Deterioration-free Survival",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = "l",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)                         # Позиция графика
+```
+
+## Модели для лечения (однофакторные)
+
+```{r}
+vars_for_table <- colnames(data_surv_new%>%select(starts_with("init")|starts_with("prior")))
+                          
+length(vars_for_table)
+
+univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+
+table0 <- data.frame()
+
+for (model in univ_models){
+  table0 <- bind_rows(table0, tidy(model))
+}
+
+table0 <- table0 %>%
+  mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          ),
+          raw_p_value = ifelse(p.value == "N.A.", NA, round(as.numeric(p.value), 2)),
+          adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
+        )
+
+
+# Данные для графика
+forest_data_plot <- table0 %>%
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(p.value)%>%
+  select(term, p.value, adj_p_value, HR_with_CI, everything())
+
+# Таблица для подписи
+labeltext <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(term, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+
+forestplot::forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = "Forest Plot for Time-Independent Cox Models for Deterioration-free Survival",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = "l",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)                         # Позиция графика
+
+```
+
+## Модели с поправкой на ковариаты (1 вид лечения)
+
+```{r}
+vars_for_table <- colnames(data_surv_new%>%select(starts_with("init")|starts_with("prior")))
+                          
+length(vars_for_table)
+
+univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~ SexCat0 + AgeNum1 + MutationCat0 +', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+
+panels <- list(
+list(width = 0.03),
+list(width = 0.1, display = ~variable, fontface = "bold", heading = "Variable"),
+list(width = 0.1, display = ~level),
+list(width = 0.05, display = ~n, hjust = 1, heading = "N"),
+#list(width = 0.05, display = ~n_events, width = 0.05, hjust = 1, heading = "Events"),
+list(width = 0.03, item = "vline", hjust = 0.5),
+list(
+width = 0.55, item = "forest", hjust = 0.5, heading = "Hazard ratio", linetype = "dashed",
+line_x = 0
+),
+list(width = 0.03, item = "vline", hjust = 0.5),
+list(width = 0.12, display = ~ ifelse(reference, "Reference", sprintf(
+"%0.2f (%0.2f, %0.2f)",
+trans(estimate), trans(conf.low), trans(conf.high)
+)), display_na = NA),
+list(
+width = 0.05,
+display = ~ ifelse(reference, "", format.pval(p.value, digits = 1, eps = 0.001)),
+display_na = NA, hjust = 1, heading = "p"
+),
+list(width = 0.03)
+)
+
+
+forest_model(model_list = univ_models, covariates = vars_for_table, merge_models = F, panels =  panels)
+
+```
+
+## Модель для лечения (многофакторная)
+
+```{r}
+linelistsurv_cox <-  survival::coxph(
+              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ initLAG + initBPA + initTPE, 
+              data = as.data.frame(data_surv_new)
+              )
+
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+
+ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  theme_bw()
+
+test.ph <- cox.zph(linelistsurv_cox)
+ggcoxzph(test.ph)
+print(test.ph)
+
+
+linelistsurv_cox <-  survival::coxph(
+              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ priorLAG + priorBPA + priorTPE, 
+              data = as.data.frame(data_surv_new)
+              )
+
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+
+ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  theme_bw()
+
+test.ph <- cox.zph(linelistsurv_cox)
+ggcoxzph(test.ph)
+print(test.ph)
+
+
+
+
+
+linelistsurv_cox <-  survival::coxph(
+              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ SexCat0 + AgeNum1 + MutationCat0 +initLAG + initBPA + initTPE, 
+              data = as.data.frame(data_surv_new)
+              )
+
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+
+ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  theme_bw()
+
+test.ph <- cox.zph(linelistsurv_cox)
+ggcoxzph(test.ph)
+print(test.ph)
+
+
+linelistsurv_cox <-  survival::coxph(
+              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ SexCat0 + AgeNum1 + MutationCat0 +priorLAG + priorBPA + priorTPE, 
+              data = as.data.frame(data_surv_new)
+              )
+
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+
+ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  theme_bw()
+
+test.ph <- cox.zph(linelistsurv_cox)
+ggcoxzph(test.ph)
+print(test.ph)
+```
+
+#Каплан майер, новый датасет: все для смерти\\ухудшения
+
+```{r}
+linelistsurv_fit_source <-  survfit(
+  Surv(Time_to_deathCox, Event_deathCox) ~ 1,
+  data = data_surv_new
+  )
+
+
+# plot
+ggsurvplot( 
+  linelistsurv_fit_source,
+  data = data_surv_new,
+  size = 1, linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Overall Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = T,
+  legend.title = "",
+  legend.labs = c(""),
+  font.legend = 10,
+  #palette = c("#E7B800","#3E606F"),
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+linelistsurv_fit_source <-  survfit(
+    Surv(Time_to_decreaseCox, Event_decreaseCox) ~ 1,
+  data = data_surv_new
+  )
+
+
+# plot
+ggsurvplot( 
+  linelistsurv_fit_source,
+  data = data_surv_new,
+  size = 1, linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = T,
+  legend.title = "",
+  legend.labs = c(""),
+  font.legend = 10,
+  #palette = c("#E7B800","#3E606F"),
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+```
+
+```{r}
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(USUBJID, starts_with("prior")| starts_with("init")))[-1]){
+  
+linelistsurv <-  survfit(
+  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = i,
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  #palette = c("#E7B800","#3E606F"),
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+
+}
+
+arrange_ggsurvplots(li, ncol = 1 )
+
+```
+
+```{r}
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(USUBJID, starts_with("prior")| starts_with("init")))[-1]){
+  
+linelistsurv <-  survfit(
+  Surv(Time_to_deathCox, Event_deathCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Overall Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = i,
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  #palette = c("#E7B800","#3E606F"),
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+
+}
+
+arrange_ggsurvplots(li, ncol = 1)
+
+```
+
+#Каплан Майер: категориальные переменные + время до ухудшения
+
+```{r}
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))[-1]){
+  
+
+linelistsurv <-  survfit(
+  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = gsub('.{4}$', '', i),
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  #palette = c("#E7B800","#3E606F"),
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+
+}
+
+arrange_ggsurvplots(li, ncol = 1)
+
+```
+
+#Каплан Майер: категориальные переменные + время до смерти
+
+```{r}
+data_surv_new <- droplevels(data_surv_new)
+
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))[-1]){
+  
+
+linelistsurv <-  survfit(
+  Surv(Time_to_deathCox, Event_deathCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Overall Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = gsub('.{4}$', '', i),
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  #palette = c("#E7B800","#3E606F"),
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+ 
+}
+
+arrange_ggsurvplots(li, ncol = 1)
+
+```
+
+## Модели кокса на импутированных данных
+
+```{r chunk1}
+data_imp <- readRDS("data/imputation_result_all_60.rds")
+
+all_sets <- lapply(1:10, function(x) complete(data_imp , x))
+final <- lapply(all_sets, function(x) select(x, !c(clin_det_count, OS1)))
+final <- lapply(final, function(x) mutate(x, TTCD_event = as.numeric(TTCD_event)))
+
+vars_for_table <- colnames(final[[1]]%>%select(ends_with("Cat0")|ends_with("Cat1")|ends_with("Num0")|ends_with("Cat2")|ends_with("Num1")))
+                          
+length(vars_for_table)
+
+univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(TTCD, TTCD_event) ~', x)))
+
+
+table0 <- data.frame()
+for (form in univ_formulas){
+  models <- lapply(final, function(x) {coxph(form, data = x)})
+  table0 <- bind_rows(table0, tidy(pool(models)))
+}
+
+
+table0 <- table0 %>%
+  arrange(p.value)%>%
+  mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          ),
+          raw_p_value = ifelse(p.value == "N.A.", NA, round(as.numeric(p.value), 2)),
+          adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
+        )
+
+
+
+# Данные для графика
+forest_data_plot <- table0 %>%
+  filter((lower_95 < 1 & upper_95 <1)|(lower_95 > 1 & upper_95 >1))%>%
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(p.value)
+
+# Таблица для подписи
+labeltext <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(term, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+
+forestplot::forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = "Forest Plot for Time-Independent Cox Models for Deterioration-free Survival (top models)",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = "l",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)  
+
+
+
+```

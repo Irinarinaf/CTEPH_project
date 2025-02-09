@@ -1,0 +1,27 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudmVubl9jb3VudHNcbmBgYCJ9 -->
+
+```r
+venn_counts
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+venn_counts
+```"
+"1","                                            Transluminal balloon angioplasty 
+                                                                          41 
+                                             Pulmonary thromboendarterectomy 
+                                                                          20 
+                                                                 PAH therapy 
+                                                                          58 
+            Transluminal balloon angioplasty&Pulmonary thromboendarterectomy 
+                                                                          10 
+                                Transluminal balloon angioplasty&PAH therapy 
+                                                                          38 
+                                 Pulmonary thromboendarterectomy&PAH therapy 
+                                                                          15 
+Transluminal balloon angioplasty&Pulmonary thromboendarterectomy&PAH therapy 
+                                                                           9 
+"

@@ -1,0 +1,113 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuT1NDb3hfY29uZmF1bmRlcnMgPC0gT1NDb3hfY29uZmF1bmRlcnMgJT4lXG4gIG11dGF0ZShNb2RlbCA9IFwiV2l0aCBDb3ZhcmlhdGVzXCIpICMg0JzQvtC00LXQu9GMINGBINC60L7QstCw0YDQuNCw0YLQsNC80LhcblxuT1NDb3ggPC0gT1NDb3ggJT4lXG4gIG11dGF0ZShNb2RlbCA9IFwiV2l0aG91dCBDb3ZhcmlhdGVzXCIpICMg0JzQvtC00LXQu9GMINCx0LXQtyDQutC+0LLQsNGA0LjQsNGCXG5cbiMg0J7QsdGK0LXQtNC40L3Rj9C10Lwg0YLQsNCx0LvQuNGG0YtcbmNvbWJpbmVkX3RhYmxlIDwtIGJpbmRfcm93cyhPU0NveF9jb25mYXVuZGVycywgT1NDb3gpXG5cbiMg0JTQsNC90L3Ri9C1INC00LvRjyDQs9GA0LDRhNC40LrQsFxuZm9yZXN0X2RhdGFfcGxvdCA8LSBjb21iaW5lZF90YWJsZSAlPiVcbiAgbXV0YXRlKFxuICAgIEhSID0gYXMubnVtZXJpYyhzdWIoXCIgLipcIiwgXCJcIiwgSFJfd2l0aF9DSSkpLCAjINCY0LfQstC70LXQutCw0LXQvCBIUlxuICAgIGxvd2VyXzk1ID0gYXMubnVtZXJpYyhzdWIoXCIuKlxcXFwoKC4qKS0uKlxcXFwpXCIsIFwiXFxcXDFcIiwgSFJfd2l0aF9DSSkpLCAjINCY0LfQstC70LXQutCw0LXQvCBsb3dlciBDSVxuICAgIHVwcGVyXzk1ID0gYXMubnVtZXJpYyhzdWIoXCIuKi0oLiopXFxcXClcIiwgXCJcXFxcMVwiLCBIUl93aXRoX0NJKSksICAgICAgIyDQmNC30LLQu9C10LrQsNC10LwgdXBwZXIgQ0lcbiAgICBwX2FuZF9hZGpfcCA9IHBhc3RlMChcInA6IFwiLCBwLnZhbHVlLCBcIjsgYWRqOiBcIiwgYWRqX3BfdmFsdWUpICAgICAgIyDQntCx0YrQtdC00LjQvdGP0LXQvCBwLXZhbHVlXG4gICkgJT4lXG4gIGFycmFuZ2UoQ292YXJpYXRlLCBNb2RlbClcblxuIyDQotCw0LHQu9C40YbQsCDQtNC70Y8g0L/QvtC00L/QuNGB0LhcbmxhYmVsdGV4dCA8LSByYmluZChcbiAgYyhcIkNvdmFyaWF0ZVwiLCBcIkhSICg5NSUgQ0kpXCIsIFwiTW9kZWxcIiwgXCJQLXZhbHVlc1wiKSwgICMg0JTQvtCx0LDQstC70Y/QtdC8INC60L7Qu9C+0L3QutGDINC00LvRjyBwLXZhbHVlc1xuICBmb3Jlc3RfZGF0YV9wbG90ICU+JSBzZWxlY3QoQ292YXJpYXRlLCBIUl93aXRoX0NJLCBNb2RlbCwgcF9hbmRfYWRqX3ApICU+JSBhcy5tYXRyaXgoKVxuKVxuXG4jINCX0L3QsNGH0LXQvdC40Y8g0LTQu9GPIEZvcmVzdCBQbG90XG5tZWFuX3ZhbHVlcyA8LSBmb3Jlc3RfZGF0YV9wbG90JEhSXG5sb3dlcl92YWx1ZXMgPC0gZm9yZXN0X2RhdGFfcGxvdCRsb3dlcl85NVxudXBwZXJfdmFsdWVzIDwtIGZvcmVzdF9kYXRhX3Bsb3QkdXBwZXJfOTVcblxuI3BuZyhcIm91dHB1dHMvZm9yZXN0X3Bsb3RfdGltZV9kZXBfT1MucG5nXCIsIHdpZHRoID0gMTUwMCwgaGVpZ2h0ID0gNTAwLCByZXMgPSAxNTApXG5cbmZvcmVzdHBsb3QoXG4gIGxhYmVsdGV4dCA9IGxhYmVsdGV4dCxcbiAgbWVhbiA9IGMoTkEsIG1lYW5fdmFsdWVzKSxcbiAgbG93ZXIgPSBjKE5BLCBsb3dlcl92YWx1ZXMpLFxuICB1cHBlciA9IGMoTkEsIHVwcGVyX3ZhbHVlcyksXG4gIHhsb2cgPSBUUlVFLFxuICB4bGltID0gYygwLjAxLCAxMDApLCAgICAgICAgICAgICAgICAgICAjINCd0LDRgdGC0YDQvtC50LrQsCDQtNC40LDQv9Cw0LfQvtC90LAg0L7RgdC4IFhcbiAgdGl0bGUgPSBcIkZvcmVzdCBQbG90IGZvciBUaW1lLURlcGVuZGVudCBDb3ggTW9kZWxzIGZvciBPdmVyYWxsIFN1cnZpdmFsXCIsXG4gIG5ld19wYWdlID0gVFJVRSxcbiAgaXMuc3VtbWFyeSA9IGMoVFJVRSwgcmVwKEZBTFNFLCBucm93KGZvcmVzdF9kYXRhX3Bsb3QpKSksXG4gIGJveHNpemUgPSAwLjIsXG4gIGNvbCA9IGZwQ29sb3JzKGJveCA9IFwiZGFya2JsdWVcIiwgbGluZSA9IFwiYmxhY2tcIiwgc3VtbWFyeSA9IFwiZGFya2JsdWVcIiksXG4gIHR4dF9ncCA9IGZwVHh0R3AobGFiZWwgPSBncGFyKGNleCA9IDAuOCksIHRpY2tzID0gZ3BhcihjZXggPSAwLjcpLCB4bGFiID0gZ3BhcihjZXggPSAwLjgpKSxcbiAgYWxpZ24gPSBcImxcIiwgICAgICAgICAgICAgICAgICAgICAgICAjINCS0YvRgNCw0LLQvdC40LLQsNC90LjQtSDRgtC10LrRgdGC0LAg0YHQu9C10LLQsFxuICBjbGlwID0gYygwLjAxLCAxMDApLCAgICAgICAgICAgICAgICAgICAjINCe0LHRgNC10LfQutCwINC30L3QsNGH0LXQvdC40LlcbiAgZ3JhcGgucG9zID0gMikgICAgICAgICAgICAgICAgICAgICAgICAgIyDQn9C+0LfQuNGG0LjRjyDQs9GA0LDRhNC40LrQsFxuYGBgIn0= -->
+
+```r
+OSCox_confaunders <- OSCox_confaunders %>%
+  mutate(Model = \"With Covariates\") # Модель с ковариатами
+
+OSCox <- OSCox %>%
+  mutate(Model = \"Without Covariates\") # Модель без ковариат
+
+# Объединяем таблицы
+combined_table <- bind_rows(OSCox_confaunders, OSCox)
+
+# Данные для графика
+forest_data_plot <- combined_table %>%
+  mutate(
+    HR = as.numeric(sub(\" .*\", \"\", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(\".*\\((.*)-.*\\)\", \"\\1\", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(\".*-(.*)\\)\", \"\\1\", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0(\"p: \", p.value, \"; adj: \", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(Covariate, Model)
+
+# Таблица для подписи
+labeltext <- rbind(
+  c(\"Covariate\", \"HR (95% CI)\", \"Model\", \"P-values\"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(Covariate, HR_with_CI, Model, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+#png(\"outputs/forest_plot_time_dep_OS.png\", width = 1500, height = 500, res = 150)
+
+forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = \"Forest Plot for Time-Dependent Cox Models for Overall Survival\",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = \"darkblue\", line = \"black\", summary = \"darkblue\"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = \"l\",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)                         # Позиция графика
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+OSCox_confaunders <- OSCox_confaunders %>%
+  mutate(Model = \"With Covariates\") # Модель с ковариатами
+
+OSCox <- OSCox %>%
+  mutate(Model = \"Without Covariates\") # Модель без ковариат
+
+# Объединяем таблицы
+combined_table <- bind_rows(OSCox_confaunders, OSCox)
+
+# Данные для графика
+forest_data_plot <- combined_table %>%
+  mutate(
+    HR = as.numeric(sub(\" .*\", \"\", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(\".*\\((.*)-.*\\)\", \"\\1\", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(\".*-(.*)\\)\", \"\\1\", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0(\"p: \", p.value, \"; adj: \", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(Covariate, Model)
+
+# Таблица для подписи
+labeltext <- rbind(
+  c(\"Covariate\", \"HR (95% CI)\", \"Model\", \"P-values\"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(Covariate, HR_with_CI, Model, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+#png(\"outputs/forest_plot_time_dep_OS.png\", width = 1500, height = 500, res = 150)
+
+forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = \"Forest Plot for Time-Dependent Cox Models for Overall Survival\",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = \"darkblue\", line = \"black\", summary = \"darkblue\"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = \"l\",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)                         # Позиция графика
+```"
+"1","
+<!-- rnb-plot-begin eyJoZWlnaHQiOjQsIndpZHRoIjoxMCwic2l6ZV9iZWhhdmlvciI6MSwiY29uZGl0aW9ucyI6W119 -->
+
+<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAHgCAMAAACCSWStAAAAA1BMVEX///+nxBvIAAAACXBIWXMAABJ0AAASdAHeZh94AAACRUlEQVR4nO3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOBnzFgAAawwCtMAAAAASUVORK5CYII=\" />
+
+<!-- rnb-plot-end -->
+"

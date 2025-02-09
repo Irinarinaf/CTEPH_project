@@ -1,0 +1,20 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXG5jYXI6OnZpZihjb3hfbW9kZWwpXG5gYGAifQ== -->
+
+```r
+
+car::vif(cox_model)
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+
+car::vif(cox_model)
+```"
+"1","Warning in vif.default(cox_model) :
+  No intercept: vifs may not be sensible.
+"
+"1","       BPAfl        TPEfl        LAGfl Age_at_start          Mut          Sex 
+    1.283653     1.156662     1.463453     1.340716     1.316189     1.457560 
+"

@@ -1,0 +1,52 @@
+"0",""
+"0","Timelines_plot <- data_end %>% "
+"0","   ggplot() +"
+"0","  geom_point(aes(x = first_visit_0_bl, reorder(USUBJID, ord), color = death), shape = 15, size = 1.5, stroke = 1.5, show.legend = FALSE) +  "
+"0","  geom_segment(aes(x = first_visit_bl, xend = end_bl, y = reorder(USUBJID, ord), yend = reorder(USUBJID, ord), color = death), size = 1.5) + # первый визит - последний визит/смерть"
+"0","  geom_point(aes(x = DateTPE_bl, reorder(USUBJID, ord), shape = ""TPE surgery""), color = ""#31a354"", size = 2, stroke = 1) + # дата операции "
+"0","  geom_point(aes(x = min_LAGdt_bl, reorder(USUBJID, ord), shape = ""First LAG therapy""), color = ""orange"", size = 1.5, stroke = .7) + # самая ранняя дата  LAG-терапии"
+"0","  geom_point(aes(x = TTCDdt_n_bl, reorder(USUBJID, ord), shape = ""First clinical worsening""), color = ""red"", size = 1.5, stroke = 1) + # перове клин ухудшение"
+"0","  geom_point(aes(x = BPAdate_bl, reorder(USUBJID, ord), shape = ""BPA surgery""), color = ""#756bb1"", size = 1, stroke = 1) + # перове клин ухудшение"
+"0","  #geom_point(aes(x = death, reorder(USUBJID, ord), shape = ""Death""), color = ""#e34a33"", size = 2, stroke = 1) + #смерть"
+"0","   labs(title = ""Treatment Timelines with Multiple Variables"", "
+"0","        x = ""Years"", "
+"0","        y = ""ID"", "
+"0","        color = ""Time data is collected"", "
+"0","        shape = ""Event"") + "
+"0","  theme_minimal() +"
+"0","  theme(axis.text.y = element_text(size = 6),"
+"0","        axis.title=element_text(size=17),"
+"0","        plot.title = element_text(size=20, hjust = 0.5),  "
+"0","        axis.text.x = element_text(size = 15)) +"
+"0"," # scale_x_datetime(date_breaks = ""5 year"", date_labels = ""%Y"") +"
+"0","  scale_color_manual(values = c(""The patient is alive"" = ""skyblue"", ""The patient is dead"" = ""#FFB6B6""),"
+"0","                     labels = c(""The patient is alive"", ""The patient is dead"")) +"
+"0","  scale_shape_manual(values = c("
+"0","                                 ""TPE surgery"" = 1, "
+"0","                                 ""First LAG therapy"" = 8, "
+"0","                                 ""First clinical worsening"" = 2, "
+"0","                                 ""BPA surgery"" = 16)) + "
+"0","  scale_x_continuous(breaks = seq(-5, max(data_end$end_bl, na.rm = TRUE), by = 2), limits = c(-5, NA)) +"
+"0","  labs(caption = ""0 is a starting date for all outcomes"")"
+"2","Warning:"
+"2"," [38;5;232mUsing `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+[36mℹ[38;5;232m Please use `linewidth` instead.
+[90mThis warning is displayed once every 8 hours.[38;5;232m
+[90mCall `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.[38;5;232m[39m
+"
+"0","Timelines_plot"
+"2","Warning:"
+"2"," [38;5;232mRemoved 358 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 359 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 60 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 89 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 195 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"

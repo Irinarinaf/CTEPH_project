@@ -1,0 +1,40 @@
+"0","knitr::opts_chunk$set(echo = TRUE)"
+"0","library(""readxl"")"
+"0","library(""gsheet"")"
+"0","library(""dplyr"")"
+"0","library(tidyverse)"
+"0","library(lubridate)"
+"0","library(car)"
+"0","library(mice)"
+"0","library(reshape2)"
+"0","library(conflicted)"
+"0","conflict_prefer(""select"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::select over any other package.[39m
+"
+"0","conflict_prefer(""filter"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::filter over any other package.[39m
+"
+"0","conflict_prefer(""summarize"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::summarize over any other package.[39m
+"
+"0","conflict_prefer(""lag"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::lag over any other package.[39m
+"
+"0","conflict_prefer(""year"", ""lubridate"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mlubridate[38;5;232m[22m::year over any other package.[39m
+"
+"0","conflict_prefer(""recode"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::recode over any other package.[39m
+"

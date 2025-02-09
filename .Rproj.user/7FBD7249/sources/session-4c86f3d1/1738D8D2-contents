@@ -1,0 +1,1069 @@
+---
+title: "Untitled"
+author: "Arina"
+date: "`r Sys.Date()`"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+data_set <- readRDS("data/time_independent_factors241219_full.rds")
+```
+
+```{r}
+data_imp <- readRDS("data/imputation_result_all_60.rds")
+```
+
+#Визуализация переменных и их влияние на зависимую переменную
+(date_clin_rate) мутация гена сопутствующие заболевания (1-10) - хотя бы
+одно из них, вес, ИМТ при выписке, если нет то при поступлении, симптомы
+в настоящее время, лучше все по отдельности, функциональный класс на
+момент начала лечения, дистанция 6-минутной хотьбы, баллы по Боргу,
+сатурация, признаки декомпенсации, гемоглобин, биохимия крови вся, BNP,
+СДЛА или срСДЛА для катетеоризации или данных ЭХОКГ, может войти только
+один из этих показателей,\
+апикальный либо передне-задний размер ПЖ сердечный выброс или сердечный
+индекс, ЛСС Вуда или ИЛСС, обе сатурации, ангиопульмонография - уровень
+поражения легочных артерий, кандидат на ТЭЭ (не знаю - оценка не
+проводилась),\
+прием диуретиков, антикоагулянтов - сам факт
+
+```{r}
+#Мутация гена 
+ggplot(data_set, aes(x= MutationCat0 , y= clin_det_rate, color = MutationCat0)) + 
+  geom_boxplot(outlier.shape = NA)+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of mutation', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none', 
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#функциональный класс на момент начала лечения
+ggplot(data_set, aes(x= WHOFuncClassCat2 , y= clin_det_rate, color = WHOFuncClassCat2)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Functional class  at the time of treatment', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#дистанция 6-минутной ходьбы
+ggplot(data_set, aes(x= Test6DistCat1 , y= clin_det_rate, color = Test6DistCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = '6 minute walk distance', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#баллы по Боргу
+ggplot(data_set, aes(x=Test6ApneaBorgCat1 , y= clin_det_rate, color = Test6ApneaBorgCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Dyspnea after 6-minute walk test (Borg scale)', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#сатурация
+g1 <- ggplot(data_set, aes(x= Test6PulsOxBeforeCat1 , y= clin_det_rate, color = Test6PulsOxBeforeCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Pulse oximetry before test', y = 'Rate of deterioration',  title = 'Pulse oximetry before 6-minute walk test') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+g2 <- ggplot(data_set, aes(x= Test6PulsOxAfterCat1 , y= clin_det_rate, color = Test6PulsOxAfterCat1)) +
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Pulse oximetry after test', y = 'Rate of deterioration', title = 'Pulse oximetry after 6-minute walk test') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+ggarrange(g1, g2)
+
+#признаки декомпенсации
+ggplot(data_set, aes(x= CHFDecompensationCat0 , y= clin_det_rate, color = CHFDecompensationCat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Signs of decompensation', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#гемоглобин
+ggplot(data_set, aes(x= HemoglobinCat1 , y= clin_det_rate, color = HemoglobinCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of hemoglobin', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#BNP
+ggplot(data_set, aes(x= BNPCat1 , y= clin_det_rate, color = BNPCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'BNP start', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#СДЛА
+ggplot(data_set, aes(x= ECHOCGSDLACat1 , y= clin_det_rate, color = ECHOCGSDLACat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'SDLA', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#передне-задний размер ПЖ
+ggplot(data_set, aes(x= ECHOCGFrontBackSizeCat1 , y= clin_det_rate, color = ECHOCGFrontBackSizeCat1)) +
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Front Back Size of the right ventricle', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#сердечный выброс или сердечный индекс
+ggplot(data_set, aes(x= RHCatheterCICat1 , y= clin_det_rate, color = RHCatheterCICat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Сardiac index', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+
+#ЛСС Вуда или ИЛСС
+ggplot(data_set, aes(x= RHCatheterLCCVudCat1 , y= clin_det_rate, color = RHCatheterLCCVudCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'LCC Vud', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#обе сатурации
+g3 <- ggplot(data_set, aes(x= RHCatheterSaO2Cat1 , y= clin_det_rate, color = RHCatheterSaO2Cat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Arterial blood saturation (SaO2), %', y = 'Rate of deterioration', title = 'Arterial blood saturation (SaO2)') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+g4 <- ggplot(data_set, aes(x= RHCatheterSvO2Cat1 , y= clin_det_rate, color = RHCatheterSvO2Cat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Arterial blood saturation (SvO2), %', y = 'Rate of deterioration', title = 'Arterial blood saturation (SvO2)') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+ggarrange(g3,g4)
+
+#ангиопульмонография - уровень поражения легочных артерий
+ggplot(data_set, aes(x= AngiopulmonographyDamageCat1 , y= clin_det_rate, color = AngiopulmonographyDamageCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of gamage', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#кандидат на ТЭЭ
+ggplot(data_set, aes(x= CPTECat0 , y= clin_det_rate, color = CPTECat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Сandidate for surgery', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+##прием антикоагулянтов - сам факт
+ggplot(data_set, aes(x= AntiCoagDrugCat0 , y= clin_det_rate, color = AntiCoagDrugCat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Anticoagulant treatment', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+#прием диуретиков
+ggplot(data_set, aes(x= DiurDrugCat0 , y= clin_det_rate, color = DiurDrugCat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Treatment with diuretics', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 16),
+        axis.title.y = element_text(size = 16),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+```
+
+```{r,  fig.width = 16, fig.height = 10}
+#Сопутствующие заболевания
+p1 <- ggplot(data_set, aes(x= medHist1Cat0 , y= clin_det_rate, color = medHist1Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of hypertension', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p2 <- ggplot(data_set, aes(x= medHist2Cat0 , y= clin_det_rate, color = medHist2Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of ischemic heart disease', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p3 <- ggplot(data_set, aes(x= medHist3Cat0 , y= clin_det_rate, color = medHist3Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of chronic \n obstructive pulmonary disease', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p4 <- ggplot(data_set, aes(x= medHist4Cat0 , y= clin_det_rate, color = medHist4Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of bronchial asthma', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p5 <- ggplot(data_set, aes(x= medHist5Cat0 , y= clin_det_rate, color = medHist5Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of obstructive \n sleep apnea syndrome', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p6 <- ggplot(data_set, aes(x= medHist6Cat0 , y= clin_det_rate, color = medHist6Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of antiphospholipid syndrome', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p7 <- ggplot(data_set, aes(x= medHist7Cat0 , y= clin_det_rate, color = medHist7Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of systemic lupus erythematosus', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p8 <- ggplot(data_set, aes(x= medHist8Cat0 , y= clin_det_rate, color = medHist8Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of diabetes or \n impaired glucose tolerance', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p9 <- ggplot(data_set, aes(x= medHist9Cat0 , y= clin_det_rate, color = medHist9Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of CKD stage 3A or higher', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+p10 <- ggplot(data_set, aes(x= medHist10Cat0 , y= clin_det_rate, color = medHist10Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Presence of FP or TP (any form)', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 13),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+ggarrange(p1,p2,p3,p4,p5)
+ggarrange(p6,p7,p8,p9,p10)
+```
+
+```{r, fig.width = 14, fig.height = 10}
+#Биохимические показатели
+gg1 <- ggplot(data_set, aes(x= BloodBHTotalCholesterolCat1 , y= clin_det_rate, color = BloodBHTotalCholesterolCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of Total Cholesterol', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+gg2 <- ggplot(data_set, aes(x= BloodBHTriglyceridesCat1 , y= clin_det_rate, color = BloodBHTriglyceridesCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of Triglycerides', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+gg3 <- ggplot(data_set, aes(x= BloodBHLDLtoHDLCat1 , y= clin_det_rate, color = BloodBHLDLtoHDLCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of LDL Cholesterol', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+gg4 <- ggplot(data_set, aes(x= BloodBHUricAcidCat1 , y= clin_det_rate, color = BloodBHUricAcidCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of uric acid ', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+gg5 <- ggplot(data_set, aes(x= BloodBHGlucoseCat1 , y= clin_det_rate, color = BloodBHGlucoseCat1)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Rate of glucose', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+ggarrange(gg1,gg2,gg3,gg4,gg5)
+
+#Симптомы
+s1 <- ggplot(data_set, aes(x= PulHypSymp1Cat0 , y= clin_det_rate, color = PulHypSymp1Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s2 <- ggplot(data_set, aes(x= PulHypSymp2Cat0 , y= clin_det_rate, color = PulHypSymp2Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s3 <- ggplot(data_set, aes(x= PulHypSymp3Cat0 , y= clin_det_rate, color = PulHypSymp3Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s4 <- ggplot(data_set, aes(x= PulHypSymp4Cat0 , y= clin_det_rate, color = PulHypSymp4Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s5 <- ggplot(data_set, aes(x= PulHypSymp5Cat0 , y= clin_det_rate, color = PulHypSymp5Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s6 <- ggplot(data_set, aes(x= PulHypSymp6Cat0 , y= clin_det_rate, color = PulHypSymp6Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s7 <- ggplot(data_set, aes(x= PulHypSymp7Cat0 , y= clin_det_rate, color = PulHypSymp7Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+s8 <- ggplot(data_set, aes(x= PulHypSymp8Cat0 , y= clin_det_rate, color = PulHypSymp8Cat0)) + 
+  geom_boxplot()+
+  geom_jitter(position=position_jitter(0.2)) +
+  labs(x = 'Symptoms', y = 'Rate of deterioration') +
+  theme_bw() +
+  theme(legend.position = 'none',
+        axis.title.x =  element_text(size = 14),
+        axis.title.y = element_text(size = 14),
+        axis.text.x = element_text(size = 11),
+        axis.text.y = element_text(size = 11)) +
+  scale_y_continuous(limits = c(0,3))
+
+ggarrange(s1,s2,s3,s4,s5,s6,s7,s8)
+```
+
+#Корреляции (для количественных переменных)
+
+```{r}
+data_set %>%
+  ggplot(aes(x = Test6DistNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = BMINum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = HemoglobinNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = BloodBHGlucoseNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = BloodBHTotalCholesterolNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = BloodBHTriglyceridesNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = BloodBHHDLCholesterolNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = BloodBHLDLCholesterolNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = ECHOCGFrontBackSizeNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = ECHOCGSDLANum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = RHCatheterCINum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = RHCatheterLCCVudNum1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = RHCatheterSaO2Num1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+
+data_set %>%
+  ggplot(aes(x = RHCatheterSvO2Num1, y = clin_det_rate)) +
+  geom_point() +
+  theme_bw()
+```
+
+```{r}
+library(conflicted)
+library(flextable)
+
+library(htmltools)
+library(kableExtra)
+
+library(knitr)
+library(MASS)
+library(pscl)
+
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+```
+
+#Регрессия Пуассона(1)
+
+```{r}
+library(tidyverse)  # Для работы с tibbles и dplyr
+
+create_model_and_get_coefficients <- function(formula, data_set, family = 'poisson') {
+  
+  # Строим модель
+  model <- glm(formula, data_set, family = family)
+  
+  # Получаем коэффициенты модели
+  coefficients <- summary(model)$coef %>% as_tibble(rownames = "Factors")
+  
+  # Оставляем нужные столбцы
+  coefficients <- coefficients[, c('Factors', 'Estimate', 'Pr(>|z|)')]
+  
+  # Рассчитываем доверительные интервалы вручную
+  alpha <- 0.05  # Уровень значимости для расчета CI
+  z_crit <- qnorm(1 - alpha/2)  # Критическое значение Z для двустороннего теста
+  std_error <- sqrt(diag(vcov(model)))  # Стандартная ошибка коэффициентов
+  lower_ci <- round(coefficients$Estimate - z_crit * std_error, digits = 2)
+  upper_ci <- round(coefficients$Estimate + z_crit * std_error, digits = 2)
+  coefficients$confidence_intervals <- paste("(", lower_ci, ", ", upper_ci, ")", sep = "")
+  
+  # Рассчитываем скорректированные p-значения
+  coefficients$p_adjusted <- p.adjust(coefficients$`Pr(>|z|)`, method = "BH")
+  
+  # Переименовываем столбцы
+  colnames(coefficients) <- c('Factors', 'Coefficients_values', 'p_value', 'confidence_intervals', 'p_adjust')
+  
+  # Добавляем обозначения для коэффициентов
+  coefficients$Coefficients <- paste0("$\\beta_", 0:(nrow(coefficients) - 1), "$")
+  
+  # Перемещаем столбец Coefficients на первое место
+  coefficients <- coefficients %>% relocate(Coefficients, .after = Factors)
+  coefficients <- coefficients %>% relocate(confidence_intervals, .after = Coefficients_values)
+  
+  return(coefficients)
+}
+
+# Список формул для моделей
+formulas <- list(
+  clin_det_count ~ MutationCat0 + offset(log(OS1)),
+  clin_det_count ~ WHOFuncClassCat2 + offset(log(OS1)),
+  clin_det_count ~ Test6DistCat1 + offset(log(OS1)),
+  clin_det_count ~ Test6ApneaBorgCat1 + offset(log(OS1)),
+  clin_det_count ~ Test6PulsOxBeforeCat1 + offset(log(OS1)),
+  clin_det_count ~ Test6PulsOxAfterCat1 + offset(log(OS1)),
+  clin_det_count ~ CHFDecompensationCat0 + offset(log(OS1)),
+  clin_det_count ~ HemoglobinCat1 + offset(log(OS1)),
+  clin_det_count ~ BNPCat1 + offset(log(OS1)),
+  clin_det_count ~ ECHOCGSDLACat1 + offset(log(OS1)),
+  clin_det_count ~ ECHOCGFrontBackSizeCat1 + offset(log(OS1)),
+  clin_det_count ~ RHCatheterLCCVudCat1 + offset(log(OS1)),
+  clin_det_count ~ RHCatheterSaO2Cat1 + offset(log(OS1)),
+  clin_det_count ~ RHCatheterSvO2Cat1 + offset(log(OS1)),
+  clin_det_count ~ RHCatheterCICat1 + offset(log(OS1)),
+  clin_det_count ~ AngiopulmonographyDamageCat1 + offset(log(OS1)),
+  clin_det_count ~ CPTECat0 + offset(log(OS1)), 
+  clin_det_count ~ AntiCoagDrugCat0 + offset(log(OS1)), 
+  clin_det_count ~ DiurDrugCat0 + offset(log(OS1)),
+  clin_det_count ~ BloodBHTotalCholesterolCat1 + offset(log(OS1)), 
+  clin_det_count ~ BloodBHTriglyceridesCat1 + offset(log(OS1)),
+  clin_det_count ~ BloodBHLDLtoHDLCat1 + offset(log(OS1)), 
+  clin_det_count ~ BloodBHUricAcidCat1 + offset(log(OS1)), 
+  clin_det_count ~ BloodBHGlucoseCat1 + offset(log(OS1)), 
+  clin_det_count ~ PulHypSymp2Cat0 + offset(log(OS1)), 
+  clin_det_count ~ PulHypSymp3Cat0 + offset(log(OS1)), 
+  clin_det_count ~ PulHypSymp4Cat0 + offset(log(OS1)), 
+  clin_det_count ~ PulHypSymp5Cat0 + offset(log(OS1)),
+  clin_det_count ~ PulHypSymp6Cat0 + offset(log(OS1)), 
+  clin_det_count ~ PulHypSymp7Cat0 + offset(log(OS1)),
+  clin_det_count ~ PulHypSymp8Cat0 + offset(log(OS1)), 
+  clin_det_count ~ medHist1Cat0 + offset(log(OS1)),
+  clin_det_count ~ medHist2Cat0 + offset(log(OS1)),
+  clin_det_count ~ medHist3Cat0 + offset(log(OS1)), 
+  clin_det_count ~ medHist4Cat0 + offset(log(OS1)), 
+  clin_det_count ~ medHist5Cat0 + offset(log(OS1)), 
+  clin_det_count ~ medHist6Cat0 + offset(log(OS1)), 
+  clin_det_count ~ medHist7Cat0 + offset(log(OS1)),
+  clin_det_count ~ medHist8Cat0 + offset(log(OS1)), 
+  clin_det_count ~ medHist9Cat0 + offset(log(OS1)),
+  clin_det_count ~ medHist10Cat0 + offset(log(OS1))
+)
+
+# Создаем список данных с коэффициентами для каждой формулы
+coefficient_data_list <- lapply(formulas, create_model_and_get_coefficients, data_set)
+
+# Объединяем все данные в одну таблицу
+combined_table_poisson <- do.call(rbind, coefficient_data_list)
+
+```
+
+#Биномиальная регресси (1)
+
+```{r}
+library(tidyverse)  # Для работы с tibbles и dplyr
+
+create_model_and_get_coefficients_nb <- function(formula, data_set) {
+  
+  # Строим модель
+  model <- glm.nb(formula, data_set)
+  
+  # Получаем коэффициенты модели
+  coefficients <- summary(model)$coef %>% as_tibble(rownames = "Factors")
+  
+  # Оставляем нужные столбцы
+  coefficients <- coefficients[, c('Estimate', 'Pr(>|z|)')]
+  
+  # Рассчитываем доверительные интервалы вручную
+  alpha <- 0.05  # Уровень значимости для расчета CI
+  z_crit <- qnorm(1 - alpha/2)  # Критическое значение Z для двустороннего теста
+  std_error <- sqrt(diag(vcov(model)))  # Стандартная ошибка коэффициентов
+  lower_ci <- round(coefficients$Estimate - z_crit * std_error, digits = 2)
+  upper_ci <- round(coefficients$Estimate + z_crit * std_error, digits = 2)
+  coefficients$confidence_intervals <- paste("(", lower_ci, ", ", upper_ci, ")", sep = "")
+  
+  # Рассчитываем скорректированные p-значения
+  coefficients$p_adjusted <- p.adjust(coefficients$`Pr(>|z|)`, method = "BH")
+  
+  # Переименовываем столбцы
+  colnames(coefficients) <- c('Coefficients_values*', 'p_value*', 'confidence_intervals*', 'p_adjust*')
+  
+  # Добавляем обозначения для коэффициентов
+  coefficients$`Coefficients*` <- paste0("$\\beta_", 0:(nrow(coefficients) - 1), "$")
+  
+  # Перемещаем столбец Coefficients на первое место
+  coefficients <- coefficients %>% relocate(`Coefficients*`)
+  coefficients <- coefficients %>% relocate(`confidence_intervals*`, .after = `Coefficients_values*`)
+  
+  return(coefficients)
+}
+
+
+# Создаем список данных с коэффициентами для каждой формулы
+coefficient_data_list_nb <- lapply(formulas, create_model_and_get_coefficients_nb, data_set)
+
+# Объединяем все данные в одну таблицу
+combined_table_nb <- do.call(rbind, coefficient_data_list_nb)
+```
+
+#С поправкой на ноль
+
+```{r}
+create_model_and_get_coefficients_zero <- function(formula, data_set) {
+  
+  # Строим модель
+  model <- zeroinfl(formula, data_set)
+  
+  # Получаем коэффициенты модели
+  coefficients <- summary(model)$coef$zero %>% as_tibble(rownames = "Factors")
+  
+  # Оставляем нужные столбцы
+  coefficients <- coefficients[, c('Estimate', 'Pr(>|z|)')]
+  
+  # Рассчитываем доверительные интервалы вручную
+  alpha <- 0.05  # Уровень значимости для расчета CI
+  z_crit <- qnorm(1 - alpha / 2)  # Критическое значение Z для двустороннего теста
+  std_error <- sqrt(diag(vcov(model)[1:nrow(coefficients), 1:nrow(coefficients)]))  # Стандартная ошибка коэффициентов
+  lower_ci <- round(coefficients$Estimate - z_crit * std_error, digits = 2)
+  upper_ci <- round(coefficients$Estimate + z_crit * std_error, digits = 2)
+  coefficients$confidence_intervals <- paste("(", lower_ci, ", ", upper_ci, ")", sep = "")
+  
+  # Рассчитываем скорректированные p-значения
+  coefficients$p_adjusted <- p.adjust(coefficients$`Pr(>|z|)`, method = "BH")
+  
+  # Переименовываем столбцы
+  colnames(coefficients) <- c('Coefficients_values0', 'p_value0', 'confidence_intervals0', 'p_adjust0')
+  
+  # Добавляем обозначения для коэффициентов
+  coefficients$`Coefficients0` <- paste0("$\\beta_", 0:(nrow(coefficients) - 1), "$")
+  
+  # Перемещаем столбец Coefficients на первое место
+  coefficients <- coefficients %>% relocate(`Coefficients0`)
+  coefficients <- coefficients %>% relocate(`confidence_intervals0`, .after = `Coefficients_values0`)
+  
+  return(coefficients)
+}
+
+
+# Создаем список данных с коэффициентами для каждой формулы
+coefficient_data_list_zero <- lapply(formulas, create_model_and_get_coefficients_zero, data_set)
+
+# Объединяем все данные в одну таблицу
+combined_table_zero <- do.call(rbind, coefficient_data_list_zero)
+```
+
+#С поправкой на ноль (count)
+
+```{r}
+create_model_and_get_coefficients_count <- function(formula, data_set) {
+  
+  # Строим модель
+  model <- zeroinfl(formula, data_set)
+  
+  # Получаем коэффициенты модели
+  coefficients <- summary(model)$coef$count %>% as_tibble(rownames = "Factors")
+  
+  # Оставляем нужные столбцы
+  coefficients <- coefficients[, c('Estimate', 'Pr(>|z|)')]
+  
+  # Рассчитываем доверительные интервалы вручную
+  alpha <- 0.05  # Уровень значимости для расчета CI
+  z_crit <- qnorm(1 - alpha / 2)  # Критическое значение Z для двустороннего теста
+  std_error <- sqrt(diag(vcov(model)[1:nrow(coefficients), 1:nrow(coefficients)]))  # Стандартная ошибка коэффициентов
+  lower_ci <- round(coefficients$Estimate - z_crit * std_error, digits = 2)
+  upper_ci <- round(coefficients$Estimate + z_crit * std_error, digits = 2)
+  coefficients$confidence_intervals <- paste("(", lower_ci, ", ", upper_ci, ")", sep = "")
+  
+  # Рассчитываем скорректированные p-значения
+  coefficients$p_adjusted <- p.adjust(coefficients$`Pr(>|z|)`, method = "BH")
+  
+  # Переименовываем столбцы
+  colnames(coefficients) <- c('Coefficients_values**', 'p_value**', 'confidence_intervals**', 'p_adjust**')
+  
+  # Добавляем обозначения для коэффициентов
+  coefficients$`Coefficients**` <- paste0("$\\beta_", 0:(nrow(coefficients) - 1), "$")
+  
+  # Перемещаем столбец Coefficients на первое место
+  coefficients <- coefficients %>% relocate(`Coefficients**`)
+  coefficients <- coefficients %>% relocate(`confidence_intervals**`, .after = `Coefficients_values**`)
+  
+  return(coefficients)
+}
+
+
+# Создаем список данных с коэффициентами для каждой формулы
+coefficient_data_list_count <- lapply(formulas, create_model_and_get_coefficients_count, data_set)
+
+# Объединяем все данные в одну таблицу
+combined_table_count <- do.call(rbind, coefficient_data_list_count)
+```
+
+```{r}
+final <- bind_cols(combined_table_poisson, combined_table_nb, combined_table_zero, combined_table_count)
+final %>%
+  kable(format = "html",
+        booktabs = T, 
+        align = "c") %>%
+  add_header_above(
+    c(" " = 1, "Poisson regression" = 5, 'Binomial negative regression' = 5, 'Zero-inflated regression (binomial with logit link)' = 5, 'Zero-inflated regression (poisson with log link)' = 5 )) %>%# Выравнивание по центру
+  kable_styling('hover', full_width = F,
+                position = "center", 
+                font_size = 14) %>%
+  column_spec(1, bold = TRUE, border_right = TRUE, color = "black", background = "lightgrey")
+  #collapse_rows() %>%
+  #row_spec(c(2, 17, 28, 45, 47, 48, 73, 85,87), background  = "darkseagreen1")
+```
+
+```{r}
+var_labels <- c(
+"AgeNum1" = "Age",
+"AngiopulmonographyDamageCat1Дистальное поражение" = "Angiopulmonography Damage_Yes",
+"AntiCoagDrugCat0Да" = "Anticoagulant Therapy_Yes",
+"ApixabanCat0Да" = "Apixaban_Yes",
+"BloodBHGlucoseNum1" = "Blood Glucose",
+"BloodBHHDLCholesterolNum1" = "HDL Cholesterol",
+"BloodBHLDLCholesterolNum1" = "LDL Cholesterol",
+"BloodBHTotalCholesterolNum1" = "Total Cholesterol",
+"BloodBHTriglyceridesNum1" = "Triglycerides",
+"BMINum1" = "Body Mass Index",
+"CHFDecompensationCat0Да" = "CHF Decompensation_Yes",
+"CPTECat0Да" = "CTPE Diagnosis_Yes",
+"CTBPACat0Да" = "CTBPA Diagnosis_Yes",
+"DabigatranCat0Да" = "Dabigatran_Yes",
+"DiurDrugCat0Да" = "Diuretics Therapy_Yes",
+"ECHOCGDZLANum0" = "ECHO DZLA",
+"ECHOCGFrontBackSizeNum1" = "ECHO Front-Back Size",
+"ECHOCGPericEffusCat0Да" = "ECHO Pericardium Effusion_Yes",
+"ECHOCGPPareaNum0" = "ECHO PP area",
+"ECHOCGSDLANum0" = "ECHO SDL Area",
+"ECHOCGTapseNum0" = "ECHO Tapse",
+"ECHOCGTricRegCat0II" = "Tricuspid regurgitation_III",
+"ECHOCGTricRegCat0III" = "Tricuspid regurgitation_II",
+"ECHOCGTricRegCat0IV" = "Tricuspid regurgitation_IV",
+"EnoxaparinCat0Да" = "Enoxaparin_Yes",
+"HemoglobinNum1" = "Hemoglobin Level",
+"medHist10Cat0ФП или ТП (любая форма)" = "Atrial Fibrillation or Flutter_Yes",
+"medHist1Cat0гипертоническая болезнь" = "Hypertension_Yes",
+"medHist2Cat0ишемическая болезнь сердца" = "Ischemic Heart Disease_Yes",
+"medHist3Cat0хроническая обструктивная болезнь легких" = "Chronic Obstructive Pulmonary Disease_Yes",
+"medHist6Cat0антифосфолипидный синдром" = "Antiphospholipid Syndrome_Yes",
+"medHist7Cat0системная красная волчанка" = "Systemic Lupus Erythematosus_Yes",
+"medHist8Cat0СД или нарушение толерантности к глюкозе" = "Diabetes or Impaired Glucose Tolerance_Yes",
+"medHist9Cat0ХБП 3А стадии или выше" = "Chronic Kidney Disease Stage 3A or Higher_Yes",
+"MutationCat0Да" = "Genetic Mutation_Yes",
+"PulHypSymp2Cat0повышенная утомляемость" = "Increased fatigue_Yes",
+"PulHypSymp3Cat0боли в области сердца" = "Chest pain_Yes",
+"PulHypSymp4Cat0головокружение" = "Dizziness_Yes",
+"PulHypSymp5Cat0синкопальные состояния" = "Syncope_Yes",
+"PulHypSymp6Cat0кашель" = "Cough_Yes",
+"PulHypSymp7Cat0кровохарканье" = "Hemoptysis_Yes",
+"PulHypSymp8Cat0отеки ног" = "Leg edema_Yes",
+"RHCatheterCINum1" = "RH Catheter CI",
+"RHCatheterDPPmeanNum0" = "RH Catheter DPP mean",
+"RHCatheterLCCVudNum1" = "RH Catheter LCC
+Vud",
+"RHCatheterSaO2Num1" = "RH Catheter SaO2",
+"RHCatheterSDLANum1" = "RH Catheter SDLA",
+"RHCatheterSvO2Num1" = "RH Catheter SvO2",
+"RivaroxabanCat0Да" = "Rivaroxaban_Yes",
+"SexCat0Женский" = "Sex_Female",
+"Test6ApneaBorgNum1" = "Apnea Borg Scale",
+"Test6DistNum1" = "6-Min Walk Distance",
+"WarfarinCat0Да" = "Warfarin_Yes",
+"WHOFuncClassCat1III" = "WHO Functional Class_III",
+"WHOFuncClassCat1IV" = "WHO Functional Class_IV")
+
+
+final <- lapply(1:10, function(x) complete(data_imp , x))
+final <- lapply(final, function(x) mutate(x, across(where(is.factor), ~ factor(.x, ordered = F))))
+
+
+vars_for_table_imp <- lapply(final, function(df) {
+  select(df, matches("Num0$|Num1$|Cat0$"), AngiopulmonographyDamageCat1, WHOFuncClassCat1) %>%
+    colnames()
+})
+
+
+vars_for_table_imp <- unique(unlist(vars_for_table_imp))
+
+
+univ_formulas <- sapply(vars_for_table_imp[2:length(vars_for_table_imp)], function(x) as.formula(paste('clin_det_count ~', x, '+ offset(log(OS1))')))
+
+univ_formulas <- lapply(vars_for_table_imp, function(x) as.formula(paste('clin_det_count ~', x, '+ offset(log(OS1))')))
+
+# Создаем список для хранения результатов
+table_imp_list <- list()
+
+for (form in univ_formulas) {
+  models <- lapply(final, function(x) glm.nb(form, data = x))
+  pooled_results <- tidy(pool(models), conf.int = TRUE) %>%
+    mutate(
+      RR = exp(estimate),
+      conf.low = exp(conf.low),
+      conf.high = exp(conf.high),
+      RR_with_CI = paste0(
+        round(RR, 2), 
+        " (", 
+        round(conf.low, 2), 
+        "-", 
+        round(conf.high, 2), 
+        ")"
+      ))
+  table_imp_list <- append(table_imp_list, list(pooled_results))
+}
+
+# Объединяем результаты в один датафрейм
+table_imp <- bind_rows(table_imp_list) %>% filter(term != '(Intercept)')
+
+# Данные для графика
+forest_data_plot_imp <- table_imp %>%
+  mutate(
+     raw_p_value = as.character(ifelse(p.value < 0.001, "<0.001", round(as.numeric(p.value), 3))),
+      adj_p_value = as.character(ifelse(p.adjust(as.numeric(p.value), method = "BH") < 0.001, 
+                                        "<0.001", 
+                                        round(p.adjust(as.numeric(p.value), method = "BH"), 3))),
+    RR = as.numeric(sub(" .*", "", RR_with_CI)), # Извлекаем RR
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", RR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", RR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(p.value)
+
+# Обновляем подписи переменных в таблице перед визуализацией
+forest_data_plot_imp <- forest_data_plot_imp %>%
+  mutate(term_clean = recode(term, !!!var_labels)) %>%  # Меняем на читаемые названия
+  slice(1:10)
+
+# Создаем таблицу для подписей
+labeltext_imp <- rbind(
+  c("Covariate", "RR (95% CI)", "P-values"),  # Заголовок
+  forest_data_plot_imp %>% select(term_clean, RR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+
+mean_values_imp <- forest_data_plot_imp$RR
+lower_values_imp <- forest_data_plot_imp$lower_95
+upper_values_imp <- forest_data_plot_imp$upper_95
+
+forestplot::forestplot(
+  labeltext = labeltext_imp,
+  mean = c(NA, mean_values_imp), 
+  lower = c(NA, lower_values_imp),
+  upper = c(NA, upper_values_imp),
+  xlog = TRUE,
+  xlim = c(0.01, 100),
+  title = "Forest Plot for Negative Binomial Univariate Models for Deterioration-free Survival",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot_imp))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(
+    label = gpar(cex = 0.8),
+    ticks = gpar(cex = 0.7),
+    xlab = gpar(cex = 0.8)
+  ),
+  align = "l",
+  clip = c(0.01, 100),
+  graph.pos = 2
+)
+```

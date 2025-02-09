@@ -1,0 +1,5 @@
+"0",""
+"0","ggcoxdiagnostics(linelistsurv_cox, type = ""schoenfeld"") +"
+"0","  theme_bw()"
+"1","[38;5;232m`geom_smooth()` using formula = 'y ~ x'[39m
+"

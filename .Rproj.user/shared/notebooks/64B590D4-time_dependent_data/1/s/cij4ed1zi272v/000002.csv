@@ -1,0 +1,30 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZWRlcF9tYW51YWwxIDwtIHRpbWVkZXBfbWFudWFsMCAlPiVcbiAgcm93d2lzZSgpICU+JVxuICBtdXRhdGUoTEFHZmwgPSBhcy5pbnRlZ2VyKGFueShjX2Fjcm9zcyhlbmRzX3dpdGgoXCJmbFwiKSAmICFtYXRjaGVzKFwiVFBFZmx8QlBBZmxcIikpID09IDEpKSkgJT4lXG4gIHVuZ3JvdXAoKSAlPiVcbiAgIG11dGF0ZShcbiAgICBMQUdmbCA9IGZhY3RvcihMQUdmbCwgbGV2ZWxzID0gYygwLCAxKSksXG4gICAgYWNyb3NzKGMoXCJTaWxkZW5hZmlsZmxcIiwgXCJSaW9jaWd1YXRmbFwiLCBcIklsb3Byb3N0ZmxcIiwgXCJTZWxleGlwYWdmbFwiLCBcIkJvemVudGFuZmxcIiwgXCJBbWJyaXNlbnRhbmZsXCIsIFwiTWFjaXRlbnRhbmZsXCIpLFxuICAgICAgICAgfiBmYWN0b3IoLngsIGxldmVscyA9IGMoMCwgMSkpKVxuICApICU+JSBcbiAgc2VsZWN0ICgtYyhcIlNpbGRlbmFmaWxcIiwgXCJSaW9jaWd1YXRcIiwgXCJJbG9wcm9zdFwiLCBcIlNlbGV4aXBhZ1wiLCBcIkJvemVudGFuXCIsIFwiQW1icmlzZW50YW5cIiwgXCJNYWNpdGVudGFuXCIsIG4pKVxuYGBgIn0= -->
+
+```r
+timedep_manual1 <- timedep_manual0 %>%
+  rowwise() %>%
+  mutate(LAGfl = as.integer(any(c_across(ends_with(\"fl\") & !matches(\"TPEfl|BPAfl\")) == 1))) %>%
+  ungroup() %>%
+   mutate(
+    LAGfl = factor(LAGfl, levels = c(0, 1)),
+    across(c(\"Sildenafilfl\", \"Riociguatfl\", \"Iloprostfl\", \"Selexipagfl\", \"Bozentanfl\", \"Ambrisentanfl\", \"Macitentanfl\"),
+         ~ factor(.x, levels = c(0, 1)))
+  ) %>% 
+  select (-c(\"Sildenafil\", \"Riociguat\", \"Iloprost\", \"Selexipag\", \"Bozentan\", \"Ambrisentan\", \"Macitentan\", n))
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+timedep_manual1 <- timedep_manual0 %>%
+  rowwise() %>%
+  mutate(LAGfl = as.integer(any(c_across(ends_with(\"fl\") & !matches(\"TPEfl|BPAfl\")) == 1))) %>%
+  ungroup() %>%
+   mutate(
+    LAGfl = factor(LAGfl, levels = c(0, 1)),
+    across(c(\"Sildenafilfl\", \"Riociguatfl\", \"Iloprostfl\", \"Selexipagfl\", \"Bozentanfl\", \"Ambrisentanfl\", \"Macitentanfl\"),
+         ~ factor(.x, levels = c(0, 1)))
+  ) %>% 
+  select (-c(\"Sildenafil\", \"Riociguat\", \"Iloprost\", \"Selexipag\", \"Bozentan\", \"Ambrisentan\", \"Macitentan\", n))
+```"

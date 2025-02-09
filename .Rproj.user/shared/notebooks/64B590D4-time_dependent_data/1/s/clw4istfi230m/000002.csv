@@ -1,0 +1,142 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuT1NDb3hfY29uZmF1bmRlcnMgPC0gYW5hbHl6ZV90aW1lX2RlcGVuZGVudF9jb3goXG4gIGRhdGEgPSB0aW1lX2RlcF9iYXNlX09TLFxuICBzdGFydCA9IFwidHN0YXJ0XCIsICMg0J3QsNC30LLQsNC90LjRjyDQutC+0LvQvtC90L7QuiDQtNC+0LvQttC90Ysg0LHRi9GC0Ywg0YHRgtGA0L7QutCw0LzQuFxuICBzdG9wID0gXCJ0c3RvcFwiLFxuICBldmVudCA9IFwiZXZlbnRcIixcbiAgbWFpbl9jb3ZhcmlhdGVzID0gYyhcIlRQRWZsXCIsIFwiQlBBZmxcIiwgXCJMQUdmbFwiKSwgIyDQndCw0LfQstCw0L3QuNGPINC60L7QstCw0YDQuNCw0YIg0LIg0YHRgtGA0L7QutCw0YVcbiAgYWRkaXRpb25hbF9jb3ZhcmlhdGVzID0gYyhcIkFnZV9hdF9zdGFydFwiLCBcIk11dFwiLCBcIlNleFwiKSAjINCi0L7QttC1INGB0YLRgNC+0LrQuFxuKVxuYGBgIn0= -->
+
+```r
+OSCox_confaunders <- analyze_time_dependent_cox(
+  data = time_dep_base_OS,
+  start = \"tstart\", # Названия колонок должны быть строками
+  stop = \"tstop\",
+  event = \"event\",
+  main_covariates = c(\"TPEfl\", \"BPAfl\", \"LAGfl\"), # Названия ковариат в строках
+  additional_covariates = c(\"Age_at_start\", \"Mut\", \"Sex\") # Тоже строки
+)
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+OSCox_confaunders <- analyze_time_dependent_cox(
+  data = time_dep_base_OS,
+  start = \"tstart\", # Названия колонок должны быть строками
+  stop = \"tstop\",
+  event = \"event\",
+  main_covariates = c(\"TPEfl\", \"BPAfl\", \"LAGfl\"), # Названия ковариат в строках
+  additional_covariates = c(\"Age_at_start\", \"Mut\", \"Sex\") # Тоже строки
+)
+```"
+"1","Surv(tstart, tstop, event) ~ TPEfl + Age_at_start + Mut + Sex
+<environment: 0x0000012f164417e0>
+"
+"1","Warning in agreg.fit(X, Y, istrat, offset, init, control, weights = weights,  :
+  Loglik converged before variable  3 ; beta may be infinite. 
+"
+"1","Call:
+coxph(formula = formula, data = complete_data, id = USUBJID)
+
+                   coef  exp(coef)   se(coef)      z     p
+TPEfl1        2.148e+00  8.571e+00  1.581e+00  1.359 0.174
+Age_at_start -5.263e-02  9.487e-01  4.945e-02 -1.064 0.287
+MutДа        -1.833e+01  1.096e-08  2.022e+04 -0.001 0.999
+SexЖенский    4.880e-01  1.629e+00  1.247e+00  0.391 0.696
+
+Likelihood ratio test=4.14  on 4 df, p=0.388
+n= 320, unique id= 73, number of events= 3 
+Surv(tstart, tstop, event) ~ BPAfl + Age_at_start + Mut + Sex
+<environment: 0x0000012f164417e0>
+"
+"1","Warning in agreg.fit(X, Y, istrat, offset, init, control, weights = weights,  :
+  Loglik converged before variable  1,3 ; beta may be infinite. 
+"
+"1","Call:
+coxph(formula = formula, data = complete_data, id = USUBJID)
+
+                   coef  exp(coef)   se(coef)      z     p
+BPAfl1       -1.903e+01  5.457e-09  1.992e+04 -0.001 0.999
+Age_at_start -5.566e-02  9.459e-01  4.864e-02 -1.144 0.252
+MutДа        -1.888e+01  6.348e-09  2.898e+04 -0.001 0.999
+SexЖенский    6.637e-01  1.942e+00  1.258e+00  0.528 0.598
+
+Likelihood ratio test=3.3  on 4 df, p=0.509
+n= 320, unique id= 73, number of events= 3 
+Surv(tstart, tstop, event) ~ LAGfl + Age_at_start + Mut + Sex
+<environment: 0x0000012f164417e0>
+"
+"1","Warning in agreg.fit(X, Y, istrat, offset, init, control, weights = weights,  :
+  Loglik converged before variable  1,3 ; beta may be infinite. 
+"
+"1","Call:
+coxph(formula = formula, data = complete_data, id = USUBJID)
+
+                   coef  exp(coef)   se(coef)      z     p
+LAGfl1        2.099e+01  1.307e+09  2.420e+04  0.001 0.999
+Age_at_start -6.022e-02  9.416e-01  4.548e-02 -1.324 0.186
+MutДа        -2.055e+01  1.185e-09  5.091e+04  0.000 1.000
+SexЖенский    1.105e+00  3.019e+00  1.246e+00  0.886 0.375
+
+Likelihood ratio test=5.69  on 4 df, p=0.2232
+n= 320, unique id= 73, number of events= 3 
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuICBPU0NveF9jb25mYXVuZGVycyA8LSBPU0NveF9jb25mYXVuZGVycyAlPiVcbiAgICBtdXRhdGUoXG4gICAgICBDb3ZhcmlhdGUgPSBjb3ZhcmlhdGVfbmFtZXNbbWFpbl9jb3ZhcmlhdGVdXG4gICAgKSAlPiVcbiAgICBzZWxlY3QoQ292YXJpYXRlLCBUb3RhbF9OLCBUb3RhbF9FdmVudHMsIEhSX3dpdGhfQ0ksIHAudmFsdWUsIGFkal9wX3ZhbHVlKSAjINCf0LXRgNC10YHRgtCw0LLQu9GP0LXQvCDQuCDQstGL0LHQuNGA0LDQtdC8INC60L7Qu9C+0L3QutC4XG4gIFxuICAjINCh0L7Qt9C00LDQtdC8IGZsZXh0YWJsZVxuICBmbGV4dGFibGU6OmZsZXh0YWJsZShPU0NveF9jb25mYXVuZGVycykgJT4lXG4gICAgZmxleHRhYmxlOjpzZXRfaGVhZGVyX2xhYmVscyhcbiAgICAgIENvdmFyaWF0ZSA9IFwiQ292YXJpYXRlXCIsXG4gICAgICBUb3RhbF9OID0gXCJOIHN1YmplY3RzXCIsXG4gICAgICBUb3RhbF9FdmVudHMgPSBcIk4gZXZlbnRzXCIsXG4gICAgICBIUl93aXRoX0NJID0gXCJIUiAoOTUlIENJKVwiLFxuICAgICAgcC52YWx1ZSA9IFwicC12YWx1ZVwiLFxuICAgICAgYWRqX3BfdmFsdWUgPSBcIkFkanVzdGVkIHAtdmFsdWVcIlxuICAgICkgJT4lXG4gICAgZmxleHRhYmxlOjphZGRfaGVhZGVyX2xpbmVzKFwiRWZmZWN0IG9mIFRyZWF0bWVudCBvbiBPdmVyYWxsIFN1cnZpdmFsXCIpICU+JVxuICAgIGZsZXh0YWJsZTo6YWxpZ24oYWxpZ24gPSBcImNlbnRlclwiLCBwYXJ0ID0gXCJoZWFkZXJcIikgJT4lIFxuICAgIGZsZXh0YWJsZTo6YWRkX2Zvb3Rlcl9saW5lcyhcIkNveCB0aW1lLWRlcGVuZGVudCBtb2RlbCB3aXRoIGFkanVzdG1lbnQgb24gU2V4LCBNdXRhdGlvbiBzdGF0dXMgYW5kIEFnZS5cIikgJT4lXG4gICAgZmxleHRhYmxlOjphZGRfZm9vdGVyX2xpbmVzKFwiKDEpIEJlbmphbWluaeKAk0hvY2hiZXJnIGFkanVzdG1lbnQgaXMgYXBwbGllZC5cIikgJT4lXG4gICAgZmxleHRhYmxlOjphdXRvZml0KClcbmBgYCJ9 -->
+
+```r
+  OSCox_confaunders <- OSCox_confaunders %>%
+    mutate(
+      Covariate = covariate_names[main_covariate]
+    ) %>%
+    select(Covariate, Total_N, Total_Events, HR_with_CI, p.value, adj_p_value) # Переставляем и выбираем колонки
+  
+  # Создаем flextable
+  flextable::flextable(OSCox_confaunders) %>%
+    flextable::set_header_labels(
+      Covariate = \"Covariate\",
+      Total_N = \"N subjects\",
+      Total_Events = \"N events\",
+      HR_with_CI = \"HR (95% CI)\",
+      p.value = \"p-value\",
+      adj_p_value = \"Adjusted p-value\"
+    ) %>%
+    flextable::add_header_lines(\"Effect of Treatment on Overall Survival\") %>%
+    flextable::align(align = \"center\", part = \"header\") %>% 
+    flextable::add_footer_lines(\"Cox time-dependent model with adjustment on Sex, Mutation status and Age.\") %>%
+    flextable::add_footer_lines(\"(1) Benjamini–Hochberg adjustment is applied.\") %>%
+    flextable::autofit()
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+  OSCox_confaunders <- OSCox_confaunders %>%
+    mutate(
+      Covariate = covariate_names[main_covariate]
+    ) %>%
+    select(Covariate, Total_N, Total_Events, HR_with_CI, p.value, adj_p_value) # Переставляем и выбираем колонки
+  
+  # Создаем flextable
+  flextable::flextable(OSCox_confaunders) %>%
+    flextable::set_header_labels(
+      Covariate = \"Covariate\",
+      Total_N = \"N subjects\",
+      Total_Events = \"N events\",
+      HR_with_CI = \"HR (95% CI)\",
+      p.value = \"p-value\",
+      adj_p_value = \"Adjusted p-value\"
+    ) %>%
+    flextable::add_header_lines(\"Effect of Treatment on Overall Survival\") %>%
+    flextable::align(align = \"center\", part = \"header\") %>% 
+    flextable::add_footer_lines(\"Cox time-dependent model with adjustment on Sex, Mutation status and Age.\") %>%
+    flextable::add_footer_lines(\"(1) Benjamini–Hochberg adjustment is applied.\") %>%
+    flextable::autofit()
+```"
+"1","
+```{=html}
+
+<!-- rnb-htmlwidget-begin eyJkZXBlbmRlbmNpZXMiOlt7Im5hbWUiOiJ0YWJ3aWQiLCJ2ZXJzaW9uIjoiMS4xLjMiLCJzcmMiOnsiZmlsZSI6IkM6L1VzZXJzL2lyaW5hL0FwcERhdGEvTG9jYWwvUi93aW4tbGlicmFyeS80LjQvZmxleHRhYmxlL3dlYl8xLjEuMyJ9LCJtZXRhIjpbXSwic2NyaXB0IjoidGFid2lkLmpzIiwic3R5bGVzaGVldCI6InRhYndpZC5jc3MiLCJoZWFkIjpbXSwiYXR0YWNobWVudCI6W10sInBhY2thZ2UiOltdLCJhbGxfZmlsZXMiOnRydWV9XSwibWV0YWRhdGEiOnsiY2xhc3NlcyI6WyJzaGlueS50YWcubGlzdCIsImxpc3QiXSwic2l6aW5nUG9saWN5IjpbXX19 -->
+
+<style></style>
+<div class=\"tabwid\"><style>.cl-88976f86{}.cl-88873e90{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-888ce1c4{margin:0;text-align:center;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-888ce1e2{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-888ce1ec{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-888d208a{width:2.68in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d209e{width:0.998in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d209f{width:0.888in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20a8{width:1.797in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20a9{width:0.786in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20b2{width:1.423in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20bc{width:2.68in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20c6{width:0.998in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20da{width:0.888in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20db{width:1.797in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20e4{width:0.786in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20e5{width:1.423in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 1.5pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20ee{width:2.68in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20ef{width:0.998in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d20f8{width:0.888in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2102{width:1.797in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2103{width:0.786in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2116{width:1.423in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2120{width:2.68in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d212a{width:0.998in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d212b{width:0.888in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2134{width:1.797in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2135{width:0.786in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d213e{width:1.423in;background-color:transparent;vertical-align: middle;border-bottom: 1.5pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d213f{width:2.68in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2148{width:0.998in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2152{width:0.888in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2153{width:1.797in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d215c{width:0.786in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-888d2166{width:1.423in;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table data-quarto-disable-processing='true' class='cl-88976f86'><thead><tr style=\"overflow-wrap:break-word;\"><th  colspan=\"6\"class=\"cl-888d208a\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">Effect of Treatment on Overall Survival</span></p></th></tr><tr style=\"overflow-wrap:break-word;\"><th class=\"cl-888d20bc\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">Covariate</span></p></th><th class=\"cl-888d20c6\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">N subjects</span></p></th><th class=\"cl-888d20da\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">N events</span></p></th><th class=\"cl-888d20db\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">HR (95% CI)</span></p></th><th class=\"cl-888d20e4\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">p-value</span></p></th><th class=\"cl-888d20e5\"><p class=\"cl-888ce1c4\"><span class=\"cl-88873e90\">Adjusted p-value</span></p></th></tr></thead><tbody><tr style=\"overflow-wrap:break-word;\"><td class=\"cl-888d20ee\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">Pulmonary thromboendarterectomy</span></p></td><td class=\"cl-888d20ef\"><p class=\"cl-888ce1ec\"><span class=\"cl-88873e90\">73</span></p></td><td class=\"cl-888d20f8\"><p class=\"cl-888ce1ec\"><span class=\"cl-88873e90\">3</span></p></td><td class=\"cl-888d2102\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">8.57 (0.39-189.96)</span></p></td><td class=\"cl-888d2103\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0.174</span></p></td><td class=\"cl-888d2116\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0.522</span></p></td></tr><tr style=\"overflow-wrap:break-word;\"><td class=\"cl-888d20ee\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">Transluminal balloon angioplasty</span></p></td><td class=\"cl-888d20ef\"><p class=\"cl-888ce1ec\"><span class=\"cl-88873e90\">73</span></p></td><td class=\"cl-888d20f8\"><p class=\"cl-888ce1ec\"><span class=\"cl-88873e90\">3</span></p></td><td class=\"cl-888d2102\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0 (0-Inf)</span></p></td><td class=\"cl-888d2103\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0.999</span></p></td><td class=\"cl-888d2116\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0.999</span></p></td></tr><tr style=\"overflow-wrap:break-word;\"><td class=\"cl-888d2120\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">PAH medication therapy</span></p></td><td class=\"cl-888d212a\"><p class=\"cl-888ce1ec\"><span class=\"cl-88873e90\">73</span></p></td><td class=\"cl-888d212b\"><p class=\"cl-888ce1ec\"><span class=\"cl-88873e90\">3</span></p></td><td class=\"cl-888d2134\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">1306607914.43 (0-Inf)</span></p></td><td class=\"cl-888d2135\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0.999</span></p></td><td class=\"cl-888d213e\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">0.999</span></p></td></tr></tbody><tfoot><tr style=\"overflow-wrap:break-word;\"><td  colspan=\"6\"class=\"cl-888d213f\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">Cox time-dependent model with adjustment on Sex, Mutation status and Age.</span></p></td></tr><tr style=\"overflow-wrap:break-word;\"><td  colspan=\"6\"class=\"cl-888d213f\"><p class=\"cl-888ce1e2\"><span class=\"cl-88873e90\">(1) Benjamini–Hochberg adjustment is applied.</span></p></td></tr></tfoot></table></div>
+
+<!-- rnb-htmlwidget-end -->
+
+```
+"

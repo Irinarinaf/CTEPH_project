@@ -1,0 +1,72 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZV9kZXBfYmFzZV9UVENEIDwtIHRpbWVkZXBfbWFudWFsMSAlPiVcbiAgIGZpbHRlcihUVENEZHQgPiBPUzFfc3RhcnRkdCkgJT4lXG4gICAgYXJyYW5nZShVU1VCSklELCBWaXNpdERhdGUpICU+JSAgIyDQodC+0YDRgtC40YDRg9C10Lwg0L/QviDQv9Cw0YbQuNC10L3RgtGDINC4INC00LDRgtC1INCy0LjQt9C40YLQsFxuICBncm91cF9ieShVU1VCSklEKSAlPiVcbiAgbXV0YXRlKFxuICAgICMg0J7Qv9GA0LXQtNC10LvRj9C10LwsINGP0LLQu9GP0LXRgtGB0Y8g0LvQuCDRgtC10LrRg9GJ0LjQuSDQstC40LfQuNGCINGB0LvQtdC00YPRjtGJ0LjQvCDQt9CwINCy0LjQt9C40YLQvtC8INGBIFZpc2l0RGF0ZSA9PSBUVENEZHRcbiAgICBpc19hZnRlcl9UVENEZHQgPSBsYWcoVmlzaXREYXRlID09IFRUQ0RkdCwgZGVmYXVsdCA9IEZBTFNFKSxcbiAgICAjINCe0L/RgNC10LTQtdC70Y/QtdC8LCDQtdGB0YLRjCDQu9C4INCy0LjQt9C40YIsINGB0LvQtdC00YPRjtGJ0LjQuSDQt9CwINCy0LjQt9C40YLQvtC8INGBIFZpc2l0RGF0ZSA9PSBUVENEZHRcbiAgICBoYXNfbmV4dF9hZnRlcl9UVENEZHQgPSBhbnkoaXNfYWZ0ZXJfVFRDRGR0KVxuICApICU+JVxuICAjINCk0LjQu9GM0YLRgNGD0LXQvCDRgdGC0YDQvtC60Lg6XG4gICMgLSDQldGB0LvQuCDQtdGB0YLRjCDRgdC70LXQtNGD0Y7RidC40Lkg0LLQuNC30LjRgiDQv9C+0YHQu9C1IFRUQ0RkdCwg0LHQtdGA0LXQvCDRgdGC0YDQvtC60Lgg0LTQviDRgdC70LXQtNGD0Y7RidC10LPQviDQstC40LfQuNGC0LBcbiAgIyAtINCY0L3QsNGH0LUg0LHQtdGA0LXQvCDRgdGC0YDQvtC60Lgg0LTQviDQstC40LfQuNGC0LAg0YEgVFRDRGR0XG4gZmlsdGVyKFxuICAgICMg0JXRgdC70LggVFRDRF9ldmVudCA9PSAwLCDQsdC10YDQtdC8INCy0YHQtSDRgdGC0YDQvtC60Lgg0LTQu9GPINC/0LDRhtC40LXQvdGC0LBcbiAgICAoVFRDRF9ldmVudCA9PSAwKSB8XG4gICAgIyDQldGB0LvQuCBUVENEX2V2ZW50ID09IDEsINGE0LjQu9GM0YLRgNGD0LXQvCDRgdGC0YDQvtC60Lgg0LIg0LfQsNCy0LjRgdC40LzQvtGB0YLQuCDQvtGCINC90LDQu9C40YfQuNGPINCy0LjQt9C40YLQsCDQv9C+0YHQu9C1IFRUQ0RkdFxuICAgIChUVENEX2V2ZW50ID09IDEgJiAoXG4gICAgICAoaGFzX25leHRfYWZ0ZXJfVFRDRGR0ICYgcm93X251bWJlcigpIDw9IHdoaWNoLm1heChpc19hZnRlcl9UVENEZHQpKSB8XG4gICAgICAoIWhhc19uZXh0X2FmdGVyX1RUQ0RkdCAmIHJvd19udW1iZXIoKSA8PSB3aGljaC5tYXgoVmlzaXREYXRlID09IFRUQ0RkdCkpXG4gICAgKSlcbiAgKSAgJT4lXG4gIGZpbHRlcihpc19hZnRlcl9UVENEZHQgPT0gRkFMU0UpICU+JVxuICAgbXV0YXRlKFxuICAgICMg0J/QtdGA0LXRgdGH0LjRgtGL0LLQsNC10LwgdHN0YXJ0INC4IHRzdG9wINCyINC60L7Qu9C40YfQtdGB0YLQstC+INC00L3QtdC5INC+0YLQvdC+0YHQuNGC0LXQu9GM0L3QviBPUzFfc3RhcnRkdFxuICAgIHRzdGFydCA9IGFzLm51bWVyaWMoYXMuRGF0ZSh0c3RhcnQpIC0gYXMuRGF0ZShPUzFfc3RhcnRkdCkpLFxuICAgIHRzdG9wID0gYXMubnVtZXJpYyhhcy5EYXRlKHRzdG9wKSAtIGFzLkRhdGUoT1MxX3N0YXJ0ZHQpKSxcbiAgICBldmVudCA9IGZhY3Rvcihpc193b3JzZW5pbmcsIGxldmVscz1jKDAsMSkpIFxuICApICU+JVxuICBzZWxlY3QoVVNVQkpJRCwgdHN0YXJ0LCB0c3RvcCwgZXZlbnQsIGV2ZXJ5dGhpbmcoKSwgLVZpc2l0RGF0ZSwgLURhdGVUUEUsIC1CUEFkYXRlLCAtT1MxX3N0YXJ0ZHQsIC1UVENEZHQsIC1UVENEX2V2ZW50LCAtZGVhdGhkdCwgLVBBSEMsIC1zdGFydHNfd2l0aCgncHJpb3InKSwgLWxhc3RhbGl2ZWR0LCAtaXNfYWZ0ZXJfVFRDRGR0LCAtaGFzX25leHRfYWZ0ZXJfVFRDRGR0LCAtaXNfd29yc2VuaW5nKSAlPiVcbiAgdW5ncm91cCgpXG5gYGAifQ== -->
+
+```r
+time_dep_base_TTCD <- timedep_manual1 %>%
+   filter(TTCDdt > OS1_startdt) %>%
+    arrange(USUBJID, VisitDate) %>%  # Сортируем по пациенту и дате визита
+  group_by(USUBJID) %>%
+  mutate(
+    # Определяем, является ли текущий визит следующим за визитом с VisitDate == TTCDdt
+    is_after_TTCDdt = lag(VisitDate == TTCDdt, default = FALSE),
+    # Определяем, есть ли визит, следующий за визитом с VisitDate == TTCDdt
+    has_next_after_TTCDdt = any(is_after_TTCDdt)
+  ) %>%
+  # Фильтруем строки:
+  # - Если есть следующий визит после TTCDdt, берем строки до следующего визита
+  # - Иначе берем строки до визита с TTCDdt
+ filter(
+    # Если TTCD_event == 0, берем все строки для пациента
+    (TTCD_event == 0) |
+    # Если TTCD_event == 1, фильтруем строки в зависимости от наличия визита после TTCDdt
+    (TTCD_event == 1 & (
+      (has_next_after_TTCDdt & row_number() <= which.max(is_after_TTCDdt)) |
+      (!has_next_after_TTCDdt & row_number() <= which.max(VisitDate == TTCDdt))
+    ))
+  )  %>%
+  filter(is_after_TTCDdt == FALSE) %>%
+   mutate(
+    # Пересчитываем tstart и tstop в количество дней относительно OS1_startdt
+    tstart = as.numeric(as.Date(tstart) - as.Date(OS1_startdt)),
+    tstop = as.numeric(as.Date(tstop) - as.Date(OS1_startdt)),
+    event = factor(is_worsening, levels=c(0,1)) 
+  ) %>%
+  select(USUBJID, tstart, tstop, event, everything(), -VisitDate, -DateTPE, -BPAdate, -OS1_startdt, -TTCDdt, -TTCD_event, -deathdt, -PAHC, -starts_with('prior'), -lastalivedt, -is_after_TTCDdt, -has_next_after_TTCDdt, -is_worsening) %>%
+  ungroup()
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+time_dep_base_TTCD <- timedep_manual1 %>%
+   filter(TTCDdt > OS1_startdt) %>%
+    arrange(USUBJID, VisitDate) %>%  # Сортируем по пациенту и дате визита
+  group_by(USUBJID) %>%
+  mutate(
+    # Определяем, является ли текущий визит следующим за визитом с VisitDate == TTCDdt
+    is_after_TTCDdt = lag(VisitDate == TTCDdt, default = FALSE),
+    # Определяем, есть ли визит, следующий за визитом с VisitDate == TTCDdt
+    has_next_after_TTCDdt = any(is_after_TTCDdt)
+  ) %>%
+  # Фильтруем строки:
+  # - Если есть следующий визит после TTCDdt, берем строки до следующего визита
+  # - Иначе берем строки до визита с TTCDdt
+ filter(
+    # Если TTCD_event == 0, берем все строки для пациента
+    (TTCD_event == 0) |
+    # Если TTCD_event == 1, фильтруем строки в зависимости от наличия визита после TTCDdt
+    (TTCD_event == 1 & (
+      (has_next_after_TTCDdt & row_number() <= which.max(is_after_TTCDdt)) |
+      (!has_next_after_TTCDdt & row_number() <= which.max(VisitDate == TTCDdt))
+    ))
+  )  %>%
+  filter(is_after_TTCDdt == FALSE) %>%
+   mutate(
+    # Пересчитываем tstart и tstop в количество дней относительно OS1_startdt
+    tstart = as.numeric(as.Date(tstart) - as.Date(OS1_startdt)),
+    tstop = as.numeric(as.Date(tstop) - as.Date(OS1_startdt)),
+    event = factor(is_worsening, levels=c(0,1)) 
+  ) %>%
+  select(USUBJID, tstart, tstop, event, everything(), -VisitDate, -DateTPE, -BPAdate, -OS1_startdt, -TTCDdt, -TTCD_event, -deathdt, -PAHC, -starts_with('prior'), -lastalivedt, -is_after_TTCDdt, -has_next_after_TTCDdt, -is_worsening) %>%
+  ungroup()
+```"

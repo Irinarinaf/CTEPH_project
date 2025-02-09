@@ -1,0 +1,113 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVFRDRENveF9jb25mYXVuZGVycyA8LSBUVENEQ294X2NvbmZhdW5kZXJzICU+JVxuICBtdXRhdGUoTW9kZWwgPSBcIldpdGggQ292YXJpYXRlc1wiKSAjINCc0L7QtNC10LvRjCDRgSDQutC+0LLQsNGA0LjQsNGC0LDQvNC4XG5cblRUQ0RDb3ggPC0gVFRDRENveCAlPiVcbiAgbXV0YXRlKE1vZGVsID0gXCJXaXRob3V0IENvdmFyaWF0ZXNcIikgIyDQnNC+0LTQtdC70Ywg0LHQtdC3INC60L7QstCw0YDQuNCw0YJcblxuIyDQntCx0YrQtdC00LjQvdGP0LXQvCDRgtCw0LHQu9C40YbRi1xuY29tYmluZWRfdGFibGUgPC0gYmluZF9yb3dzKFRUQ0RDb3hfY29uZmF1bmRlcnMsIFRUQ0RDb3gpXG5cbiMg0JTQsNC90L3Ri9C1INC00LvRjyDQs9GA0LDRhNC40LrQsFxuZm9yZXN0X2RhdGFfcGxvdCA8LSBjb21iaW5lZF90YWJsZSAlPiVcbiAgbXV0YXRlKFxuICAgIEhSID0gYXMubnVtZXJpYyhzdWIoXCIgLipcIiwgXCJcIiwgSFJfd2l0aF9DSSkpLCAjINCY0LfQstC70LXQutCw0LXQvCBIUlxuICAgIGxvd2VyXzk1ID0gYXMubnVtZXJpYyhzdWIoXCIuKlxcXFwoKC4qKS0uKlxcXFwpXCIsIFwiXFxcXDFcIiwgSFJfd2l0aF9DSSkpLCAjINCY0LfQstC70LXQutCw0LXQvCBsb3dlciBDSVxuICAgIHVwcGVyXzk1ID0gYXMubnVtZXJpYyhzdWIoXCIuKi0oLiopXFxcXClcIiwgXCJcXFxcMVwiLCBIUl93aXRoX0NJKSksICAgICAgIyDQmNC30LLQu9C10LrQsNC10LwgdXBwZXIgQ0lcbiAgICBwX2FuZF9hZGpfcCA9IHBhc3RlMChcInA6IFwiLCBwLnZhbHVlLCBcIjsgYWRqOiBcIiwgYWRqX3BfdmFsdWUpICAgICAgIyDQntCx0YrQtdC00LjQvdGP0LXQvCBwLXZhbHVlXG4gICkgJT4lXG4gIGFycmFuZ2UoQ292YXJpYXRlLCBNb2RlbClcblxuIyDQotCw0LHQu9C40YbQsCDQtNC70Y8g0L/QvtC00L/QuNGB0LhcbmxhYmVsdGV4dCA8LSByYmluZChcbiAgYyhcIkNvdmFyaWF0ZVwiLCBcIkhSICg5NSUgQ0kpXCIsIFwiTW9kZWxcIiwgXCJQLXZhbHVlc1wiKSwgICMg0JTQvtCx0LDQstC70Y/QtdC8INC60L7Qu9C+0L3QutGDINC00LvRjyBwLXZhbHVlc1xuICBmb3Jlc3RfZGF0YV9wbG90ICU+JSBzZWxlY3QoQ292YXJpYXRlLCBIUl93aXRoX0NJLCBNb2RlbCwgcF9hbmRfYWRqX3ApICU+JSBhcy5tYXRyaXgoKVxuKVxuXG4jINCX0L3QsNGH0LXQvdC40Y8g0LTQu9GPIEZvcmVzdCBQbG90XG5tZWFuX3ZhbHVlcyA8LSBmb3Jlc3RfZGF0YV9wbG90JEhSXG5sb3dlcl92YWx1ZXMgPC0gZm9yZXN0X2RhdGFfcGxvdCRsb3dlcl85NVxudXBwZXJfdmFsdWVzIDwtIGZvcmVzdF9kYXRhX3Bsb3QkdXBwZXJfOTVcblxuI3BuZyhcIm91dHB1dHMvZm9yZXN0X3Bsb3RfdGltZV9kZXBfVFRDRC5wbmdcIiwgd2lkdGggPSAxNTAwLCBoZWlnaHQgPSA1MDAsIHJlcyA9IDE1MClcblxuZm9yZXN0cGxvdChcbiAgbGFiZWx0ZXh0ID0gbGFiZWx0ZXh0LFxuICBtZWFuID0gYyhOQSwgbWVhbl92YWx1ZXMpLFxuICBsb3dlciA9IGMoTkEsIGxvd2VyX3ZhbHVlcyksXG4gIHVwcGVyID0gYyhOQSwgdXBwZXJfdmFsdWVzKSxcbiAgeGxvZyA9IFRSVUUsXG4gIHhsaW0gPSBjKDAuMDEsIDEwMCksICAgICAgICAgICAgICAgICAgICMg0J3QsNGB0YLRgNC+0LnQutCwINC00LjQsNC/0LDQt9C+0L3QsCDQvtGB0LggWFxuICB0aXRsZSA9IFwiRm9yZXN0IFBsb3QgZm9yIFRpbWUtRGVwZW5kZW50IENveCBNb2RlbHMgZm9yIERldGVyaW9yYXRpb24tZnJlZSBTdXJ2aXZhbFwiLFxuICBuZXdfcGFnZSA9IFRSVUUsXG4gIGlzLnN1bW1hcnkgPSBjKFRSVUUsIHJlcChGQUxTRSwgbnJvdyhmb3Jlc3RfZGF0YV9wbG90KSkpLFxuICBib3hzaXplID0gMC4yLFxuICBjb2wgPSBmcENvbG9ycyhib3ggPSBcImRhcmtibHVlXCIsIGxpbmUgPSBcImJsYWNrXCIsIHN1bW1hcnkgPSBcImRhcmtibHVlXCIpLFxuICB0eHRfZ3AgPSBmcFR4dEdwKGxhYmVsID0gZ3BhcihjZXggPSAwLjgpLCB0aWNrcyA9IGdwYXIoY2V4ID0gMC43KSwgeGxhYiA9IGdwYXIoY2V4ID0gMC44KSksXG4gIGFsaWduID0gXCJsXCIsICAgICAgICAgICAgICAgICAgICAgICAgIyDQktGL0YDQsNCy0L3QuNCy0LDQvdC40LUg0YLQtdC60YHRgtCwINGB0LvQtdCy0LBcbiAgY2xpcCA9IGMoMC4wMSwgMTAwKSwgICAgICAgICAgICAgICAgICAgIyDQntCx0YDQtdC30LrQsCDQt9C90LDRh9C10L3QuNC5XG4gIGdyYXBoLnBvcyA9IDIpICAgICAgICAgICAgICAgICAgICAgICAgICMg0J/QvtC30LjRhtC40Y8g0LPRgNCw0YTQuNC60LBcbmBgYCJ9 -->
+
+```r
+TTCDCox_confaunders <- TTCDCox_confaunders %>%
+  mutate(Model = \"With Covariates\") # Модель с ковариатами
+
+TTCDCox <- TTCDCox %>%
+  mutate(Model = \"Without Covariates\") # Модель без ковариат
+
+# Объединяем таблицы
+combined_table <- bind_rows(TTCDCox_confaunders, TTCDCox)
+
+# Данные для графика
+forest_data_plot <- combined_table %>%
+  mutate(
+    HR = as.numeric(sub(\" .*\", \"\", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(\".*\\((.*)-.*\\)\", \"\\1\", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(\".*-(.*)\\)\", \"\\1\", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0(\"p: \", p.value, \"; adj: \", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(Covariate, Model)
+
+# Таблица для подписи
+labeltext <- rbind(
+  c(\"Covariate\", \"HR (95% CI)\", \"Model\", \"P-values\"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(Covariate, HR_with_CI, Model, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+#png(\"outputs/forest_plot_time_dep_TTCD.png\", width = 1500, height = 500, res = 150)
+
+forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = \"Forest Plot for Time-Dependent Cox Models for Deterioration-free Survival\",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = \"darkblue\", line = \"black\", summary = \"darkblue\"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = \"l\",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)                         # Позиция графика
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+TTCDCox_confaunders <- TTCDCox_confaunders %>%
+  mutate(Model = \"With Covariates\") # Модель с ковариатами
+
+TTCDCox <- TTCDCox %>%
+  mutate(Model = \"Without Covariates\") # Модель без ковариат
+
+# Объединяем таблицы
+combined_table <- bind_rows(TTCDCox_confaunders, TTCDCox)
+
+# Данные для графика
+forest_data_plot <- combined_table %>%
+  mutate(
+    HR = as.numeric(sub(\" .*\", \"\", HR_with_CI)), # Извлекаем HR
+    lower_95 = as.numeric(sub(\".*\\((.*)-.*\\)\", \"\\1\", HR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(\".*-(.*)\\)\", \"\\1\", HR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0(\"p: \", p.value, \"; adj: \", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(Covariate, Model)
+
+# Таблица для подписи
+labeltext <- rbind(
+  c(\"Covariate\", \"HR (95% CI)\", \"Model\", \"P-values\"),  # Добавляем колонку для p-values
+  forest_data_plot %>% select(Covariate, HR_with_CI, Model, p_and_adj_p) %>% as.matrix()
+)
+
+# Значения для Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+#png(\"outputs/forest_plot_time_dep_TTCD.png\", width = 1500, height = 500, res = 150)
+
+forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  title = \"Forest Plot for Time-Dependent Cox Models for Deterioration-free Survival\",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = \"darkblue\", line = \"black\", summary = \"darkblue\"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = \"l\",                        # Выравнивание текста слева
+  clip = c(0.01, 100),                   # Обрезка значений
+  graph.pos = 2)                         # Позиция графика
+```"
+"1","
+<!-- rnb-plot-begin eyJoZWlnaHQiOjQsIndpZHRoIjoxMCwic2l6ZV9iZWhhdmlvciI6MSwiY29uZGl0aW9ucyI6W119 -->
+
+<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAHgCAMAAACCSWStAAAAA1BMVEX///+nxBvIAAAACXBIWXMAABJ0AAASdAHeZh94AAACRUlEQVR4nO3BMQEAAADCoPVPbQsvoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOBnzFgAAawwCtMAAAAASUVORK5CYII=\" />
+
+<!-- rnb-plot-end -->
+"

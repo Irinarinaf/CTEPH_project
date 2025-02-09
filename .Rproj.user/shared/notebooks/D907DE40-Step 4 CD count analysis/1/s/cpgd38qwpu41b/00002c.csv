@@ -1,0 +1,7 @@
+"0","data_set %>%"
+"0","  ggplot(aes(x = BloodBHTotalCholesterolNum1, y = clin_det_rate)) +"
+"0","  geom_point() +"
+"0","  theme_bw()"
+"2","Warning:"
+"2"," [38;5;232mRemoved 11 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"

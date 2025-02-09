@@ -1,0 +1,134 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShjb25mbGljdGVkKVxubGlicmFyeShmbGV4dGFibGUpXG5cbmxpYnJhcnkoaHRtbHRvb2xzKVxubGlicmFyeShrYWJsZUV4dHJhKVxuYGBgIn0= -->
+
+```r
+library(conflicted)
+library(flextable)
+
+library(htmltools)
+library(kableExtra)
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+library(conflicted)
+library(flextable)
+
+library(htmltools)
+library(kableExtra)
+```"
+"1","Warning: package ‘kableExtra’ was built under R version 4.4.2
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShrbml0cilcbmBgYCJ9 -->
+
+```r
+library(knitr)
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+library(knitr)
+```"
+"1","Warning: package ‘knitr’ was built under R version 4.4.2
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShNQVNTKVxubGlicmFyeShwc2NsKVxubGlicmFyeShzdHJpbmdyKVxuXG5jb25mbGljdF9wcmVmZXIoXCJzZWxlY3RcIiwgXCJkcGx5clwiKVxuYGBgIn0= -->
+
+```r
+library(MASS)
+library(pscl)
+library(stringr)
+
+conflict_prefer(\"select\", \"dplyr\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+library(MASS)
+library(pscl)
+library(stringr)
+
+conflict_prefer(\"select\", \"dplyr\")
+```"
+"1","[conflicted] Removing existing preference.
+[conflicted] Will prefer dplyr::select over any other package.
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uZmxpY3RfcHJlZmVyKFwiZmlsdGVyXCIsIFwiZHBseXJcIilcbmBgYCJ9 -->
+
+```r
+conflict_prefer(\"filter\", \"dplyr\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+conflict_prefer(\"filter\", \"dplyr\")
+```"
+"1","[conflicted] Removing existing preference.
+[conflicted] Will prefer dplyr::filter over any other package.
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uZmxpY3RfcHJlZmVyKFwic3VtbWFyaXplXCIsIFwiZHBseXJcIilcbmBgYCJ9 -->
+
+```r
+conflict_prefer(\"summarize\", \"dplyr\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+conflict_prefer(\"summarize\", \"dplyr\")
+```"
+"1","[conflicted] Removing existing preference.
+[conflicted] Will prefer dplyr::summarize over any other package.
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uZmxpY3RfcHJlZmVyKFwibGFnXCIsIFwiZHBseXJcIilcbmBgYCJ9 -->
+
+```r
+conflict_prefer(\"lag\", \"dplyr\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+conflict_prefer(\"lag\", \"dplyr\")
+```"
+"1","[conflicted] Removing existing preference.
+[conflicted] Will prefer dplyr::lag over any other package.
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uZmxpY3RfcHJlZmVyKFwieWVhclwiLCBcImx1YnJpZGF0ZVwiKVxuYGBgIn0= -->
+
+```r
+conflict_prefer(\"year\", \"lubridate\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+conflict_prefer(\"year\", \"lubridate\")
+```"
+"1","[conflicted] Removing existing preference.
+[conflicted] Will prefer lubridate::year over any other package.
+"
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29uZmxpY3RfcHJlZmVyKFwicmVjb2RlXCIsIFwiZHBseXJcIilcbmBgYCJ9 -->
+
+```r
+conflict_prefer(\"recode\", \"dplyr\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+conflict_prefer(\"recode\", \"dplyr\")
+```"
+"1","[conflicted] Removing existing preference.
+[conflicted] Will prefer dplyr::recode over any other package.
+"

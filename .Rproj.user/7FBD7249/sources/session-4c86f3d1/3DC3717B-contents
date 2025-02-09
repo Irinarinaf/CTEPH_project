@@ -1,0 +1,732 @@
+---
+title: "Descriptive statistics"
+author: "IsaevaA.S."
+date: "2025-01-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readxl)
+library(lubridate)
+library(flextable)
+library(RColorBrewer)
+library(ggpubr)
+library(qqplotr)
+library(psych)
+library(ggcorrplot)
+library(broom)
+library(pheatmap)
+library(survival)
+library(survminer)
+library(gtsummary)
+library(conflicted)
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("summarize", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("year", "lubridate")
+conflict_prefer("recode", "dplyr")
+```
+
+# Описательные таблицы
+
+## Загрузка данных для описательных таблиц
+
+### Загрузка количественных переменных
+
+```{r chunk1}
+
+time_ind <- readRDS("data/time_independent_factors241219_full.rds")
+
+numeric_vars <- time_ind %>%
+  ungroup() %>% 
+  select(
+    matches("Num", ignore.case = TRUE) & where(is.numeric)        
+  )
+
+selected_variables <- c(
+  "BMINum1", "Test6DistNum1", "Test6ApneaBorgNum1", "Test6PulsOxBeforeNum1", 
+  "Test6PulsOxAfterNum1", "HemoglobinNum1", "BNPNum1", "BloodBHGlucoseNum1",
+  "BloodBHTotalCholesterolNum1", "BloodBHTriglyceridesNum1", "BloodBHHDLCholesterolNum1",
+  "BloodBHLDLCholesterolNum1", "BloodBHUricAcidNum1", "ECHOCGTapseNum0", 
+  "ECHOCGPPareaNum0", "ECHOCGFrontBackSizeNum1", "ECHOCGSDLANum1", 
+  "ECHOCGDZLANum0", "RHCatheterDPPmeanNum0", "RHCatheterSDLANum1", 
+  "RHCatheterDZLANum0", "RHCatheterCINum1", "RHCatheterLCCVudNum1",
+  "RHCatheterSaO2Num1", "RHCatheterSvO2Num1", "AgeNum1", "clin_det_count", "OS1", "TTCD_event", "TTCD"
+)
+
+
+
+# Фильтруем датасет, выбирая только нужные переменные
+numeric_vars <- time_ind %>%
+ # ungroup() %>% 
+  select(all_of(selected_variables)) %>% 
+  mutate(TTCD_event = as.factor(TTCD_event))
+
+```
+
+### Загрузка категориальных переменных
+
+```{r chunk3}
+data_cat <- readRDS("data/time_independent_factors241219_full.rds") 
+
+data_cat <- data_cat %>% 
+  select(where(is.factor)) %>% 
+  left_join(numeric_vars %>% select(USUBJID, TTCD_event), by = "USUBJID")
+
+data_cat <- data_cat %>%
+  mutate_all(~ as.character(.) %>% na_if("не знаю") %>% na_if("Не знаю")) %>% 
+   mutate_all(~ as.factor(.)) 
+
+
+```
+
+##№ Установка порядка категорий
+
+```{r chunk4}
+
+# Функция для задания порядка категорий
+set_ordered_factors <- function(data_cat, factors) {
+  for (factor in names(factors)) {
+    data_cat[[factor]] <- factor(data_cat[[factor]], levels = factors[[factor]], ordered = TRUE)
+  }
+  return(data_cat)
+}
+
+
+# Порядок категорий
+levels <- list(
+  SexCat0 = c('Мужской', 'Женский'),
+  MutationCat0 = c('Нет', 'Да'),
+  medHist1Cat0 = c('Нет', 'гипертоническая болезнь'),
+  medHist2Cat0 = c('Нет', 'ишемическая болезнь сердца'),
+  medHist3Cat0 = c('Нет', 'хроническая обструктивная болезнь легких'),
+  medHist4Cat0 = c('Нет', 'бронхиальная астма'),
+  medHist5Cat0 = c('Нет', 'синдром обструктивного апноэ сна'),
+  medHist6Cat0 = c('Нет', 'антифосфолипидный синдром'),
+  medHist7Cat0 = c('Нет', 'системная красная волчанка'),
+  medHist8Cat0 = c('Нет', 'СД или нарушение толерантности к глюкозе'),
+  medHist9Cat0 = c('Нет', 'ХБП 3А стадии или выше'),
+  medHist10Cat0 = c('Нет', 'ФП или ТП (любая форма)'),
+  PulHypSymp1Cat0 = c('Нет', 'одышка при физической нагрузке'),
+  PulHypSymp2Cat0 = c('Нет', 'повышенная утомляемость'),
+  PulHypSymp3Cat0 = c('Нет', 'боли в области сердца'),
+  PulHypSymp4Cat0 = c('Нет', 'головокружение'),
+  PulHypSymp5Cat0 = c('Нет', 'синкопальные состояния'),
+  PulHypSymp6Cat0 = c('Нет', 'кашель'),
+  PulHypSymp7Cat0 = c('Нет', 'кровохарканье'),
+  PulHypSymp8Cat0 = c('Нет', 'отеки ног'),
+  WHOFuncClassCat2 = c('I', 'II', 'III', 'IV'),
+  CHFDecompensationCat0 = c('Нет', 'Да'),
+  AngiopulmonographyDamageCat2 = c('легочный ствол, левая и правая легочные артерии, долевые артерии',
+                                   'сегментарные артерии',
+                                   'субсегментарные артерии'),
+  CPTECat0 = c('Нет', 'Да'),
+  CTBPACat0 = c('Нет', 'Да'),
+  ECHOCGTricRegCat0 = c('I', 'II', 'III', 'IV'),
+  ECHOCGPericEffusCat0 = c('Нет', 'Да'),
+  EnoxaparinCat0 = c('Нет', 'Да'),
+  WarfarinCat0 = c('Нет', 'Да'),
+  ApixabanCat0 = c('Нет', 'Да'),
+  RivaroxabanCat0 = c('Нет', 'Да'),
+  DabigatranCat0 = c('Нет', 'Да'),
+  DiurDrugCat0 = c('Нет', 'Да'),
+  AntiCoagDrugCat0 = c('Нет', 'Да'),
+  AgeCat1 = c('<50', '50-65', '>65'),
+  BMICat1 = c('Норма', 'Лишний вес', 'Ожирение'),
+  Test6DistCat1 = c('<300м', '300-450м', '>450м'),
+  BNPCat1 = c('<50', '50-300', '>300'),
+  WHOFuncClassCat1 = c('I/II', 'III', 'IV'),
+  BloodBHTotalCholesterolCat1 = c('Норма', 'Пограничный', 'Высокий'),
+  BloodBHTriglyceridesCat1 = c('Норма', 'Повышенный', 'Высокий'),
+  BloodBHLDLtoHDLCat1 = c('Норма', 'Повышенный', 'Высокий'),
+  BloodBHGlucoseCat1 = c('Норма', 'Преддиабет или диабет'),
+  HemoglobinCat1 = c('Норма', 'CTCAE степень 2', 'CTCAE степень 3'),
+  Test6ApneaBorgCat1 = c('легкая одышка', 'средняя или тяжелая одышка'),
+  Test6PulsOxBeforeCat1 = c('Норма', 'Снижена'),
+  Test6PulsOxAfterCat1 = c('Норма', 'Снижена'),
+  ECHOCGSDLACat1 = c('Норма', 'Умеренное нарушение', 'Тяжелое нарушение'),
+  ECHOCGFrontBackSizeCat1 = c('норма', 'увеличен'),
+  RHCatheterLCCVudCat1 = c('Норма', 'Повышен'),
+  RHCatheterSaO2Cat1 = c('Норма', 'Снижена'),
+  RHCatheterSvO2Cat1 = c('Норма', 'Снижена'),
+  RHCatheterCICat1 = c('норма', 'снижен'),
+  AngiopulmonographyDamageCat1 = c('Проксимальное поражение', 'Дистальное поражение'),
+  BloodBHUricAcidCat1 = c('Норма', 'Повышенный', 'Высокий'),
+  TTCD_event = c('0', '1')
+)
+
+#Преобразование датасета
+data_factors_ordered <- set_ordered_factors(data_cat, levels)
+
+```
+
+### Общий датасет:
+
+```{r}
+
+numeric_vars_table <- numeric_vars 
+
+
+
+merged_data_table <- merge(numeric_vars, data_factors_ordered, by = "USUBJID", all = TRUE) %>% 
+  ungroup() %>% 
+  select(-c(OS1,clin_det_count, TTCD))
+
+```
+
+### Переименуем переменные
+
+```{r}
+
+
+
+merged_data_table <- merged_data_table %>% 
+  rename('BMI' = BMINum1,
+        '6-Min Walk Distance' = Test6DistNum1,
+        'Apnea Borg Scale' = Test6ApneaBorgNum1,
+        'Pulse Ox Before Test' = Test6PulsOxBeforeNum1,
+        'Pulse Ox After Test' = Test6PulsOxAfterNum1,
+        'Hemoglobin Level' = HemoglobinNum1,
+        'BNP Level' = BNPNum1,
+        'Blood Glucose' = BloodBHGlucoseNum1,
+        'Total Cholesterol' = BloodBHTotalCholesterolNum1,
+        'Triglycerides' = BloodBHTriglyceridesNum1,
+        'BHDL Cholesterol' = BloodBHHDLCholesterolNum1,
+        'BLDL Cholesterol' = BloodBHHDLCholesterolNum1,
+        'Uric Acid' = BloodBHUricAcidNum1,
+        'ECHO TAPSE' = ECHOCGTapseNum0,
+        'ECHO PP Area' = ECHOCGPPareaNum0,
+        'ECHO Front-Back Size' = ECHOCGFrontBackSizeNum1,
+        'ECHO SDL Area' = ECHOCGSDLANum1,
+        'ECHO DZ Area' = ECHOCGDZLANum0,
+        'DPP Mean' = RHCatheterDPPmeanNum0,
+        'SDL Area' = RHCatheterSDLANum1,
+        'DZ Area' = RHCatheterDZLANum0,
+        'Cardiac Index' = RHCatheterCINum1,
+        'LCC Volume' = RHCatheterLCCVudNum1,
+        'Arterial Oxygen Saturation' = RHCatheterSaO2Num1,
+        'Venous Oxygen Saturation' = RHCatheterSvO2Num1,
+        'Age' = AgeNum1,
+        'Sex' = SexCat0,
+        'Mutation' = MutationCat0,
+        'Hypertension' = medHist1Cat0,
+        'Ischemic heart disease' = medHist2Cat0,
+        'Chronic obstructive pulmonary disease' = medHist3Cat0,
+        'Bronchial asthma' = medHist4Cat0,
+        'Obstructive sleep apnea syndrome' = medHist5Cat0,
+        'Antiphospholipid syndrome' = medHist6Cat0,
+        'Systemic lupus erythematosus' = medHist7Cat0,
+        'Diabetes or impaired glucose tolerance' = medHist8Cat0,
+        'Chronic kidney disease stage 3A or higher' = medHist9Cat0,
+        'Atrial fibrillation or atrial flutter (any form)' = medHist10Cat0,
+        'Dyspnea on exertion' = PulHypSymp1Cat0,
+        'Increased fatigue' = PulHypSymp2Cat0,
+        'Chest pain' = PulHypSymp3Cat0,
+        'Dizziness' = PulHypSymp4Cat0,
+        'Syncope' = PulHypSymp5Cat0,
+        'Cough' = PulHypSymp6Cat0,
+        'Leg swelling' = PulHypSymp8Cat0,
+        'WHO functional class' = WHOFuncClassCat2,
+        'CHF Decompensation' = CHFDecompensationCat0,
+        'Angiopulmonography Damage' = AngiopulmonographyDamageCat2,
+        'CPTE'= CPTECat0,
+        'CTBPA' = CTBPACat0,
+        'Tricuspid regurgitation, degree' = ECHOCGTricRegCat0,
+        'Enoxaparin' = EnoxaparinCat0,
+        'Warfarin' = WarfarinCat0,
+        'Apixaban' = ApixabanCat0,
+        'Rivaroxaban' = RivaroxabanCat0,
+        'Dabigatran' = DabigatranCat0,
+        'Diuretic drug' = DiurDrugCat0,
+        'Anticoagulant therapy' = AntiCoagDrugCat0,
+        'Age category' = AgeCat1,
+        'BMI category' = BMICat1,
+        '6-Min Walk Distance category' = Test6DistCat1,
+        'BNP Level category' = BNPCat1,
+        'WHO functional class category' = WHOFuncClassCat1,
+        'Total Cholesterol category' = BloodBHTotalCholesterolCat1,
+        'Triglycerides category' = BloodBHTriglyceridesCat1,
+        'BHDL Cholesterol category' = BloodBHLDLtoHDLCat1,
+        'Uric Acid category' = BloodBHUricAcidCat1,
+        'Blood Glucose category' = BloodBHGlucoseCat1,
+        'Hemoglobin category' = HemoglobinCat1,
+        'Apnea Borg Scale category' = Test6ApneaBorgCat1,
+        'Pulse Ox Before Test category' = Test6PulsOxBeforeCat1,
+        'ECHO DZ Area category' = ECHOCGSDLACat1,
+        'ECHO Front-Back Size category' = ECHOCGFrontBackSizeCat1,
+        'LCC Volume category' = RHCatheterLCCVudCat1,
+        'Arterial Oxygen Saturation category' = RHCatheterSaO2Cat1,
+        'Venous Oxygen Saturation category' = RHCatheterSvO2Cat1,
+        'Cardiac Index category' = RHCatheterCICat1,
+        'Angiopulmonography Damage category' = AngiopulmonographyDamageCat1)
+
+
+
+
+```
+
+### Переименуем категории в переменных
+
+```{r}
+
+
+  
+  merged_data_table_recode <- merged_data_table %>%
+  mutate(across(Sex, function(x) x %>% 
+                  factor(levels=c("Мужской", "Женский"), labels=c("Male", "Female")))) %>%  
+  mutate(across(Hypertension, function(x) x %>% 
+                  factor(levels=c("Нет", "гипертоническая болезнь"), labels=c("No", "Yes"))))%>% 
+  mutate(across(Hypertension, function(x) x %>% 
+                  factor(levels=c("Нет", "гипертоническая болезнь"), labels=c("No", "Yes"))))%>% 
+  mutate(across('Ischemic heart disease', function(x) x %>% 
+                  factor(levels=c("Нет", "ишемическая болезнь сердца"), labels=c("No", "Yes"))))%>%
+  mutate(across('Chronic obstructive pulmonary disease', function(x) x %>% 
+                factor(levels=c("Нет", "хроническая обструктивная болезнь легких"), labels=c("No", "Yes"))))%>%
+  mutate(across('Bronchial asthma', function(x) x %>% 
+                factor(levels=c("Нет", "бронхиальная астма"), labels=c("No", "Yes"))))%>%
+  mutate(across('Obstructive sleep apnea syndrome', function(x) x %>% 
+                factor(levels=c("Нет", "синдром обструктивного апноэ сна"), labels=c("No", "Yes"))))%>%
+  mutate(across('Antiphospholipid syndrome', function(x) x %>% 
+                factor(levels=c("Нет", "антифосфолипидный синдром"), labels=c("No", "Yes"))))%>%
+  mutate(across('Systemic lupus erythematosus', function(x) x %>% 
+                factor(levels=c("Нет", "системная красная волчанка"), labels=c("No", "Yes"))))%>%
+  mutate(across('Diabetes or impaired glucose tolerance', function(x) x %>% 
+                factor(levels=c("Нет", "СД или нарушение толерантности к глюкозе"), labels=c("No", "Yes"))))%>%
+  mutate(across('Chronic kidney disease stage 3A or higher', function(x) x %>% 
+                factor(levels=c("Нет", "ХБП 3А стадии или выше"), labels=c("No", "Yes")))) %>% 
+    mutate(across('Atrial fibrillation or atrial flutter (any form)', function(x) x %>% 
+                factor(levels=c("Нет", "ФП или ТП (любая форма)"), labels=c("No", "Yes")))) %>% 
+    mutate(across('Dyspnea on exertion', function(x) x %>% 
+                factor(levels=c("Нет", "одышка при физической нагрузке"), labels=c("No", "Yes"))))%>%
+    mutate(across('Increased fatigue', function(x) x %>% 
+                factor(levels=c("Нет", "повышенная утомляемость"), labels=c("No", "Yes"))))%>%
+    mutate(across('Chest pain', function(x) x %>% 
+                factor(levels=c("Нет", "головокружение"), labels=c("No", "Yes"))))%>%
+    mutate(across('Dizziness', function(x) x %>% 
+                factor(levels=c("Нет", "СД или нарушение толерантности к глюкозе"), labels=c("No", "Yes"))))%>%
+    mutate(across('Syncope', function(x) x %>% 
+                factor(levels=c("Нет", "синкопальные состояния"), labels=c("No", "Yes"))))%>%
+    mutate(across('Cough', function(x) x %>% 
+                factor(levels=c("Нет", "кашель"), labels=c("No", "Yes"))))%>%
+    mutate(across('PulHypSymp7Cat0', function(x) x %>% 
+                factor(levels=c("Нет", "кровохарканье"), labels=c("No", "Yes"))))%>%
+    mutate(across('Leg swelling', function(x) x %>% 
+                factor(levels=c("Нет", "отеки ног"), labels=c("No", "Yes"))))%>%
+    mutate(across('CHF Decompensation', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Angiopulmonography Damage', function(x) x %>% 
+                factor(levels=c("легочный ствол, левая и правая легочные артерии, долевые артерии", "сегментарные артерии", "субсегментарные артерии"), labels=c("pulmonary trunk, left and right pulmonary arteries, lobular arteries", "segmental arteries", "subsegmental arteries"))))%>%
+    mutate(across('CPTE', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('CTBPA', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('ECHOCGPericEffusCat0', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Enoxaparin', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Warfarin', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Apixaban', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Rivaroxaban', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Dabigatran', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Diuretic drug', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Anticoagulant therapy', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('BMI category', function(x) x %>% 
+                factor(levels=c("Норма", "Лишний вес", "Ожирение"), labels=c("Normal", "Overweight", "Obese"))))%>%
+    mutate(across('Total Cholesterol category', function(x) x %>% 
+                factor(levels=c("Норма", "Пограничный", "Высокий"), labels=c("Normal", "Borderline", "High"))))%>%
+    mutate(across('Triglycerides category', function(x) x %>% 
+                factor(levels=c("Норма", "Повышенный", "Высокий"), labels=c("Normal", "Increased", "High"))))%>%
+    mutate(across('BHDL Cholesterol category', function(x) x %>% 
+                factor(levels=c("Норма", "Повышенный", "Высокий"), labels=c("Normal", "Increased", "High"))))%>%
+    mutate(across('Uric Acid category', function(x) x %>% 
+                factor(levels=c("Норма", "Повышенный", "Высокий"), labels=c("Normal", "Increased", "High"))))%>%
+    mutate(across('Blood Glucose category', function(x) x %>% 
+                factor(levels=c("Норма", "Преддиабет или диабет"), labels=c("Normal", "Prediabetes or diabetes"))))%>%
+    mutate(across('Hemoglobin category', function(x) x %>% 
+                factor(levels=c("Норма", "CTCAE степень 2", "CTCAE степень 3"), labels=c("Normal", "Increased", "High")))) %>% 
+    mutate(across('Mutation', function(x) x %>% 
+                factor(levels=c("Нет", "Да"), labels=c("No", "Yes"))))%>%
+    mutate(across('Apnea Borg Scale category', function(x) x %>% 
+                factor(levels=c("легкая одышка", "средняя или тяжелая одышка"), labels=c("slight dyspnea", "moderate to severe dyspnea")))) %>%
+    mutate(across('Pulse Ox Before Test category', function(x) x %>% 
+                factor(levels=c("Норма", "Снижена"), labels=c("Normal", "Reduced")))) %>%
+    mutate(across('Test6PulsOxAfterCat1', function(x) x %>% 
+                factor(levels=c("Норма", "Снижена"), labels=c("Normal", "Reduced")))) %>%
+    mutate(across('ECHO DZ Area category', function(x) x %>% 
+                factor(levels=c( "Норма","Умеренное нарушение", "Тяжелое нарушение"), 
+                       labels=c("Normal", "Moderate disorder", "Severe disorder")))) %>%
+    mutate(across('ECHO Front-Back Size category', function(x) x %>% 
+                factor(levels=c("норма", "увеличен"), labels=c("normal", "increased")))) %>%
+    mutate(across('LCC Volume category', function(x) x %>% 
+                factor(levels=c("Норма", "Повышен"), labels=c("normal", "increased")))) %>%
+    mutate(across('Arterial Oxygen Saturation category', function(x) x %>% 
+                factor(levels=c("Норма", "Снижена"), labels=c("normal", "reduced")))) %>%
+    mutate(across('Venous Oxygen Saturation category', function(x) x %>% 
+                factor(levels=c("Норма", "Снижена"), labels=c("normal", "reduced")))) %>%
+    mutate(across('Cardiac Index category', function(x) x %>% 
+                factor(levels=c("норма", "снижен"), labels=c("normal", "reduced")))) %>%
+    mutate(across('Angiopulmonography Damage category', function(x) x %>% 
+                factor(levels=c("Проксимальное поражение", "Дистальное поражение"), labels=c("Proximal lesion", "Distal lesion"))))
+    
+ 
+
+```
+
+# Описатльные таблицы
+
+## Количественные переменные
+
+```{r}
+num_var_table <- merged_data_table %>% 
+  select_if(is.numeric) %>% 
+  tbl_summary(
+    type = list(all_continuous() ~ "continuous2"),  # Позволяет многострочный вывод
+    statistic = list(
+      all_continuous() ~ c("{mean} ({sd})", 
+                           "{median} ({p25}, {p75})", 
+                           "{min}, {max}")
+    ),
+    digits = all_continuous() ~ 2
+  ) %>% 
+  modify_header(label ~ "**Variable**", stat_0 ~ "**Statistic**") %>%
+  bold_labels()
+
+num_var_table
+```
+
+## Качественные переменные
+
+```{r}
+cat_var_table <- merged_data_table_recode %>% select (-TTCD_event.x, TTCD_event.y) %>%
+  select_if(is.factor) %>% 
+  tbl_summary()
+
+cat_var_table
+```
+
+# Описательные графики
+
+## Качественные переменные
+
+### Распределение пациентов по полу на 1 визите:
+
+```{r, fig.width=16, fig.height=10}
+
+
+data_count <- as.data.frame(table(merged_data_table_recode$Sex))
+colnames(data_count) <- c("category", "count")
+
+#data_count$category <- recode(data_count$category, "Мужской" = "Male", "Женский" = "Female")
+
+sex_vis1 <- ggplot(data_count, aes(x = category, y = count)) +
+  geom_bar(stat = "identity", fill = "skyblue") + 
+  geom_label(aes(label = count), vjust = 0.5, color = "black", size = 7) +
+  labs(title = "Distribution of patients by sex", x = "Sex", y = "Number of Patients") +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.title = element_text(size = 30, hjust = 0.5),
+    plot.subtitle = element_text(size = 25, hjust = 0.5),
+    strip.text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 25),
+    legend.title = element_text(size = 25),
+    legend.text = element_text(size = 20),
+    axis.line = element_line(color = "black"))
+
+sex_vis1
+
+
+```
+
+## Количественные переменные
+
+### Загрузим датасет:
+
+```{r}
+row <- readRDS('data/processed_data_19dec24.rds')  
+
+data <- row %>%
+  mutate(USUBJID = as.factor(USUBJID),
+         visit = as.factor(visit),
+         SUBVISID = as.factor(SUBVISID))
+```
+
+### Распределение пациентов по возрасту на 1 визите:
+
+Плотность вероятности:
+
+```{r, fig.width=16, fig.height=10}
+
+#Добавим перемнную age - возраст пациента
+data_age<-data %>% 
+  mutate(age = year(Sys.Date()) - year(btdt) - 
+           ifelse(month(Sys.Date()) < month(btdt) | 
+                  (month(Sys.Date()) == month(btdt) & day(Sys.Date()) < day(btdt)), 
+                  1, 0)) 
+
+
+data_age_visit1 <- data_age %>% 
+ggplot(aes(x=age))+
+  geom_density(color="darkblue", alpha=.3, fill='skyblue')+
+  labs(y= "Density", 
+       x = "Age", 
+       title = "Distribution of patients by age")+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.title = element_text(size = 30, hjust = 0.5),
+    plot.subtitle = element_text(size = 25, hjust = 0.5),
+    strip.text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 25),
+    legend.title = element_text(size = 25),
+    legend.text = element_text(size = 20),
+    axis.line = element_line(color = "black"))
+
+data_age_visit1
+
+
+```
+
+## Распределение пациентов по возрасту и полу на 1 визите:
+
+```{r, fig.width=16, fig.height=10}
+
+#Добавим перемнную age - возраст пациента
+data_age<-data %>% 
+  mutate(age = year(Sys.Date()) - year(btdt) - 
+           ifelse(month(Sys.Date()) < month(btdt) | 
+                  (month(Sys.Date()) == month(btdt) & day(Sys.Date()) < day(btdt)), 
+                  1, 0)) %>% 
+  mutate(visit=as.factor(visit))
+
+
+data_age_sex_visit1 <- data_age %>%
+  filter(visit == "1") %>% 
+  filter(!is.na(age), !is.na(sex)) %>%  
+  mutate(sex = dplyr::recode(sex, "Женский" = "Female", "Мужской" = "Male")) %>%  
+  ggplot(aes(x = sex, y = age, fill = sex)) +
+  geom_boxplot(outlier.colour = "darkblue", alpha = .3) +
+  labs(y = "Age", 
+       x = "Sex", 
+       title = "Distribution of patients by age") +
+  theme(
+    panel.background = element_rect(fill = "white"),
+    plot.title = element_text(size = 30, hjust = 0.5),
+    plot.subtitle = element_text(size = 25, hjust = 0.5),
+    strip.text = element_text(size = 20),
+    axis.text = element_text(size = 20),
+    axis.title = element_text(size = 25),
+    legend.position = "none",  
+    axis.line = element_line(color = "black")) +
+  scale_fill_manual(values = c("Male" = "blue", 
+                                "Female" = "red"))  
+
+
+
+
+
+data_age_sex_visit1
+
+
+
+```
+
+## Анализ корреляций количественных факторов
+
+```{r fig.width=8, fig.height=8}
+
+numeric_vars <- time_ind %>%
+  ungroup() %>% 
+  select(
+    matches("Num", ignore.case = TRUE) & where(is.numeric)        
+  )
+
+#colnames(numeric_vars)
+# Построение матрицы корреляции
+#correlation_matrix <- numeric_vars %>% cor(use = "complete.obs")
+selected_variables <- c(
+  "BMINum1", "Test6DistNum1", "Test6ApneaBorgNum1", "Test6PulsOxBeforeNum1", 
+  "Test6PulsOxAfterNum1", "HemoglobinNum1", "BNPNum1", "BloodBHGlucoseNum1",
+  "BloodBHTotalCholesterolNum1", "BloodBHTriglyceridesNum1", "BloodBHHDLCholesterolNum1",
+  "BloodBHLDLCholesterolNum1", "BloodBHUricAcidNum1", 
+  "ECHOCGPPareaNum0", "ECHOCGFrontBackSizeNum1", "ECHOCGSDLANum1", 
+  "ECHOCGDZLANum0", "RHCatheterDPPmeanNum0", "RHCatheterSDLANum1", 
+  "RHCatheterDZLANum0", "RHCatheterCINum1", "RHCatheterLCCVudNum1",
+  "RHCatheterSaO2Num1", "RHCatheterSvO2Num1", "AgeNum1"
+)
+
+# Создаем словарь для более "человеческих" названий
+variable_names <- c(
+  "BMINum1" = "BMI",
+  "Test6DistNum1" = "6-Min Walk Distance",
+  "Test6ApneaBorgNum1" = "Apnea Borg Scale",
+  "Test6PulsOxBeforeNum1" = "Pulse Ox Before Test",
+  "Test6PulsOxAfterNum1" = "Pulse Ox After Test",
+  "HemoglobinNum1" = "Hemoglobin Level",
+  "BNPNum1" = "BNP Level",
+  "BloodBHGlucoseNum1" = "Blood Glucose",
+  "BloodBHTotalCholesterolNum1" = "Total Cholesterol",
+  "BloodBHTriglyceridesNum1" = "Triglycerides",
+  "BloodBHHDLCholesterolNum1" = "HDL Cholesterol",
+  "BloodBHLDLCholesterolNum1" = "LDL Cholesterol",
+  "BloodBHUricAcidNum1" = "Uric Acid",
+  "ECHOCGTapseNum0" = "ECHO TAPSE",
+  "ECHOCGPPareaNum0" = "ECHO PP Area",
+  "ECHOCGFrontBackSizeNum1" = "ECHO Front-Back Size",
+  "ECHOCGSDLANum1" = "ECHO SDL Area",
+  "ECHOCGDZLANum0" = "ECHO DZ Area",
+  "RHCatheterDPPmeanNum0" = "DPP Mean",
+  "RHCatheterSDLANum1" = "SDL Area",
+  "RHCatheterDZLANum0" = "DZ Area",
+  "RHCatheterCINum1" = "Cardiac Index",
+  "RHCatheterLCCVudNum1" = "LCC Volume",
+  "RHCatheterSaO2Num1" = "Arterial Oxygen Saturation",
+  "RHCatheterSvO2Num1" = "Venous Oxygen Saturation",
+  "AgeNum1" = "Age"
+)
+
+# Фильтруем датасет, выбирая только нужные переменные
+numeric_vars <- time_ind %>%
+  ungroup() %>% 
+  select(all_of(selected_variables))
+
+# Вычисляем корреляционную матрицу
+correlation_matrix <- cor(numeric_vars, use = "pairwise.complete.obs")
+
+# Переименовываем строки и столбцы матрицы
+colnames(correlation_matrix) <- variable_names[colnames(correlation_matrix)]
+rownames(correlation_matrix) <- variable_names[rownames(correlation_matrix)]
+
+# Построение тепловой карты
+pheatmap_cor <- pheatmap(
+        mat = correlation_matrix,
+        color = colorRampPalette(c("blue", "white", "red"))(100),
+        display_numbers = FALSE,                 # Числа внутри ячеек не отображаются
+        clustering_distance_rows = "euclidean",  # Метрика расстояния для строк
+        clustering_distance_cols = "euclidean",  # Метрика расстояния для столбцов
+        clustering_method = "complete",          # Метод кластеризации
+        fontsize_row = 8,                        # Размер шрифта для строк
+        fontsize_col = 8,                        # Размер шрифта для столбцов
+        main = "Correlation Matrix for Numeric Predictors"
+       )
+
+pheatmap_cor
+
+
+```
+
+## Treatment Timelines with Multiple Variables
+
+Создание датасета и добавление переменных:
+
+```{r}
+
+data_end <- data %>%
+  ungroup() %>% 
+  filter( rowSums(is.na(select(., -USUBJID))) < ncol(select(., -USUBJID)))
+
+
+data_end <- data_end %>% 
+  group_by(USUBJID) %>% 
+  mutate(deathdt = as.POSIXct(deathdt)) %>% #перевод в формат POSIXct
+  mutate(end = ifelse(!is.na(deathdt), deathdt, last_visit)) %>% 
+  #дата исключения пациента из исследования: смерть или последний визит
+  mutate(end = as.POSIXct(end)) %>% #перевод в формат POSIXct
+  mutate(end_bl = as.numeric(difftime( end, OS1_startdt, units = "days")) / 365.25) %>% 
+  mutate(HTdiag = ifelse(!is.na(PriorverifiedEarlierdt), PriorverifiedEarlierdt, first_visit)) %>% #дата диагностирования заболевания ХТЭЛГ: либо диагностика до включения либо дата первого визита
+  mutate(HTdiag = as.POSIXct(HTdiag)) %>%  #перевод в формат POSIXct
+  mutate(first_visit_0 = case_when(!is.na(end) & end == first_visit ~ first_visit,
+                                   is.na(end) ~ NA,
+                                   TRUE ~ NA)) %>% # чтобы отметить пациентов, которые пришли только на 1 визит
+  mutate(first_visit_0_bl = as.numeric(difftime( first_visit_0, OS1_startdt, units = "days")) / 365.25) %>% 
+  mutate(first_visit_0 = as.POSIXct(first_visit_0)) %>% 
+  mutate(min_LAGdt = as.POSIXct(min_LAGdt)) %>% 
+  mutate(TTCDdt = as.POSIXct(TTCDdt)) %>% 
+  mutate(TTCDdt_n = case_when(TTCDdt == lastalivedt ~ NA,
+                              TTCDdt >= deathdt ~ NA,
+                                   TRUE ~ TTCDdt)) %>% 
+  mutate(TTCDdt_n = as.POSIXct(TTCDdt_n)) %>% 
+  mutate(OS1_startdt = as.POSIXct(OS1_startdt)) %>%
+  mutate(first_visit_bl = as.numeric(difftime( first_visit, OS1_startdt, units = "days")) / 365.25) %>% 
+  mutate(ord =  first_visit_bl - end_bl) %>%  #порядок пациентов по Y
+  mutate(DateTPE_bl = as.numeric(difftime( DateTPE, OS1_startdt, units = "days")) / 365.25) %>% 
+  mutate(min_LAGdt_bl = as.numeric(difftime( min_LAGdt, OS1_startdt, units = "days")) / 365.25) %>% 
+  mutate(TTCDdt_n_bl = as.numeric(difftime( TTCDdt_n, OS1_startdt, units = "days")) / 365.25) %>% 
+  mutate(death = ifelse(is.na(deathdt), "The patient is alive", "The patient is dead")) %>% 
+  mutate(BPAdate_bl = as.numeric(difftime( BPAdate, OS1_startdt, units = "days")) / 365.25)
+
+
+
+
+data_end <- data_end %>%
+  ungroup() %>% 
+  filter(!is.na(end) & rowSums(is.na(select(., -USUBJID))) < ncol(select(., -USUBJID))) 
+
+
+
+
+
+
+```
+
+График:
+
+```{r, fig.width=10, fig.height=10}
+
+Timelines_plot <- data_end %>% 
+   ggplot() +
+  geom_point(aes(x = first_visit_0_bl, reorder(USUBJID, ord), color = death), shape = 15, size = 1.5, stroke = 1.5, show.legend = FALSE) +  
+  geom_segment(aes(x = first_visit_bl, xend = end_bl, y = reorder(USUBJID, ord), yend = reorder(USUBJID, ord), color = death), size = 1.5) + # первый визит - последний визит/смерть
+  geom_point(aes(x = DateTPE_bl, reorder(USUBJID, ord), shape = "TPE surgery"), color = "#31a354", size = 2, stroke = 1) + # дата операции 
+  geom_point(aes(x = min_LAGdt_bl, reorder(USUBJID, ord), shape = "First LAG therapy"), color = "orange", size = 1.5, stroke = .7) + # самая ранняя дата  LAG-терапии
+  geom_point(aes(x = TTCDdt_n_bl, reorder(USUBJID, ord), shape = "First clinical worsening"), color = "red", size = 1.5, stroke = 1) + # перове клин ухудшение
+  geom_point(aes(x = BPAdate_bl, reorder(USUBJID, ord), shape = "BPA surgery"), color = "#756bb1", size = 1, stroke = 1) + # перове клин ухудшение
+  #geom_point(aes(x = death, reorder(USUBJID, ord), shape = "Death"), color = "#e34a33", size = 2, stroke = 1) + #смерть
+   labs(title = "Treatment Timelines with Multiple Variables", 
+        x = "Years", 
+        y = "ID", 
+        color = "Time data is collected", 
+        shape = "Event") + 
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 6),
+        axis.title=element_text(size=17),
+        plot.title = element_text(size=20, hjust = 0.5),  
+        axis.text.x = element_text(size = 15)) +
+ # scale_x_datetime(date_breaks = "5 year", date_labels = "%Y") +
+  scale_color_manual(values = c("The patient is alive" = "skyblue", "The patient is dead" = "#FFB6B6"),
+                     labels = c("The patient is alive", "The patient is dead")) +
+  scale_shape_manual(values = c(
+                                 "TPE surgery" = 1, 
+                                 "First LAG therapy" = 8, 
+                                 "First clinical worsening" = 2, 
+                                 "BPA surgery" = 16)) + 
+  scale_x_continuous(breaks = seq(-5, max(data_end$end_bl, na.rm = TRUE), by = 2), limits = c(-5, NA)) +
+  labs(caption = "0 is a starting date for all outcomes")
+
+Timelines_plot
+
+```
+
+# Сохранение графиков и таблиц:
+
+```{r}
+ggsave("outputs/sex_distribution_29.png", plot = sex_vis1, width = 16, height = 10, dpi = 300)
+ggsave("outputs/age_distribution_29.png", plot = data_age_visit1, width = 16, height = 10, dpi = 300)
+ggsave("outputs/age_sex_distribution_29.png", plot = data_age_sex_visit1, width = 16, height = 10, dpi = 300)
+ggsave("outputs/Timelines_plot_29.png", plot = Timelines_plot, width = 10, height = 10, dpi = 300)
+ggsave("outputs/pheatmap_cor_29.png", plot = pheatmap_cor, width = 8, height = 8, dpi = 300)
+
+saveRDS(num_var_table, file = "outputs/num_var_table_29.rds")
+saveRDS(cat_var_table, file = "outputs/cat_var_table_29.rds")
+
+```

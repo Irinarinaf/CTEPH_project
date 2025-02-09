@@ -1,0 +1,124 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZWRlcF9tYW51YWwwIDwtIHRpbWVkZXAwICU+JVxuICBhcnJhbmdlKFVTVUJKSUQsIFZpc2l0RGF0ZSkgJT4lICAjINCh0L7RgNGC0LjRgNGD0LXQvCDQv9C+INC/0LDRhtC40LXQvdGC0YMg0Lgg0LTQsNGC0LUg0LLQuNC30LjRgtCwXG4gIGdyb3VwX2J5KFVTVUJKSUQpICU+JVxuICBtdXRhdGUoXG4gICAgIyDQndCw0YfQsNC70L4g0LjQvdGC0LXRgNCy0LDQu9CwIOKAlCDRgtC10LrRg9GJ0LjQuSDQstC40LfQuNGCXG4gICAgdHN0YXJ0ID0gVmlzaXREYXRlLFxuICAgICMg0JrQvtC90LXRhiDQuNC90YLQtdGA0LLQsNC70LAg4oCUINGB0LvQtdC00YPRjtGJ0LjQuSDQstC40LfQuNGCINC00LvRjyDRgtC+0LPQviDQttC1INC/0LDRhtC40LXQvdGC0LBcbiAgICB0c3RvcCA9IGxlYWQoVmlzaXREYXRlLCBkZWZhdWx0ID0gZmlyc3QobGFzdGFsaXZlZHQpKSAgIyDQn9C+0YHQu9C10LTQvdC40Lkg0LjQvdGC0LXRgNCy0LDQuyDQvtCz0YDQsNC90LjRh9C40LLQsNC10YLRgdGPIFRUQ0RkdFxuICAgICMg0J/QtdGA0LXRgdGH0LjRgtGL0LLQsNC10Lwg0LLQvtC30YDQsNGB0YIg0L3QsCDQvdCw0YfQsNC70L4g0LjQvdGC0LXRgNCy0LDQu9CwXG4gICkgJT4lXG4gIGZpbHRlcih0c3RhcnQgIT0gdHN0b3ApICU+JVxuICAgbXV0YXRlKFxuICAgIHRzdGFydCA9IGlmX2Vsc2UoT1MxX3N0YXJ0ZHQgPiB0c3RhcnQgJiBPUzFfc3RhcnRkdCA8IHRzdG9wLCBPUzFfc3RhcnRkdCwgdHN0YXJ0KSxcbiAgICBBZ2VfYXRfc3RhcnQgPSBmbG9vcihhcy5udW1lcmljKGRpZmZ0aW1lKHRzdGFydCwgYnRkdCwgdW5pdHMgPSBcImRheXNcIikpIC8gMzAuNDM3NSAvIDEyKSxcbiAgKSAlPiVcbiAgZmlsdGVyKHRzdG9wID4gT1MxX3N0YXJ0ZHQgJiB0c3RhcnQgPCB0c3RvcCklPiVcbiAgdW5ncm91cCgpICU+JVxuIGxlZnRfam9pbihcbiAgICB0aW1lZGVwMCAlPiVcbiAgICAgIHNlbGVjdChVU1VCSklELCBCUEFkYXRlKSAlPiVcbiAgICAgIGZpbHRlcighaXMubmEoQlBBZGF0ZSkpICU+JVxuICAgICAgZ3JvdXBfYnkoVVNVQkpJRCkgJT4lXG4gICAgICBzdW1tYXJpc2UoYWxsX0JQQWRhdGUgPSBsaXN0KEJQQWRhdGUpLCAuZ3JvdXBzID0gXCJkcm9wXCIpLFxuICAgIGJ5ID0gXCJVU1VCSklEXCJcbiAgKSAlPiVcbiAgdW5ncm91cCgpICU+JVxuICBsZWZ0X2pvaW4oXG4gICAgdGltZWRlcDAgJT4lXG4gICAgICBzZWxlY3QoVVNVQkpJRCwgRGF0ZVRQRSkgJT4lXG4gICAgICBmaWx0ZXIoIWlzLm5hKERhdGVUUEUpKSAlPiVcbiAgICAgIGdyb3VwX2J5KFVTVUJKSUQpICU+JVxuICAgICAgc3VtbWFyaXNlKGFsbF9EYXRlVFBFID0gbGlzdChEYXRlVFBFKSwgLmdyb3VwcyA9IFwiZHJvcFwiKSxcbiAgICBieSA9IFwiVVNVQkpJRFwiXG4gICkgJT4lXG4gIHJvd3dpc2UoKSAlPiVcbiAgbXV0YXRlKFxuICAgICMg0J/RgNC+0LLQtdGA0Y/QtdC8LCDQtdGB0YLRjCDQu9C4INGF0L7RgtGPINCx0Ysg0L7QtNC90L4g0LfQvdCw0YfQtdC90LjQtSBEYXRlVFBFINCy0L3Rg9GC0YDQuCDQuNC90YLQtdGA0LLQsNC70LBcbiAgICBUUEVmbCA9IGFzLm51bWVyaWMoYW55KHVubGlzdChhbGxfRGF0ZVRQRSkgPj0gdHN0YXJ0ICYgdW5saXN0KGFsbF9EYXRlVFBFKSA8IHRzdG9wLCBuYS5ybSA9IFRSVUUpKSxcbiAgICAjINCf0YDQvtCy0LXRgNGP0LXQvCwg0LXRgdGC0Ywg0LvQuCDRhdC+0YLRjyDQsdGLINC+0LTQvdC+INC30L3QsNGH0LXQvdC40LUgQlBBZGF0ZSDQstC90YPRgtGA0Lgg0LjQvdGC0LXRgNCy0LDQu9CwXG4gICAgQlBBZmwgPSBhcy5udW1lcmljKGFueSh1bmxpc3QoYWxsX0JQQWRhdGUpID49IHRzdGFydCAmIHVubGlzdChhbGxfQlBBZGF0ZSkgPCB0c3RvcCwgbmEucm0gPSBUUlVFKSksXG4gICAgIyBjdW11bGF0aXZlIHN1cmdlcmllc1xuICAgIEN1bUJQQSA9IHN1bSh1bmxpc3QoYWxsX0JQQWRhdGUpIDwgdHN0b3AsIG5hLnJtID0gVFJVRSksXG4gICAgQ3VtVFBFID0gc3VtKHVubGlzdChhbGxfRGF0ZVRQRSkgPCB0c3RvcCwgbmEucm0gPSBUUlVFKVxuICApICU+JVxuICB1bmdyb3VwKCkgJT4lXG4gIHNlbGVjdChVU1VCSklELCB0c3RhcnQsIHRzdG9wLCBUUEVmbCwgQlBBZmwsIEN1bUJQQSwgQ3VtVFBFLCBldmVyeXRoaW5nKCksIC1hbGxfQlBBZGF0ZSwgLWFsbF9EYXRlVFBFLCAtYnRkdCkgJT4lXG4gICPQtNC+0LHQsNCy0LvRj9C10Lwg0LTQtdC80L7Qs9GA0LDRhNC40YfQtdGB0LrQuNC1INC00LDQvdC90YvQtSDQv9C+INC/0L7Qu9GDINC4INC80YPRgtCw0YbQuNC4XG4gIGxlZnRfam9pbihcbiAgICB0aW1lX2luZCAlPiVcbiAgICAgIHNlbGVjdChVU1VCSklELCBNdXRhdGlvbkNhdDAsIFNleENhdDApICU+JVxuICAgICAgcmVuYW1lKE11dCA9IE11dGF0aW9uQ2F0MCwgU2V4ID0gU2V4Q2F0MCksXG4gICAgYnkgPSBcIlVTVUJKSURcIlxuICApICU+JVxuICBtdXRhdGUoXG4gICAgVFBFZmwgPSBmYWN0b3IoVFBFZmwsIGxldmVscyA9IGMoMCwgMSkpLFxuICAgIEJQQWZsID0gZmFjdG9yKEJQQWZsLCBsZXZlbHMgPSBjKDAsIDEpKVxuICApXG5gYGAifQ== -->
+
+```r
+timedep_manual0 <- timedep0 %>%
+  arrange(USUBJID, VisitDate) %>%  # Сортируем по пациенту и дате визита
+  group_by(USUBJID) %>%
+  mutate(
+    # Начало интервала — текущий визит
+    tstart = VisitDate,
+    # Конец интервала — следующий визит для того же пациента
+    tstop = lead(VisitDate, default = first(lastalivedt))  # Последний интервал ограничивается TTCDdt
+    # Пересчитываем возраст на начало интервала
+  ) %>%
+  filter(tstart != tstop) %>%
+   mutate(
+    tstart = if_else(OS1_startdt > tstart & OS1_startdt < tstop, OS1_startdt, tstart),
+    Age_at_start = floor(as.numeric(difftime(tstart, btdt, units = \"days\")) / 30.4375 / 12),
+  ) %>%
+  filter(tstop > OS1_startdt & tstart < tstop)%>%
+  ungroup() %>%
+ left_join(
+    timedep0 %>%
+      select(USUBJID, BPAdate) %>%
+      filter(!is.na(BPAdate)) %>%
+      group_by(USUBJID) %>%
+      summarise(all_BPAdate = list(BPAdate), .groups = \"drop\"),
+    by = \"USUBJID\"
+  ) %>%
+  ungroup() %>%
+  left_join(
+    timedep0 %>%
+      select(USUBJID, DateTPE) %>%
+      filter(!is.na(DateTPE)) %>%
+      group_by(USUBJID) %>%
+      summarise(all_DateTPE = list(DateTPE), .groups = \"drop\"),
+    by = \"USUBJID\"
+  ) %>%
+  rowwise() %>%
+  mutate(
+    # Проверяем, есть ли хотя бы одно значение DateTPE внутри интервала
+    TPEfl = as.numeric(any(unlist(all_DateTPE) >= tstart & unlist(all_DateTPE) < tstop, na.rm = TRUE)),
+    # Проверяем, есть ли хотя бы одно значение BPAdate внутри интервала
+    BPAfl = as.numeric(any(unlist(all_BPAdate) >= tstart & unlist(all_BPAdate) < tstop, na.rm = TRUE)),
+    # cumulative surgeries
+    CumBPA = sum(unlist(all_BPAdate) < tstop, na.rm = TRUE),
+    CumTPE = sum(unlist(all_DateTPE) < tstop, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  select(USUBJID, tstart, tstop, TPEfl, BPAfl, CumBPA, CumTPE, everything(), -all_BPAdate, -all_DateTPE, -btdt) %>%
+  #добавляем демографические данные по полу и мутации
+  left_join(
+    time_ind %>%
+      select(USUBJID, MutationCat0, SexCat0) %>%
+      rename(Mut = MutationCat0, Sex = SexCat0),
+    by = \"USUBJID\"
+  ) %>%
+  mutate(
+    TPEfl = factor(TPEfl, levels = c(0, 1)),
+    BPAfl = factor(BPAfl, levels = c(0, 1))
+  )
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+timedep_manual0 <- timedep0 %>%
+  arrange(USUBJID, VisitDate) %>%  # Сортируем по пациенту и дате визита
+  group_by(USUBJID) %>%
+  mutate(
+    # Начало интервала — текущий визит
+    tstart = VisitDate,
+    # Конец интервала — следующий визит для того же пациента
+    tstop = lead(VisitDate, default = first(lastalivedt))  # Последний интервал ограничивается TTCDdt
+    # Пересчитываем возраст на начало интервала
+  ) %>%
+  filter(tstart != tstop) %>%
+   mutate(
+    tstart = if_else(OS1_startdt > tstart & OS1_startdt < tstop, OS1_startdt, tstart),
+    Age_at_start = floor(as.numeric(difftime(tstart, btdt, units = \"days\")) / 30.4375 / 12),
+  ) %>%
+  filter(tstop > OS1_startdt & tstart < tstop)%>%
+  ungroup() %>%
+ left_join(
+    timedep0 %>%
+      select(USUBJID, BPAdate) %>%
+      filter(!is.na(BPAdate)) %>%
+      group_by(USUBJID) %>%
+      summarise(all_BPAdate = list(BPAdate), .groups = \"drop\"),
+    by = \"USUBJID\"
+  ) %>%
+  ungroup() %>%
+  left_join(
+    timedep0 %>%
+      select(USUBJID, DateTPE) %>%
+      filter(!is.na(DateTPE)) %>%
+      group_by(USUBJID) %>%
+      summarise(all_DateTPE = list(DateTPE), .groups = \"drop\"),
+    by = \"USUBJID\"
+  ) %>%
+  rowwise() %>%
+  mutate(
+    # Проверяем, есть ли хотя бы одно значение DateTPE внутри интервала
+    TPEfl = as.numeric(any(unlist(all_DateTPE) >= tstart & unlist(all_DateTPE) < tstop, na.rm = TRUE)),
+    # Проверяем, есть ли хотя бы одно значение BPAdate внутри интервала
+    BPAfl = as.numeric(any(unlist(all_BPAdate) >= tstart & unlist(all_BPAdate) < tstop, na.rm = TRUE)),
+    # cumulative surgeries
+    CumBPA = sum(unlist(all_BPAdate) < tstop, na.rm = TRUE),
+    CumTPE = sum(unlist(all_DateTPE) < tstop, na.rm = TRUE)
+  ) %>%
+  ungroup() %>%
+  select(USUBJID, tstart, tstop, TPEfl, BPAfl, CumBPA, CumTPE, everything(), -all_BPAdate, -all_DateTPE, -btdt) %>%
+  #добавляем демографические данные по полу и мутации
+  left_join(
+    time_ind %>%
+      select(USUBJID, MutationCat0, SexCat0) %>%
+      rename(Mut = MutationCat0, Sex = SexCat0),
+    by = \"USUBJID\"
+  ) %>%
+  mutate(
+    TPEfl = factor(TPEfl, levels = c(0, 1)),
+    BPAfl = factor(BPAfl, levels = c(0, 1))
+  )
+```"

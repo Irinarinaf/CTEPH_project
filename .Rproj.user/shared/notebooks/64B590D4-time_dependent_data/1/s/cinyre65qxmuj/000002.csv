@@ -1,0 +1,26 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZHJ1Z3MgPC0gYyhcIlNpbGRlbmFmaWxcIiwgXCJSaW9jaWd1YXRcIiwgXCJJbG9wcm9zdFwiLCBcIlNlbGV4aXBhZ1wiLCBcIkJvemVudGFuXCIsIFwiQW1icmlzZW50YW5cIiwgXCJNYWNpdGVudGFuXCIpXG5cbmZvciAoZHJ1ZyBpbiBkcnVncykge1xuICB0aW1lZGVwX21hbnVhbDAgPC0gYWRkX2RydWdfdmFyaWFibGUyKHRpbWVkZXBfbWFudWFsMCwgZHJ1Zylcbn1cblxudGVzdDUgPC0gdGltZWRlcF9tYW51YWwwICU+JVxuICBzZWxlY3QoVVNVQkpJRCwgVmlzaXREYXRlLCBTaWxkZW5hZmlsLCBwcmlvclNpbGRlbmFmaWwsIFBBSEMsIFNpbGRlbmFmaWxmbCwgbilcbmBgYCJ9 -->
+
+```r
+drugs <- c(\"Sildenafil\", \"Riociguat\", \"Iloprost\", \"Selexipag\", \"Bozentan\", \"Ambrisentan\", \"Macitentan\")
+
+for (drug in drugs) {
+  timedep_manual0 <- add_drug_variable2(timedep_manual0, drug)
+}
+
+test5 <- timedep_manual0 %>%
+  select(USUBJID, VisitDate, Sildenafil, priorSildenafil, PAHC, Sildenafilfl, n)
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+drugs <- c(\"Sildenafil\", \"Riociguat\", \"Iloprost\", \"Selexipag\", \"Bozentan\", \"Ambrisentan\", \"Macitentan\")
+
+for (drug in drugs) {
+  timedep_manual0 <- add_drug_variable2(timedep_manual0, drug)
+}
+
+test5 <- timedep_manual0 %>%
+  select(USUBJID, VisitDate, Sildenafil, priorSildenafil, PAHC, Sildenafilfl, n)
+```"

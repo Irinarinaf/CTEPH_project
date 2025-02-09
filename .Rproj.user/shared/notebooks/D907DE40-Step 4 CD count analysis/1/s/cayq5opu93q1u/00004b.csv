@@ -1,0 +1,18 @@
+"0","#ангиопульмонография - уровень поражения легочных артерий"
+"0","ggplot(data_set, aes(x= AngiopulmonographyDamageCat1 , y= clin_det_rate, color = AngiopulmonographyDamageCat1)) + "
+"0","  geom_boxplot()+"
+"0","  geom_jitter(position=position_jitter(0.2)) +"
+"0","  labs(x = 'Rate of gamage', y = 'Rate of deterioration') +"
+"0","  theme_bw() +"
+"0","  theme(legend.position = 'none',"
+"0","        axis.title.x =  element_text(size = 16),"
+"0","        axis.title.y = element_text(size = 16),"
+"0","        axis.text.x = element_text(size = 11),"
+"0","        axis.text.y = element_text(size = 11)) +"
+"0","  scale_y_continuous(limits = c(0,3))"
+"2","Warning:"
+"2"," [38;5;232mRemoved 1 row containing non-finite outside the scale range (`stat_boxplot()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 12 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"

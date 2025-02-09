@@ -1,0 +1,5 @@
+"0","univ_formulas <- sapply(vars_for_table[19:26], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))"
+"0",""
+"0","univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})"
+"0",""
+"0","forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)"

@@ -1,0 +1,6 @@
+"0","linelistsurv_cox <-  survival::coxph("
+"0","              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ initLAG + initBPA + initTPE, "
+"0","              data = as.data.frame(data_surv_new)"
+"0","              )"
+"0",""
+"0","ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))"

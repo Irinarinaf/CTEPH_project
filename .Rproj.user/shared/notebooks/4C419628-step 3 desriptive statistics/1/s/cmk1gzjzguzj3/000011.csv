@@ -1,0 +1,5 @@
+"0","cat_var_table <- merged_data_table_recode %>% select (-TTCD_event.x, TTCD_event.y) %>%"
+"0","  select_if(is.factor) %>% "
+"0","  tbl_summary()"
+"0",""
+"0","cat_var_table"

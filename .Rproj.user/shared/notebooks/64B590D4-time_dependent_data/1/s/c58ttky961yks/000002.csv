@@ -1,0 +1,238 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW5hbHl6ZV90aW1lX2RlcGVuZGVudF9jb3ggPC0gZnVuY3Rpb24oZGF0YSwgc3RhcnQsIHN0b3AsIGV2ZW50LCBtYWluX2NvdmFyaWF0ZXMsIGFkZGl0aW9uYWxfY292YXJpYXRlcykge1xuICByZXN1bHRzIDwtIGxpc3QoKVxuICBcbiAgZm9yIChtYWluX2NvdiBpbiBtYWluX2NvdmFyaWF0ZXMpIHtcbiAgICAjINCk0L7RgNC80LjRgNGD0LXQvCDRgdC/0LjRgdC+0Log0L/QtdGA0LXQvNC10L3QvdGL0YUg0LTQu9GPINC/0YDQvtCy0LXRgNC60Lgg0L/RgNC+0L/Rg9GB0LrQvtCyXG4gICAgYWxsX2NvdmFyaWF0ZXMgPC0gYyhtYWluX2NvdiwgYWRkaXRpb25hbF9jb3ZhcmlhdGVzKVxuICAgIFxuICAgICMg0KTQuNC70YzRgtGA0LDRhtC40Y8g0LTQsNC90L3Ri9GFINCx0LXQtyDQv9GA0L7Qv9GD0YHQutC+0LJcbiAgICBjb21wbGV0ZV9kYXRhIDwtIGRhdGEgJT4lXG4gICAgICBmaWx0ZXIoaWZfYWxsKGFsbF9vZihhbGxfY292YXJpYXRlcyksIH4gIWlzLm5hKC4pKSkgIyDQo9Cx0LjRgNCw0LXQvCDRgdGC0YDQvtC60Lgg0YEgTkEg0LIg0LrQvtCy0LDRgNC40LDRgtCw0YVcbiAgICBcbiAgICAjINCf0L7QtNGB0YfQtdGCINC+0LHRidC10LPQviDQutC+0LvQuNGH0LXRgdGC0LLQsCDQv9Cw0YbQuNC10L3RgtC+0LIg0Lgg0YHQvtCx0YvRgtC40LlcbiAgICB0b3RhbF9jb21wbGV0ZSA8LSBjb21wbGV0ZV9kYXRhICU+JVxuICAgICAgc3VtbWFyaXNlKFxuICAgICAgICBUb3RhbF9OID0gbl9kaXN0aW5jdChVU1VCSklEKSwgIyDQo9C90LjQutCw0LvRjNC90L7QtSDQutC+0LvQuNGH0LXRgdGC0LLQviDQv9Cw0YbQuNC10L3RgtC+0LJcbiAgICAgICAgVG90YWxfRXZlbnRzID0gc3VtKGFzLmludGVnZXIoISFzeW0oZXZlbnQpKSwgbmEucm0gPSBUUlVFKSAjINCe0LHRidC10LUg0LrQvtC70LjRh9C10YHRgtCy0L4g0YHQvtCx0YvRgtC40LlcbiAgICAgIClcbiAgICBcbiAgICAjINCk0L7RgNC80LjRgNGD0LXQvCDRhNC+0YDQvNGD0LvRgyDQvNC+0LTQtdC70LhcbiAgICBpZiAobGVuZ3RoKGFkZGl0aW9uYWxfY292YXJpYXRlcykgPiAwKSB7XG4gICAgICBmb3JtdWxhIDwtIGFzLmZvcm11bGEocGFzdGUwKFxuICAgICAgICBcIlN1cnYoXCIsIHN0YXJ0LCBcIiwgXCIsIHN0b3AsIFwiLCBcIiwgZXZlbnQsIFwiKSB+IFwiLCBcbiAgICAgICAgbWFpbl9jb3YsIFxuICAgICAgICBcIiArIFwiLCBcbiAgICAgICAgcGFzdGUoYWRkaXRpb25hbF9jb3ZhcmlhdGVzLCBjb2xsYXBzZSA9IFwiICsgXCIpXG4gICAgICApKVxuICAgIH0gZWxzZSB7XG4gICAgICBmb3JtdWxhIDwtIGFzLmZvcm11bGEocGFzdGUwKFxuICAgICAgICBcIlN1cnYoXCIsIHN0YXJ0LCBcIiwgXCIsIHN0b3AsIFwiLCBcIiwgZXZlbnQsIFwiKSB+IFwiLCBcbiAgICAgICAgbWFpbl9jb3ZcbiAgICAgICkpXG4gICAgfVxuICAgIFxuICAgIHByaW50KGZvcm11bGEpXG4gICAgXG4gICAgIyDQodGC0YDQvtC40Lwg0LzQvtC00LXQu9GMINCa0L7QutGB0LBcbiAgICBtb2RlbCA8LSB0cnlDYXRjaCh7XG4gICAgICBjb3hwaChmb3JtdWxhLCBkYXRhID0gY29tcGxldGVfZGF0YSwgaWQgPSBVU1VCSklEKVxuICAgIH0sIGVycm9yID0gZnVuY3Rpb24oZSkgTlVMTClcbiAgICBwcmludChtb2RlbClcbiAgICAjINCV0YHQu9C4INC80L7QtNC10LvRjCDRg9GB0L/QtdGI0L3QviDQv9C+0YHRgtGA0L7QtdC90LAsINC40LfQstC70LXQutCw0LXQvCDRgNC10LfRg9C70YzRgtCw0YLRi1xuICAgIGlmICghaXMubnVsbChtb2RlbCkpIHtcbiAgICAgIGJyb29tX3Jlc3VsdHMgPC0gdGlkeShtb2RlbCkgJT4lXG4gICAgICAgIGZpbHRlcihcbiAgICAgIHRlcm0gPT0gbWFpbl9jb3YgfCBzdGFydHNXaXRoKHRlcm0sIHBhc3RlMChtYWluX2NvdiwgXCIxXCIpKSAjINCj0YfQuNGC0YvQstCw0LXQvCDRhNCw0LrRgtC+0YDQvdGL0Lkg0YTQvtGA0LzQsNGCXG4gICAgKSAlPiVcbiAgICAgICAgbXV0YXRlKFxuICAgICAgICAgIEhSID0gZXhwKGVzdGltYXRlKSxcbiAgICAgICAgICBsb3dlcl85NSA9IGV4cChlc3RpbWF0ZSAtIDEuOTYgKiBzdGQuZXJyb3IpLFxuICAgICAgICAgIHVwcGVyXzk1ID0gZXhwKGVzdGltYXRlICsgMS45NiAqIHN0ZC5lcnJvciksXG4gICAgICAgICAgSFJfd2l0aF9DSSA9IHBhc3RlMChcbiAgICAgICAgICAgIHJvdW5kKEhSLCAyKSwgXG4gICAgICAgICAgICBcIiAoXCIsIFxuICAgICAgICAgICAgcm91bmQobG93ZXJfOTUsIDIpLCBcbiAgICAgICAgICAgIFwiLVwiLCBcbiAgICAgICAgICAgIHJvdW5kKHVwcGVyXzk1LCAyKSwgXG4gICAgICAgICAgICBcIilcIlxuICAgICAgICAgIClcbiAgICAgICAgKSAlPiVcbiAgICAgICAgYmluZF9jb2xzKHRvdGFsX2NvbXBsZXRlKSAlPiUgIyDQlNC+0LHQsNCy0LvRj9C10Lwg0L7QsdGJ0LXQtSDQutC+0LvQuNGH0LXRgdGC0LLQviDQv9Cw0YbQuNC10L3RgtC+0LIg0Lgg0YHQvtCx0YvRgtC40LlcbiAgICAgICAgc2VsZWN0KG1haW5fY292YXJpYXRlID0gdGVybSwgSFJfd2l0aF9DSSwgcC52YWx1ZSwgVG90YWxfTiwgVG90YWxfRXZlbnRzKVxuICAgIH0gZWxzZSB7XG4gICAgICAjINCV0YHQu9C4INC80L7QtNC10LvRjCDQvdC1INC/0L7RgdGC0YDQvtC10L3QsCwg0LLQtdGA0L3Rg9GC0YwgTi5BLlxuICAgICAgYnJvb21fcmVzdWx0cyA8LSB0aWJibGUoXG4gICAgICAgIG1haW5fY292YXJpYXRlID0gbWFpbl9jb3YsXG4gICAgICAgIEhSX3dpdGhfQ0kgPSBcIk4uQS5cIixcbiAgICAgICAgcC52YWx1ZSA9IFwiTi5BLlwiLFxuICAgICAgICBUb3RhbF9OID0gdG90YWxfY29tcGxldGUkVG90YWxfTixcbiAgICAgICAgVG90YWxfRXZlbnRzID0gdG90YWxfY29tcGxldGUkVG90YWxfRXZlbnRzXG4gICAgICApXG4gICAgfVxuICAgIFxuICAgIHJlc3VsdHNbW21haW5fY292XV0gPC0gYnJvb21fcmVzdWx0c1xuICB9XG4gIFxuICAjINCe0LHRitC10LTQuNC90Y/QtdC8INGA0LXQt9GD0LvRjNGC0LDRgtGLINC00LvRjyDQstGB0LXRhSDQutC+0LLQsNGA0LjQsNGCXG4gIGZpbmFsX3Jlc3VsdHMgPC0gYmluZF9yb3dzKHJlc3VsdHMpXG4gICMg0J/RgNC10L7QsdGA0LDQt9GD0LXQvCBwLXZhbHVlINCyINGH0LjRgdC70L7QstGL0LUg0LfQvdCw0YfQtdC90LjRjyAo0LTQu9GPINC60L7RgNGA0LXQutGC0LjRgNC+0LLQutC4KVxuZmluYWxfcmVzdWx0cyA8LSBmaW5hbF9yZXN1bHRzICU+JVxuICBtdXRhdGUoXG4gICAgbnVtZXJpY19wX3ZhbHVlID0gaWZlbHNlKHAudmFsdWUgPT0gXCJOLkEuXCIsIE5BLCBhcy5udW1lcmljKHAudmFsdWUpKSAjINCe0YHRgtCw0LLQu9GP0LXQvCBOQSDQtNC70Y8g0L/RgNC+0L/Rg9GB0LrQvtCyXG4gIClcblxuIyDQn9GA0LjQvNC10L3Rj9C10Lwg0L/QvtC/0YDQsNCy0LrRgyDQvdCwINC80L3QvtC20LXRgdGC0LLQtdC90L3Ri9C1INGC0LXRgdGC0LjRgNC+0LLQsNC90LjRj1xuaWYgKHN1bSghaXMubmEoZmluYWxfcmVzdWx0cyRudW1lcmljX3BfdmFsdWUpKSA+IDEpIHtcbiAgZmluYWxfcmVzdWx0cyA8LSBmaW5hbF9yZXN1bHRzICU+JVxuICAgIG11dGF0ZShcbiAgICAgIHJhd19hZGpfcF92YWx1ZSA9IHAuYWRqdXN0KG51bWVyaWNfcF92YWx1ZSwgbWV0aG9kID0gXCJCSFwiKSAjINCh0L7RhdGA0LDQvdGP0LXQvCDRgdGL0YDRi9C1INC30L3QsNGH0LXQvdC40Y9cbiAgICApXG59IGVsc2Uge1xuICBmaW5hbF9yZXN1bHRzIDwtIGZpbmFsX3Jlc3VsdHMgJT4lXG4gICAgbXV0YXRlKHJhd19hZGpfcF92YWx1ZSA9IG51bWVyaWNfcF92YWx1ZSkgIyDQkdC10Lcg0LrQvtGA0YDQtdC60YLQuNGA0L7QstC60Lhcbn1cblxuIyDQpNC+0YDQvNCw0YLQuNGA0L7QstCw0L3QuNC1IHAtdmFsdWUg0LggYWRqdXN0ZWQgcC12YWx1ZVxuZmluYWxfcmVzdWx0cyA8LSBmaW5hbF9yZXN1bHRzICU+JVxuICBtdXRhdGUoXG4gICAgcC52YWx1ZSA9IGlmZWxzZShcbiAgICAgIGlzLm5hKG51bWVyaWNfcF92YWx1ZSksIFwiTi5BLlwiLFxuICAgICAgaWZlbHNlKG51bWVyaWNfcF92YWx1ZSA8IDAuMDAxLCBcIjwwLjAwMVwiLCBmb3JtYXQocm91bmQobnVtZXJpY19wX3ZhbHVlLCAzKSwgbnNtYWxsID0gMykpXG4gICAgKSxcbiAgICBhZGpfcF92YWx1ZSA9IGlmZWxzZShcbiAgICAgIGlzLm5hKHJhd19hZGpfcF92YWx1ZSksIFwiTi5BLlwiLFxuICAgICAgaWZlbHNlKHJhd19hZGpfcF92YWx1ZSA8IDAuMDAxLCBcIjwwLjAwMVwiLCBmb3JtYXQocm91bmQocmF3X2Fkal9wX3ZhbHVlLCAzKSwgbnNtYWxsID0gMykpXG4gICAgKVxuICApXG5cbiMg0KPQtNCw0LvRj9C10Lwg0LLRgNC10LzQtdC90L3Ri9C1INC60L7Qu9C+0L3QutC4XG5maW5hbF9yZXN1bHRzIDwtIGZpbmFsX3Jlc3VsdHMgJT4lXG4gIHNlbGVjdCgtbnVtZXJpY19wX3ZhbHVlLCAtcmF3X2Fkal9wX3ZhbHVlKVxuXG5cbiAgcmV0dXJuKGZpbmFsX3Jlc3VsdHMpXG59XG5gYGAifQ== -->
+
+```r
+analyze_time_dependent_cox <- function(data, start, stop, event, main_covariates, additional_covariates) {
+  results <- list()
+  
+  for (main_cov in main_covariates) {
+    # Формируем список переменных для проверки пропусков
+    all_covariates <- c(main_cov, additional_covariates)
+    
+    # Фильтрация данных без пропусков
+    complete_data <- data %>%
+      filter(if_all(all_of(all_covariates), ~ !is.na(.))) # Убираем строки с NA в ковариатах
+    
+    # Подсчет общего количества пациентов и событий
+    total_complete <- complete_data %>%
+      summarise(
+        Total_N = n_distinct(USUBJID), # Уникальное количество пациентов
+        Total_Events = sum(as.integer(!!sym(event)), na.rm = TRUE) # Общее количество событий
+      )
+    
+    # Формируем формулу модели
+    if (length(additional_covariates) > 0) {
+      formula <- as.formula(paste0(
+        \"Surv(\", start, \", \", stop, \", \", event, \") ~ \", 
+        main_cov, 
+        \" + \", 
+        paste(additional_covariates, collapse = \" + \")
+      ))
+    } else {
+      formula <- as.formula(paste0(
+        \"Surv(\", start, \", \", stop, \", \", event, \") ~ \", 
+        main_cov
+      ))
+    }
+    
+    print(formula)
+    
+    # Строим модель Кокса
+    model <- tryCatch({
+      coxph(formula, data = complete_data, id = USUBJID)
+    }, error = function(e) NULL)
+    print(model)
+    # Если модель успешно построена, извлекаем результаты
+    if (!is.null(model)) {
+      broom_results <- tidy(model) %>%
+        filter(
+      term == main_cov | startsWith(term, paste0(main_cov, \"1\")) # Учитываем факторный формат
+    ) %>%
+        mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            \" (\", 
+            round(lower_95, 2), 
+            \"-\", 
+            round(upper_95, 2), 
+            \")\"
+          )
+        ) %>%
+        bind_cols(total_complete) %>% # Добавляем общее количество пациентов и событий
+        select(main_covariate = term, HR_with_CI, p.value, Total_N, Total_Events)
+    } else {
+      # Если модель не построена, вернуть N.A.
+      broom_results <- tibble(
+        main_covariate = main_cov,
+        HR_with_CI = \"N.A.\",
+        p.value = \"N.A.\",
+        Total_N = total_complete$Total_N,
+        Total_Events = total_complete$Total_Events
+      )
+    }
+    
+    results[[main_cov]] <- broom_results
+  }
+  
+  # Объединяем результаты для всех ковариат
+  final_results <- bind_rows(results)
+  # Преобразуем p-value в числовые значения (для корректировки)
+final_results <- final_results %>%
+  mutate(
+    numeric_p_value = ifelse(p.value == \"N.A.\", NA, as.numeric(p.value)) # Оставляем NA для пропусков
+  )
+
+# Применяем поправку на множественные тестирования
+if (sum(!is.na(final_results$numeric_p_value)) > 1) {
+  final_results <- final_results %>%
+    mutate(
+      raw_adj_p_value = p.adjust(numeric_p_value, method = \"BH\") # Сохраняем сырые значения
+    )
+} else {
+  final_results <- final_results %>%
+    mutate(raw_adj_p_value = numeric_p_value) # Без корректировки
+}
+
+# Форматирование p-value и adjusted p-value
+final_results <- final_results %>%
+  mutate(
+    p.value = ifelse(
+      is.na(numeric_p_value), \"N.A.\",
+      ifelse(numeric_p_value < 0.001, \"<0.001\", format(round(numeric_p_value, 3), nsmall = 3))
+    ),
+    adj_p_value = ifelse(
+      is.na(raw_adj_p_value), \"N.A.\",
+      ifelse(raw_adj_p_value < 0.001, \"<0.001\", format(round(raw_adj_p_value, 3), nsmall = 3))
+    )
+  )
+
+# Удаляем временные колонки
+final_results <- final_results %>%
+  select(-numeric_p_value, -raw_adj_p_value)
+
+
+  return(final_results)
+}
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+analyze_time_dependent_cox <- function(data, start, stop, event, main_covariates, additional_covariates) {
+  results <- list()
+  
+  for (main_cov in main_covariates) {
+    # Формируем список переменных для проверки пропусков
+    all_covariates <- c(main_cov, additional_covariates)
+    
+    # Фильтрация данных без пропусков
+    complete_data <- data %>%
+      filter(if_all(all_of(all_covariates), ~ !is.na(.))) # Убираем строки с NA в ковариатах
+    
+    # Подсчет общего количества пациентов и событий
+    total_complete <- complete_data %>%
+      summarise(
+        Total_N = n_distinct(USUBJID), # Уникальное количество пациентов
+        Total_Events = sum(as.integer(!!sym(event)), na.rm = TRUE) # Общее количество событий
+      )
+    
+    # Формируем формулу модели
+    if (length(additional_covariates) > 0) {
+      formula <- as.formula(paste0(
+        \"Surv(\", start, \", \", stop, \", \", event, \") ~ \", 
+        main_cov, 
+        \" + \", 
+        paste(additional_covariates, collapse = \" + \")
+      ))
+    } else {
+      formula <- as.formula(paste0(
+        \"Surv(\", start, \", \", stop, \", \", event, \") ~ \", 
+        main_cov
+      ))
+    }
+    
+    print(formula)
+    
+    # Строим модель Кокса
+    model <- tryCatch({
+      coxph(formula, data = complete_data, id = USUBJID)
+    }, error = function(e) NULL)
+    print(model)
+    # Если модель успешно построена, извлекаем результаты
+    if (!is.null(model)) {
+      broom_results <- tidy(model) %>%
+        filter(
+      term == main_cov | startsWith(term, paste0(main_cov, \"1\")) # Учитываем факторный формат
+    ) %>%
+        mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            \" (\", 
+            round(lower_95, 2), 
+            \"-\", 
+            round(upper_95, 2), 
+            \")\"
+          )
+        ) %>%
+        bind_cols(total_complete) %>% # Добавляем общее количество пациентов и событий
+        select(main_covariate = term, HR_with_CI, p.value, Total_N, Total_Events)
+    } else {
+      # Если модель не построена, вернуть N.A.
+      broom_results <- tibble(
+        main_covariate = main_cov,
+        HR_with_CI = \"N.A.\",
+        p.value = \"N.A.\",
+        Total_N = total_complete$Total_N,
+        Total_Events = total_complete$Total_Events
+      )
+    }
+    
+    results[[main_cov]] <- broom_results
+  }
+  
+  # Объединяем результаты для всех ковариат
+  final_results <- bind_rows(results)
+  # Преобразуем p-value в числовые значения (для корректировки)
+final_results <- final_results %>%
+  mutate(
+    numeric_p_value = ifelse(p.value == \"N.A.\", NA, as.numeric(p.value)) # Оставляем NA для пропусков
+  )
+
+# Применяем поправку на множественные тестирования
+if (sum(!is.na(final_results$numeric_p_value)) > 1) {
+  final_results <- final_results %>%
+    mutate(
+      raw_adj_p_value = p.adjust(numeric_p_value, method = \"BH\") # Сохраняем сырые значения
+    )
+} else {
+  final_results <- final_results %>%
+    mutate(raw_adj_p_value = numeric_p_value) # Без корректировки
+}
+
+# Форматирование p-value и adjusted p-value
+final_results <- final_results %>%
+  mutate(
+    p.value = ifelse(
+      is.na(numeric_p_value), \"N.A.\",
+      ifelse(numeric_p_value < 0.001, \"<0.001\", format(round(numeric_p_value, 3), nsmall = 3))
+    ),
+    adj_p_value = ifelse(
+      is.na(raw_adj_p_value), \"N.A.\",
+      ifelse(raw_adj_p_value < 0.001, \"<0.001\", format(round(raw_adj_p_value, 3), nsmall = 3))
+    )
+  )
+
+# Удаляем временные колонки
+final_results <- final_results %>%
+  select(-numeric_p_value, -raw_adj_p_value)
+
+
+  return(final_results)
+}
+```"

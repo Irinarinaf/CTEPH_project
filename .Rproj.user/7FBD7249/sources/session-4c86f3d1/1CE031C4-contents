@@ -1,0 +1,415 @@
+---
+title: "Datasets for imputation"
+author: "IsaevaA.S."
+date: "2025-01-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("readxl")
+library("gsheet")
+library("dplyr")
+library(tidyverse)
+library(lubridate)
+library(car)
+library(mice)
+library(reshape2)
+library(conflicted)
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("summarize", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("year", "lubridate")
+conflict_prefer("recode", "dplyr")
+```
+
+# Загрузка количественных переменных
+
+```{r chunk1}
+
+time_ind <- readRDS("data/time_independent_factors241219_full.rds")
+
+numeric_vars <- time_ind %>%
+  ungroup() %>% 
+  select(
+    matches("Num", ignore.case = TRUE) & where(is.numeric)        
+  )
+
+selected_variables <- c(
+  "BMINum1", "Test6DistNum1", "Test6ApneaBorgNum1", "Test6PulsOxBeforeNum1", 
+  "Test6PulsOxAfterNum1", "HemoglobinNum1", "BNPNum1", "BloodBHGlucoseNum1",
+  "BloodBHTotalCholesterolNum1", "BloodBHTriglyceridesNum1", "BloodBHHDLCholesterolNum1",
+  "BloodBHLDLCholesterolNum1", "BloodBHUricAcidNum1", "ECHOCGTapseNum0", 
+  "ECHOCGPPareaNum0", "ECHOCGFrontBackSizeNum1", "ECHOCGSDLANum1", 
+  "ECHOCGDZLANum0", "RHCatheterDPPmeanNum0", "RHCatheterSDLANum1", 
+  "RHCatheterDZLANum0", "RHCatheterCINum1", "RHCatheterLCCVudNum1",
+  "RHCatheterSaO2Num1", "RHCatheterSvO2Num1", "AgeNum1", "clin_det_count", "OS1", "TTCD_event", "TTCD", "OS1_CNSR"
+)
+
+
+
+# Фильтруем датасет, выбирая только нужные переменные
+numeric_vars <- time_ind %>%
+ # ungroup() %>% 
+  select(all_of(selected_variables)) %>% 
+  mutate(TTCD_event = as.factor(TTCD_event))
+
+```
+
+# Загрузка категориальных переменных
+
+```{r chunk3}
+data_cat <- readRDS("data/time_independent_factors241219_full.rds") 
+
+data_cat <- data_cat %>% 
+  select(where(is.factor)) %>% 
+  left_join(numeric_vars %>% select(USUBJID, TTCD_event), by = "USUBJID")
+
+data_cat <- data_cat %>%
+  mutate_all(~ as.character(.) %>% na_if("не знаю") %>% na_if("Не знаю")) %>% 
+   mutate_all(~ as.factor(.)) 
+
+
+```
+
+## Установка порядка категорий
+
+```{r chunk4}
+
+# Функция для задания порядка категорий
+set_ordered_factors <- function(data_cat, factors) {
+  for (factor in names(factors)) {
+    data_cat[[factor]] <- factor(data_cat[[factor]], levels = factors[[factor]], ordered = TRUE)
+  }
+  return(data_cat)
+}
+
+
+# Порядок категорий
+levels <- list(
+  SexCat0 = c('Мужской', 'Женский'),
+  MutationCat0 = c('Нет', 'Да'),
+  medHist1Cat0 = c('Нет', 'гипертоническая болезнь'),
+  medHist2Cat0 = c('Нет', 'ишемическая болезнь сердца'),
+  medHist3Cat0 = c('Нет', 'хроническая обструктивная болезнь легких'),
+  medHist4Cat0 = c('Нет', 'бронхиальная астма'),
+  medHist5Cat0 = c('Нет', 'синдром обструктивного апноэ сна'),
+  medHist6Cat0 = c('Нет', 'антифосфолипидный синдром'),
+  medHist7Cat0 = c('Нет', 'системная красная волчанка'),
+  medHist8Cat0 = c('Нет', 'СД или нарушение толерантности к глюкозе'),
+  medHist9Cat0 = c('Нет', 'ХБП 3А стадии или выше'),
+  medHist10Cat0 = c('Нет', 'ФП или ТП (любая форма)'),
+  PulHypSymp1Cat0 = c('Нет', 'одышка при физической нагрузке'),
+  PulHypSymp2Cat0 = c('Нет', 'повышенная утомляемость'),
+  PulHypSymp3Cat0 = c('Нет', 'боли в области сердца'),
+  PulHypSymp4Cat0 = c('Нет', 'головокружение'),
+  PulHypSymp5Cat0 = c('Нет', 'синкопальные состояния'),
+  PulHypSymp6Cat0 = c('Нет', 'кашель'),
+  PulHypSymp7Cat0 = c('Нет', 'кровохарканье'),
+  PulHypSymp8Cat0 = c('Нет', 'отеки ног'),
+  WHOFuncClassCat2 = c('I', 'II', 'III', 'IV'),
+  CHFDecompensationCat0 = c('Нет', 'Да'),
+  AngiopulmonographyDamageCat2 = c('легочный ствол, левая и правая легочные артерии, долевые артерии',
+                                   'сегментарные артерии',
+                                   'субсегментарные артерии'),
+  CPTECat0 = c('Нет', 'Да'),
+  CTBPACat0 = c('Нет', 'Да'),
+  ECHOCGTricRegCat0 = c('I', 'II', 'III', 'IV'),
+  ECHOCGPericEffusCat0 = c('Нет', 'Да'),
+  EnoxaparinCat0 = c('Нет', 'Да'),
+  WarfarinCat0 = c('Нет', 'Да'),
+  ApixabanCat0 = c('Нет', 'Да'),
+  RivaroxabanCat0 = c('Нет', 'Да'),
+  DabigatranCat0 = c('Нет', 'Да'),
+  DiurDrugCat0 = c('Нет', 'Да'),
+  AntiCoagDrugCat0 = c('Нет', 'Да'),
+  AgeCat1 = c('<50', '50-65', '>65'),
+  BMICat1 = c('Норма', 'Лишний вес', 'Ожирение'),
+  Test6DistCat1 = c('<300м', '300-450м', '>450м'),
+  BNPCat1 = c('<50', '50-300', '>300'),
+  WHOFuncClassCat1 = c('I/II', 'III', 'IV'),
+  BloodBHTotalCholesterolCat1 = c('Норма', 'Пограничный', 'Высокий'),
+  BloodBHTriglyceridesCat1 = c('Норма', 'Повышенный', 'Высокий'),
+  BloodBHLDLtoHDLCat1 = c('Норма', 'Повышенный', 'Высокий'),
+  BloodBHGlucoseCat1 = c('Норма', 'Преддиабет или диабет'),
+  HemoglobinCat1 = c('Норма', 'CTCAE степень 2', 'CTCAE степень 3'),
+  Test6ApneaBorgCat1 = c('легкая одышка', 'средняя или тяжелая одышка'),
+  Test6PulsOxBeforeCat1 = c('Норма', 'Снижена'),
+  Test6PulsOxAfterCat1 = c('Норма', 'Снижена'),
+  ECHOCGSDLACat1 = c('Норма', 'Умеренное нарушение', 'Тяжелое нарушение'),
+  ECHOCGFrontBackSizeCat1 = c('норма', 'увеличен'),
+  RHCatheterLCCVudCat1 = c('Норма', 'Повышен'),
+  RHCatheterSaO2Cat1 = c('Норма', 'Снижена'),
+  RHCatheterSvO2Cat1 = c('Норма', 'Снижена'),
+  RHCatheterCICat1 = c('норма', 'снижен'),
+  AngiopulmonographyDamageCat1 = c('Проксимальное поражение', 'Дистальное поражение'),
+  BloodBHUricAcidCat1 = c('Норма', 'Повышенный', 'Высокий'),
+  TTCD_event = c('0', '1')
+)
+
+#Преобразование датасета
+data_factors_ordered <- set_ordered_factors(data_cat, levels)
+
+```
+
+## Общий датасет:
+
+```{r}
+
+numeric_vars <- numeric_vars %>% 
+  mutate(TTCD_event = NULL)
+
+# Датасет для графика
+merged_data_plot <- merge(numeric_vars, data_factors_ordered, by = "USUBJID", all = TRUE) %>% 
+  ungroup()
+
+# Датасет для импутации
+merged_data <- merge(numeric_vars, data_factors_ordered, by = "USUBJID", all = TRUE) %>% 
+  ungroup() %>% 
+   select(-c(USUBJID, PulHypSymp1Cat0, WHOFuncClassCat2, BloodBHUricAcidNum1, 
+            medHist5Cat0, medHist4Cat0, medHist7Cat0, medHist6Cat0, PulHypSymp7Cat0, 
+            EnoxaparinCat0, WarfarinCat0, ApixabanCat0, RivaroxabanCat0, DabigatranCat0))
+
+```
+
+## Переименуем переменные для графиков
+
+```{r}
+
+
+
+# Удаление переменных, связанных с исходом 
+deleted_var <- c("OS1",
+                 "clin_det_count", 
+                 "TTCD_event", 
+                 "TTCD",
+                 "OS1_CNSR",
+                 "AgeCat1")
+
+merged_data_name_plot <- merged_data_plot %>%
+  select(-all_of(deleted_var))
+
+
+merged_data_name <- merged_data_name_plot %>% 
+  rename('BMI' = BMINum1,
+        '6-Min Walk Distance' = Test6DistNum1,
+        'Apnea Borg Scale' = Test6ApneaBorgNum1,
+        'Pulse Ox Before Test' = Test6PulsOxBeforeNum1,
+        'Pulse Ox After Test' = Test6PulsOxAfterNum1,
+        'Hemoglobin Level' = HemoglobinNum1,
+        'BNP Level' = BNPNum1,
+        'Blood Glucose' = BloodBHGlucoseNum1,
+        'Total Cholesterol' = BloodBHTotalCholesterolNum1,
+        'Triglycerides' = BloodBHTriglyceridesNum1,
+        'BHDL Cholesterol' = BloodBHHDLCholesterolNum1,
+        'BLDL Cholesterol' = BloodBHHDLCholesterolNum1,
+        'Uric Acid' = BloodBHUricAcidNum1,
+        'ECHO TAPSE' = ECHOCGTapseNum0,
+        'ECHO PP Area' = ECHOCGPPareaNum0,
+        'ECHO Front-Back Size' = ECHOCGFrontBackSizeNum1,
+        'ECHO SDL Area' = ECHOCGSDLANum1,
+        'ECHO DZ Area' = ECHOCGDZLANum0,
+        'DPP Mean' = RHCatheterDPPmeanNum0,
+        'SDL Area' = RHCatheterSDLANum1,
+        'DZ Area' = RHCatheterDZLANum0,
+        'Cardiac Index' = RHCatheterCINum1,
+        'LCC Volume' = RHCatheterLCCVudNum1,
+        'Arterial Oxygen Saturation' = RHCatheterSaO2Num1,
+        'Venous Oxygen Saturation' = RHCatheterSvO2Num1,
+        'Age' = AgeNum1,
+        'Sex' = SexCat0,
+        'Mutation' = MutationCat0,
+        'Hypertension' = medHist1Cat0,
+        'Ischemic heart disease' = medHist2Cat0,
+        'Chronic obstructive pulmonary disease' = medHist3Cat0,
+        'Bronchial asthma' = medHist4Cat0,
+        'Obstructive sleep apnea syndrome' = medHist5Cat0,
+        'Antiphospholipid syndrome' = medHist6Cat0,
+        'Systemic lupus erythematosus' = medHist7Cat0,
+        'Diabetes or impaired glucose tolerance' = medHist8Cat0,
+        'Chronic kidney disease stage 3A or higher' = medHist9Cat0,
+        'Atrial fibrillation or atrial flutter (any form)' = medHist10Cat0,
+        'Dyspnea on exertion' = PulHypSymp1Cat0,
+        'Increased fatigue' = PulHypSymp2Cat0,
+        'Chest pain' = PulHypSymp3Cat0,
+        'Dizziness' = PulHypSymp4Cat0,
+        'Syncope' = PulHypSymp5Cat0,
+        'Cough' = PulHypSymp6Cat0,
+        'Leg swelling' = PulHypSymp8Cat0,
+        'WHO functional class' = WHOFuncClassCat2,
+        'CHF Decompensation' = CHFDecompensationCat0,
+        'Angiopulmonography Damage' = AngiopulmonographyDamageCat2,
+        'CPTE'= CPTECat0,
+        'CTBPA' = CTBPACat0,
+        'Tricuspid regurgitation, degree' = ECHOCGTricRegCat0,
+        'Enoxaparin' = EnoxaparinCat0,
+        'Warfarin' = WarfarinCat0,
+        'Apixaban' = ApixabanCat0,
+        'Rivaroxaban' = RivaroxabanCat0,
+        'Dabigatran' = DabigatranCat0,
+        'Diuretic drug' = DiurDrugCat0,
+        'Anticoagulant therapy' = AntiCoagDrugCat0,
+        'BMI category' = BMICat1,
+        '6-Min Walk Distance category' = Test6DistCat1,
+        'BNP Level category' = BNPCat1,
+        'WHO functional class category' = WHOFuncClassCat1,
+        'Total Cholesterol category' = BloodBHTotalCholesterolCat1,
+        'Triglycerides category' = BloodBHTriglyceridesCat1,
+        'BHDL Cholesterol category' = BloodBHLDLtoHDLCat1,
+        'Uric Acid category' = BloodBHUricAcidCat1,
+        'Blood Glucose category' = BloodBHGlucoseCat1,
+        'Hemoglobin category' = HemoglobinCat1,
+        'Apnea Borg Scale category' = Test6ApneaBorgCat1,
+        'Pulse Ox Before Test category' = Test6PulsOxBeforeCat1,
+        'ECHO DZ Area category' = ECHOCGSDLACat1,
+        'ECHO Front-Back Size category' = ECHOCGFrontBackSizeCat1,
+        'LCC Volume category' = RHCatheterLCCVudCat1,
+        'Arterial Oxygen Saturation category' = RHCatheterSaO2Cat1,
+        'Venous Oxygen Saturation category' = RHCatheterSvO2Cat1,
+        'Cardiac Index category' = RHCatheterCICat1,
+        'Angiopulmonography Damage category' = AngiopulmonographyDamageCat1)
+
+
+#glimpse(merged_data_name)
+
+```
+
+## Паттерн NA для бейзлайн характеристик, собранных на начало лечения
+
+```{r, fig.height=40, fig.width=60, , error = FALSE, warning = FALSE}
+
+options(max.print = 10000) 
+invisible(mice::md.pattern(merged_data_plot))
+```
+
+## Общий % NA
+
+```{r}
+(sum(is.na(merged_data)) / (nrow(merged_data) * ncol(merged_data))) * 100
+```
+
+## Распределение NA по переменным
+
+```{r, fig.height=10, fig.width=10}
+
+
+
+# Тип переменной
+variable_types <- sapply(merged_data_name, function(x) {
+  if (is.numeric(x)) {
+    return('numeric')
+  } else {
+    return('factor')
+  }
+})
+
+
+miss_merged_data <- naniar::miss_var_summary(merged_data_name) %>% 
+  mutate(Type = variable_types[variable])
+
+
+pot_NA_var <- ggplot(miss_merged_data, aes(x = reorder(variable, pct_miss), y = pct_miss, fill = Type)) +
+  geom_bar(stat = "identity", alpha = .7) +
+  coord_flip() +
+  geom_hline(yintercept = 50, linetype = "dashed", color = "red", size = 1) + 
+  theme_minimal() +
+  labs(x = "Variables", y = "% Missings", title = "Percentage of Missings in Variables") +
+  scale_fill_manual(values = c("factor" = "#31a354", "numeric" = "#756bb1")) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+pot_NA_var
+
+```
+
+## Распределение NA по пациентам
+
+```{r, fig.height=10, fig.width=10}
+
+merged_data_plot_na <- merged_data_plot %>%
+  mutate(NA_Count = rowSums(is.na(.))) %>%
+  mutate(Percentage = (NA_Count / ncol(.)) * 100) %>%
+  select(USUBJID, NA_Count, Percentage) %>%
+  arrange(Percentage)  
+
+plot_NA_ID <- ggplot(merged_data_plot_na, aes(x = Percentage, y = reorder(USUBJID, Percentage))) +
+  geom_segment(aes(x = 0, xend = Percentage, yend = USUBJID), color = "black") +  
+  geom_point(size = 3, color = "black", alpha = .5) +
+  labs(title = "Percentage of NA Values for Each Patient (USUBJID)",
+       x = "% Missings",
+       y = "Patient (USUBJID)") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 8)) +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  geom_vline(xintercept = 50, linetype = "dashed", color = "red", size = 1) 
+
+plot_NA_ID
+
+```
+
+# Импутация в общий датасет:
+
+```{r}
+
+# Исключаем переменные с количеством пропусков > 60%
+cleaned_data <- merged_data %>%
+  filter(rowSums(is.na(.)) <= 0.60 * ncol(merged_data))%>%
+  select(where(~ sum(is.na(.)) <= 0.60 * nrow(merged_data)))
+
+# Общее количество пропусков в датасете
+(sum(is.na(cleaned_data)) / (nrow(cleaned_data) * ncol(cleaned_data))) * 100
+
+# Вывод исключенных переменных
+na_summary <- merged_data %>%
+  summarise(across(everything(), ~ mean(is.na(.))) * 100) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "percent_na")
+
+na_list <- na_summary %>%
+  filter(percent_na >= 60) %>%
+  pull(variable)
+
+na_list
+
+# Импутация
+imp_all_60 <- mice(
+    cleaned_data, 
+    maxit = 17, 
+    m = 10, 
+    seed = 30583, 
+    printFlag = FALSE,
+    defaultMethod = c("pmm", "logreg", FALSE, "polr")
+)
+
+
+
+```
+
+## Оценка импутации:
+
+```{r, fig.height=10, fig.width=10}
+plot(imp_all_60)
+stripplot(imp_all_60, par.strip.text = list(cex = .5))
+```
+
+## Просмотр одного из вариантов импутации
+
+```{r}
+imp1 <- complete(imp_all_60, action = 1)
+imp1
+
+```
+
+# Сохранение данных импутации:
+
+```{r}
+saveRDS(imp_all_60, file = "data/imputation_result_all_60.rds")
+
+```
+
+# Сохранение графиков:
+
+```{r}
+ggsave("outputs/plot_NA_ID.png", plot = plot_NA_ID, width = 10, height = 10, dpi = 300)
+
+ggsave("outputs/pot_NA_var.png", plot = plot_NA_ID, width = 10, height = 10, dpi = 300)
+```

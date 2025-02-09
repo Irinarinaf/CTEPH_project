@@ -1,0 +1,14 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9zZXQgPC0gcmVhZFJEUyhcImRhdGEvdGltZV9pbmRlcGVuZGVudF9mYWN0b3JzMjQxMjE5X2Z1bGwucmRzXCIpXG5kYXRhX2ltcCA8LSByZWFkUkRTKFwiZGF0YS9pbXB1dGF0aW9uX3Jlc3VsdF9hbGxfNjAucmRzXCIpXG5gYGAifQ== -->
+
+```r
+data_set <- readRDS(\"data/time_independent_factors241219_full.rds\")
+data_imp <- readRDS(\"data/imputation_result_all_60.rds\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+data_set <- readRDS(\"data/time_independent_factors241219_full.rds\")
+data_imp <- readRDS(\"data/imputation_result_all_60.rds\")
+```"

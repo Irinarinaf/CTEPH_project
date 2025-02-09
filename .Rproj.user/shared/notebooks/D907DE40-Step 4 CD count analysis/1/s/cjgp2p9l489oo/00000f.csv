@@ -1,0 +1,34 @@
+"0","library(conflicted)"
+"0","library(flextable)"
+"0",""
+"0","library(htmltools)"
+"0","library(kableExtra)"
+"2","Warning:"
+"2"," package ‘kableExtra’ was built under R version 4.4.2
+"
+"0","library(knitr)"
+"2","Warning:"
+"2"," package ‘knitr’ was built under R version 4.4.2
+"
+"0","library(MASS)"
+"0","library(pscl)"
+"2","Warning:"
+"2"," package ‘pscl’ was built under R version 4.4.2
+"
+"2","Classes and Methods for R originally developed in the
+Political Science Computational Laboratory
+Department of Political Science
+Stanford University (2002-2015),
+by and under the direction of Simon Jackman.
+hurdle and zeroinfl functions by Achim Zeileis.
+"
+"0","conflict_prefer(""select"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::select over any other package.[39m
+"
+"0","conflict_prefer(""filter"", ""dplyr"")"
+"1","[38;5;232m[90m[conflicted][38;5;232m Removing existing preference.[39m
+"
+"1","[38;5;232m[90m[conflicted][38;5;232m Will prefer [1m[34mdplyr[38;5;232m[22m::filter over any other package.[39m
+"

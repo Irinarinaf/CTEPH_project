@@ -1,0 +1,6 @@
+"0","row <- readRDS('data/processed_data_19dec24.rds')  "
+"0",""
+"0","data <- row %>%"
+"0","  mutate(USUBJID = as.factor(USUBJID),"
+"0","         visit = as.factor(visit),"
+"0","         SUBVISID = as.factor(SUBVISID))"

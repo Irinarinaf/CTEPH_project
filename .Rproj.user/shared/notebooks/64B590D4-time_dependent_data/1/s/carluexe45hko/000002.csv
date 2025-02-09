@@ -1,0 +1,64 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWRkX2RydWdfdmFyaWFibGUyIDwtIGZ1bmN0aW9uKGRhdGFfaW50ZXJ2YWxzLCBkcnVnX25hbWUpIHtcbiAgXG4gICBuZXdfdmFyIDwtIHBhc3RlMChkcnVnX25hbWUsIFwiZmxcIilcbiAgIHByaW9yX3ZhciA8LSBwYXN0ZTAoXCJwcmlvclwiLCBkcnVnX25hbWUpXG4gXG4gICMg0J7QsdGK0LXQtNC40L3QtdC90LjQtSDQtNCw0L3QvdGL0YUg0Lgg0LTQvtCx0LDQstC70LXQvdC40LUg0YTQu9Cw0LPQsFxuICAgcmVzdWx0IDwtIGRhdGFfaW50ZXJ2YWxzICU+JVxuICAgICAgZ3JvdXBfYnkoVVNVQkpJRCkgJT4lXG4gICAgICAgbXV0YXRlKFxuICAgICAgICAgbiA9ICByb3dfbnVtYmVyKCksXG4gICAgICAgICAhIXN5bShuZXdfdmFyKSA6PSBOQVxuICAgICAgICkgJT4lXG4gICAgICAgbXV0YXRlKFxuICAgICAgICAgICEhc3ltKG5ld192YXIpOj0gY2FzZV93aGVuKFxuICAgICAgICAgIFBBSEMgPT0gJ9CU0LAnIH4gMCwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXG4gICAgICAgICAgISFzeW0oZHJ1Z19uYW1lKSA9PSAn0JTQsCcgfiAxLFxuICAgICAgICAgIG4gPT0gMSAmICEhc3ltKHByaW9yX3ZhcikgPT0gMSB+IDEsXG4gICAgICAgICAgbiA+IDEgfiBkcGx5cjo6bGFnKCEhc3ltKG5ld192YXIpLCBkZWZhdWx0ID0gTkFfcmVhbF8pLFxuICAgICAgICAgIFRSVUUgfiAhIXN5bShuZXdfdmFyKVxuICAgICAgICAgIClcbiAgICAgICkgJT4lXG4gICAgICBmaWxsKCEhc3ltKG5ld192YXIpLCAuZGlyZWN0aW9uID0gXCJkb3duXCIpICU+JVxuICAgICAgbXV0YXRlKCEhc3ltKG5ld192YXIpIDo9IHJlcGxhY2VfbmEoISFzeW0obmV3X3ZhciksIDApKSAlPiVcbiAgICAgIHVuZ3JvdXAoKVxuICAgXG4gICAgcmV0dXJuKHJlc3VsdClcbn1cbmBgYCJ9 -->
+
+```r
+add_drug_variable2 <- function(data_intervals, drug_name) {
+  
+   new_var <- paste0(drug_name, \"fl\")
+   prior_var <- paste0(\"prior\", drug_name)
+ 
+  # Объединение данных и добавление флага
+   result <- data_intervals %>%
+      group_by(USUBJID) %>%
+       mutate(
+         n =  row_number(),
+         !!sym(new_var) := NA
+       ) %>%
+       mutate(
+          !!sym(new_var):= case_when(
+          PAHC == 'Да' ~ 0,                               
+          !!sym(drug_name) == 'Да' ~ 1,
+          n == 1 & !!sym(prior_var) == 1 ~ 1,
+          n > 1 ~ dplyr::lag(!!sym(new_var), default = NA_real_),
+          TRUE ~ !!sym(new_var)
+          )
+      ) %>%
+      fill(!!sym(new_var), .direction = \"down\") %>%
+      mutate(!!sym(new_var) := replace_na(!!sym(new_var), 0)) %>%
+      ungroup()
+   
+    return(result)
+}
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+add_drug_variable2 <- function(data_intervals, drug_name) {
+  
+   new_var <- paste0(drug_name, \"fl\")
+   prior_var <- paste0(\"prior\", drug_name)
+ 
+  # Объединение данных и добавление флага
+   result <- data_intervals %>%
+      group_by(USUBJID) %>%
+       mutate(
+         n =  row_number(),
+         !!sym(new_var) := NA
+       ) %>%
+       mutate(
+          !!sym(new_var):= case_when(
+          PAHC == 'Да' ~ 0,                               
+          !!sym(drug_name) == 'Да' ~ 1,
+          n == 1 & !!sym(prior_var) == 1 ~ 1,
+          n > 1 ~ dplyr::lag(!!sym(new_var), default = NA_real_),
+          TRUE ~ !!sym(new_var)
+          )
+      ) %>%
+      fill(!!sym(new_var), .direction = \"down\") %>%
+      mutate(!!sym(new_var) := replace_na(!!sym(new_var), 0)) %>%
+      ungroup()
+   
+    return(result)
+}
+```"

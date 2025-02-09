@@ -1,0 +1,14 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YW1haW4gPC0gcmVhZFJEUyhcImRhdGEvcHJvY2Vzc2VkX2RhdGFfMTlkZWMyNC5yZHNcIilcbnRpbWVfaW5kIDwtIHJlYWRSRFMoXCJkYXRhL3RpbWVfaW5kZXBlbmRlbnRfZmFjdG9yczI0MTIxOV9mdWxsLnJkc1wiKSAlPiUgdW5ncm91cCgpXG5gYGAifQ== -->
+
+```r
+datamain <- readRDS(\"data/processed_data_19dec24.rds\")
+time_ind <- readRDS(\"data/time_independent_factors241219_full.rds\") %>% ungroup()
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+datamain <- readRDS(\"data/processed_data_19dec24.rds\")
+time_ind <- readRDS(\"data/time_independent_factors241219_full.rds\") %>% ungroup()
+```"

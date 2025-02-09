@@ -1,0 +1,836 @@
+"0","fixed_values <- function(ids) {"
+"0","  x <- as.tibble(matrix(,,1))"
+"0","  colnames(x) <- c(""Priormut"")"
+"0","  x0 <- x"
+"0","  for (id in ids){"
+"0","    if(id %in% data$USUBJID[data$visit == ""1""]){"
+"0","      x <-bind_rows(x, data%>% filter(visit == ""1"", USUBJID == id)%>%select(Priormut))"
+"0","    }"
+"0","    else{"
+"0","      x <-bind_rows(x, x0)"
+"0","    }"
+"0","  }"
+"0","  return(x%>%slice(-1))"
+"0","}"
+"0",""
+"0","last_visit_before_decline <- data%>%"
+"0","  filter(VisitDate <= OS1_startdt)%>%"
+"0","  group_by(USUBJID)%>%"
+"0","  summarise(max_vis = max(visit))%>%"
+"0","  ungroup()%>%"
+"0","  mutate(name_vis = paste(USUBJID, max_vis, sep = ""_""))"
+"0",""
+"0","names <- last_visit_before_decline$name_vis"
+"0",""
+"0",""
+"0","anticoag_drugs_names <- c(""Enoxaparin"", ""Warfarin"", ""Apixaban"", ""Rivaroxaban"", ""Dabigatran"")"
+"0","diur_drugs_names <- c(""Furosemide"", ""Torasemide"", ""Indapamide"", ""Hydrochlorthiazide"", ""Spironolactone"", ""Eplerenone"", ""Diacarb"")"
+"0",""
+"0","data_surv <- data%>%"
+"0","  mutate(Priormut = fixed_values(USUBJID)$Priormut)%>%"
+"0","  filter(SUBVISID %in% names)%>%"
+"0","  select(USUBJID, visit, VisitDate, btdt, "
+"0","         OS1_startdt, TTCD_CNSR, TTCD, OS1_CNSR, OS1, TTCDdt, TTCD_event, "
+"0","         last_visit, first_visit, deathdt, min_trtdt, lastalivedt, "
+"0","         death_visits, clin_det_count, first_clin_detdt, clin_det_rate, is_worsening,"
+"0","         DateTPE, BPAdate, sex, Priormut,  WeightEnd, BMISEnd, starts_with(""medHist""), starts_with(""PulHypSymp""), WHOFuncClass, starts_with(""Test6""), CHFDecompensation, Hemoglobin, pro_BNP, BNP, starts_with(""BloodBH""), AngiopulmonographyDamage, CPTE, CTBPA, starts_with(""ECHOCG""), starts_with(""RHCatheter""), anticoag_drugs_names, diur_drugs_names, initBPA, initLAG, initTPE, priorBPA, priorTPE, priorLAG)%>%"
+"0","  select(!c(""medHistOther"", ""RHCatheterDate"", ""RHCatheterAccess"", ""RHCatheterCVMethod"", ""RHCatheterLCC"", ""RHCatheterILCC""))%>%"
+"0","  mutate(Age = as.numeric(difftime(OS1_startdt, btdt, units = ""days""))/ 30.4375 / 12,  "
+"0","         Event_decrease = 1-TTCD_CNSR,"
+"0","         Time_to_decrease = TTCD,"
+"0","         Event_death = 1-OS1_CNSR,"
+"0","         Time_to_death  = OS1,"
+"0","         Priormut = ifelse(Priormut == ""Не знаю"",  NA, as.character(Priormut)),"
+"0","         diur_drugs = ifelse(Furosemide == ""Да"" | Torasemide == ""Да"" | Indapamide == ""Да"" | Hydrochlorthiazide  == ""Да"" | Spironolactone == ""Да"" | Eplerenone == ""Да"" | Diacarb == ""Да"", ""Да"", ""Нет""),"
+"0","         anticoag_drugs = ifelse(Enoxaparin == ""Да"" |Warfarin == ""Да"" |Apixaban == ""Да"" |Rivaroxaban == ""Да"" |Dabigatran == ""Да"", ""Да"", ""Нет"")"
+"0","         )%>%"
+"0","  select(!c(diur_drugs_names))"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"1","[38;5;232mAdding missing grouping variables: `USUBJID`[39m
+"
+"0","data_surv <- data_surv%>%"
+"0","  mutate(all_operations = operation_class(USUBJID, BPE_TPE_names, TPEnames, BPAnames))%>%"
+"0","  mutate(medHist1 = ifelse(is.na(medHist1), ""Нет"", as.character(medHist1)),"
+"0","           medHist2 = ifelse(is.na(medHist2), ""Нет"", as.character(medHist2)),"
+"0","           medHist3 = ifelse(is.na(medHist3), ""Нет"", as.character(medHist3)),"
+"0","           medHist4 = ifelse(is.na(medHist4), ""Нет"", as.character(medHist4)),"
+"0","           medHist5 = ifelse(is.na(medHist5), ""Нет"", as.character(medHist5)),"
+"0","           medHist6 = ifelse(is.na(medHist6), ""Нет"", as.character(medHist6)),"
+"0","           medHist7 = ifelse(is.na(medHist7), ""Нет"", as.character(medHist7)),"
+"0","           medHist8 = ifelse(is.na(medHist8), ""Нет"", as.character(medHist8)),"
+"0","           medHist9 = ifelse(is.na(medHist9), ""Нет"", as.character(medHist9)),"
+"0","           medHist10 = ifelse(is.na(medHist10), ""Нет"", as.character(medHist10)),"
+"0","         anticoag_drugs = ifelse(is.na(anticoag_drugs), ""Нет"", as.character(anticoag_drugs)),"
+"0","         diur_drugs = ifelse(is.na(diur_drugs), ""Нет"", as.character(diur_drugs)),)"
+"0",""
+"0",""
+"0","#data_surv <- data_surv%>%"
+"0","  #mutate(DateTPE = ifelse(DateTPE < VisitDate, NA, as.character(DateTPE)),"
+"0","         #BPAdate = ifelse(BPAdate < VisitDate, NA, as.character(BPAdate)),"
+"0","         #start_treatment = ifelse(is.na(DateTPE),ifelse(is.na(BPAdate), ""drugs"", ""BPA""), ""TPE""))"
+"0",""
+"0",""
+"0","saveRDS(data_surv, ""./data/time_independent_factors241219.rds"")"

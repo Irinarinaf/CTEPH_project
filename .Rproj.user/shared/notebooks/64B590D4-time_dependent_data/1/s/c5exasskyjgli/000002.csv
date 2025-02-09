@@ -1,0 +1,34 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YV9zdW1tYXJ5IDwtIGRhdGFtYWluICU+JSBmaWx0ZXIgKCFpcy5uYShPUzFfc3RhcnRkdCkpICU+JVxuICBncm91cF9ieShVU1VCSklEKSAlPiVcbiAgc3VtbWFyaXplKFxuICAgIFRQRSA9IHNhZmVfbWluKERhdGVUUEUpLFxuICAgIEJQQWNvdW50ID0gc3VtKCFpcy5uYShCUEFkYXRlKSksXG4gICAgVFBFY291bnQgPSBzdW0oIWlzLm5hKERhdGVUUEUpKSxcbiAgICBMQUdjb3VudCA9IHN1bSghaXMubmEobWluX0xBR2R0KSksXG4gICAgQlBBc3ViZmwgPSBhbnkoIWlzLm5hKEJQQWRhdGUpKSxcbiAgICBUUEVzdWJmbCA9IGFueSghaXMubmEoRGF0ZVRQRSkpLFxuICAgIExBR3N1YmZsID0gYW55KCFpcy5uYShtaW5fTEFHZHQpKSxcbiAgICB0cmVhdGVkID0gYW55KEJQQXN1YmZsIHwgVFBFc3ViZmwgfCBMQUdzdWJmbClcbiAgKVxuYGBgIn0= -->
+
+```r
+data_summary <- datamain %>% filter (!is.na(OS1_startdt)) %>%
+  group_by(USUBJID) %>%
+  summarize(
+    TPE = safe_min(DateTPE),
+    BPAcount = sum(!is.na(BPAdate)),
+    TPEcount = sum(!is.na(DateTPE)),
+    LAGcount = sum(!is.na(min_LAGdt)),
+    BPAsubfl = any(!is.na(BPAdate)),
+    TPEsubfl = any(!is.na(DateTPE)),
+    LAGsubfl = any(!is.na(min_LAGdt)),
+    treated = any(BPAsubfl | TPEsubfl | LAGsubfl)
+  )
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+data_summary <- datamain %>% filter (!is.na(OS1_startdt)) %>%
+  group_by(USUBJID) %>%
+  summarize(
+    TPE = safe_min(DateTPE),
+    BPAcount = sum(!is.na(BPAdate)),
+    TPEcount = sum(!is.na(DateTPE)),
+    LAGcount = sum(!is.na(min_LAGdt)),
+    BPAsubfl = any(!is.na(BPAdate)),
+    TPEsubfl = any(!is.na(DateTPE)),
+    LAGsubfl = any(!is.na(min_LAGdt)),
+    treated = any(BPAsubfl | TPEsubfl | LAGsubfl)
+  )
+```"

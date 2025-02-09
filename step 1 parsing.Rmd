@@ -1,0 +1,1060 @@
+---
+title: "Data preprocessing, step 1"
+author: "Irina, Maria, Arina"
+date: "2024-11-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("readxl")
+library("gsheet")
+library("dplyr")
+library(tidyverse)
+library(conflicted)
+library(tidyverse)
+library(MASS)
+
+# Resolve function conflicts (prefer tidyverse over MASS)
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("summarize", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("year", "lubridate")
+```
+
+```{r}
+
+#Helping functions
+safe_max <- function(x) {
+  if (all(is.na(x))) NA else max(x, na.rm = TRUE)
+}
+
+safe_min <- function(x) {
+  if (all(is.na(x))) NA else min(x, na.rm = TRUE)
+}
+```
+
+# Upload of raw data and processing using specification
+
+```{r, message=FALSE}
+
+#Extraction of data type and new column names
+colnames1 <- gsheet2tbl('https://docs.google.com/spreadsheets/d/1qYlm1F1jRJb4lskIHXwyY3x6euskjHvVuWbH-WX5JT0/edit?gid=1236758243#gid=1236758243')
+v1_names <- colnames1$newname[1:534]
+v1_types <- colnames1$ColTypes[1:534]
+
+#First visit data
+v1 <- read_excel('data/CTEPH_1_18.xlsx', sheet = "Визит 1", col_names = v1_names, col_types = v1_types, range = "A4:TN100")%>%
+  mutate(visit = "1")%>%
+  filter(!is.na(USUBJID))
+
+colnames2_20 <- gsheet2tbl('https://docs.google.com/spreadsheets/d/1qYlm1F1jRJb4lskIHXwyY3x6euskjHvVuWbH-WX5JT0/edit?gid=1587234806#gid=1587234806')
+v2_20_names <- colnames2_20$newname[1:312]
+v2_20_types <- colnames2_20$ColTypes[1:312]
+
+#Dataset for data from visits 2-20
+sheets <- excel_sheets('data/CTEPH_1_18.xlsx')
+
+v2_20merged <- read_excel('data/CTEPH_1_18.xlsx', sheet = "Визит 2", col_names = v2_20_names, col_types = v2_20_types,  range = "A4:KZ100")%>%
+  mutate(visit = "2")%>%
+  filter(!is.na(USUBJID))
+
+for (i in 3:length(sheets)) {
+  newv <- read_excel('data/CTEPH_1_18.xlsx', sheet = sheets[i], col_names = v2_20_names, col_types = v2_20_types,  range = "A4:KZ100")%>%
+  mutate(visit = as.character(i))%>%
+  filter(!is.na(USUBJID))
+  v2_20merged <- bind_rows(v2_20merged, newv)
+}
+```
+
+## Processing of factor variables
+
+```{r, message=FALSE}
+process_code_column <- function(column, codes) {
+  #browser()
+  split_codes <- strsplit(codes, split = "%")
+  
+  levels <- sapply(split_codes, function(x) if (length(x) >= 2) x[1] else NA)  
+  labels <- sapply(split_codes, function(x) if (length(x) >= 2) x[2] else NA) 
+  
+  valid_entries <- !is.na(levels) & !is.na(labels)
+  levels <- levels[valid_entries]
+  labels <- labels[valid_entries]
+  
+  levels <- as.character(levels)
+  labels <- as.character(labels)
+  
+  result <- factor(column, levels = levels, labels = labels)
+  return(result)
+}
+```
+
+## First visit data parsing
+
+```{r, message=FALSE}
+data_colnames1 <-  colnames1
+
+factor_var1<- data_colnames1$newname[!is.na(data_colnames1$code1)]
+
+data_v1_final <- v1 %>%
+  mutate(across(all_of(factor_var1), as.character)) %>%
+  mutate(across(all_of(factor_var1), ~ gsub(".0+$", "",.x))) %>%
+  # Recoding
+  mutate(across(
+    all_of(factor_var1),
+   ~ process_code_column(., 
+        codes = c(
+          data_colnames1$code1[data_colnames1$newname == cur_column()],
+          data_colnames1$code2[data_colnames1$newname == cur_column()],
+          data_colnames1$code3[data_colnames1$newname == cur_column()],
+          data_colnames1$code4[data_colnames1$newname == cur_column()],
+          data_colnames1$code5[data_colnames1$newname == cur_column()],
+          data_colnames1$code6[data_colnames1$newname == cur_column()],
+          data_colnames1$code7[data_colnames1$newname == cur_column()]
+          # Need to add more code columns if required
+        ))
+  ))
+
+
+zero_to_na <- function(column) {
+  return(as.numeric(ifelse(column == 0, NA, column)))
+}
+
+dosenames1 <- colnames(data_v1_final%>%
+           select(ends_with("Dose")))
+
+drugnames1 <- str_sub(dosenames1, end=-5)
+
+notzerovalues <- c("height",
+"WeightStart",
+"WeightEnd",
+"Test6Dist",
+"Test6PulsOxBefore",
+"Test6PulsOxAfter",
+"Hemoglobin",
+"pro_BNP",
+"BNP",
+"BloodBHGlucose",
+"BloodBHTotalCholesterol",
+"BloodBHTriglycerides",
+"BloodBHHDLCholesterol",
+"BloodBHLDLCholesterol",
+"BloodBHUricAcid",
+"ECHOCGTapse",
+"ECHOCGPParea",
+"ECHOCGApicalSize",
+"ECHOCGFrontBackSize",
+"ECHOCGSDLA",
+"ECHOCGmeanDLA",
+"ECHOCGDZLA",
+"RHCatheterDPPmean",
+"RHCatheterSDLA",
+"RHCatheterDDLA",
+"RHCathetermeanDLA",
+"RHCatheterDZLA",
+"RHCatheterCV",
+"RHCatheterCI",
+"RHCatheterCVMethod",
+"RHCatheterLCC",
+"RHCatheterLCCVud",
+"RHCatheterOLCC",
+"RHCatheterILCC",
+"RHCatheterSaO2",
+"RHCatheterSvO2",
+"SSPBPA",
+"avaragePBPA",
+"PVRBPA",
+"PVRWoodBPA",
+"TPVRBPA",
+"IPVRBPA",
+"SSPTPE",
+"avaregePTPE",
+"PVRTPE",
+"PVRWoodTPE",
+"TPVRTPE",
+"IPVRTPE",
+"NumCyl"
+)
+
+data_v1_final <- data_v1_final%>%
+  mutate(across(all_of(dosenames1), ~  zero_to_na(.)))%>%
+  mutate(across(all_of(notzerovalues), ~  zero_to_na(.)))%>%
+  mutate(SUBVISID = paste(USUBJID, visit, sep = "_"),
+         WeightEnd = ifelse(is.na(WeightEnd), WeightStart, WeightEnd),
+         BMIStart = round(WeightStart/height/height*10000, 1),
+         BMISEnd = round(WeightEnd/height/height*10000, 1),
+         AgeInc = as.numeric(incdt - btdt)/365.25,
+         RHCatheterLCCVud = RHCatheterLCC/80,
+         BloodBHLDLCholesterol = BloodBHTotalCholesterol - BloodBHHDLCholesterol - BloodBHTriglycerides/2.2,
+         PVRWoodBPA = PVRBPA/80,
+         PVRWoodTPE = PVRTPE/80)%>%
+  select(-c(DROP, n))%>%
+  select(USUBJID, visit, SUBVISID,  AgeInc,  everything())
+
+data_v1_final <- data_v1_final%>%
+  mutate(PriorApixaban = ifelse(PriorApixabanDose > 0, "да", PriorApixaban))
+
+```
+
+### Data for drugs
+
+```{r, eval=FALSE, echo=FALSE}
+x1 <- data_v1_final%>%
+  select(dosenames1)%>%
+  summarise_all(~ sum(is.na(.)))%>%
+  pivot_longer(everything(), values_to = "dose")
+
+
+x2 <- data_v1_final%>%
+  select(drugnames1)%>%
+  summarise_all(~ sum(is.na(.)))%>%
+  pivot_longer(everything(), values_to = "factor", names_to = "Drug")
+
+bind_cols(x1, x2)%>%
+  mutate(wrong = dose - factor)%>%
+  arrange(wrong)
+```
+
+## Visits 2-20 data parsing
+
+```{r}
+colnames2_20<- gsheet2tbl('https://docs.google.com/spreadsheets/d/1qYlm1F1jRJb4lskIHXwyY3x6euskjHvVuWbH-WX5JT0/edit?gid=1587234806#gid=1587234806')
+
+colnames(v2_20merged) <- colnames2_20$newname
+
+data_colnames2_20 <-  colnames2_20
+
+factor_var2_20 <- data_colnames2_20$newname[!is.na(data_colnames2_20$code1)]
+
+data_v2_20merged_final <- v2_20merged %>%
+  mutate(across(all_of(factor_var2_20), as.character)) %>%
+  mutate(across(all_of(factor_var2_20), ~ gsub(".0+$", "",.x))) %>%
+#  mutate(across(all_of(num_var2_20), as.numeric)) %>%
+  # recoding
+  mutate(across(all_of(factor_var2_20),
+   ~ process_code_column(., 
+        codes = c(
+          data_colnames2_20$code1[data_colnames2_20$newname == cur_column()],
+          data_colnames2_20$code2[data_colnames2_20$newname == cur_column()],
+          data_colnames2_20$code3[data_colnames2_20$newname == cur_column()],
+          data_colnames2_20$code4[data_colnames2_20$newname == cur_column()],
+          data_colnames2_20$code5[data_colnames2_20$newname == cur_column()],
+          data_colnames2_20$code6[data_colnames2_20$newname == cur_column()],
+          data_colnames2_20$code7[data_colnames2_20$newname == cur_column()]
+          # add more codes if required
+        ))
+  ))
+
+dosenames2 <- colnames(data_v2_20merged_final%>%
+           select(ends_with("Dose")))
+
+drugnames2 <- str_sub(dosenames2, end=-5)
+
+data_v2_20merged_final <- data_v2_20merged_final %>%
+  mutate(across(all_of(dosenames2), ~  zero_to_na(.)))%>%
+  mutate(across(all_of(notzerovalues), ~  zero_to_na(.)))%>%
+  mutate(SUBVISID = paste(USUBJID, visit, sep = "_"),
+         WeightEnd = ifelse(is.na(WeightEnd), WeightStart, WeightEnd),
+         BMIStart = round(WeightStart/height/height*10000, 1),
+         BMISEnd = round(WeightEnd/height/height*10000, 1),
+         RHCatheterLCCVud = RHCatheterLCC/80,
+         BloodBHLDLCholesterol = BloodBHTotalCholesterol - BloodBHHDLCholesterol - BloodBHTriglycerides/2.2,
+         RHCatheterDate = ifelse(RHCatheterDate == 0, NA, RHCatheterDate),
+         RHCatheterDate = as.Date(RHCatheterDate, origin = "1899-12-30"),
+         PVRWoodBPA = PVRBPA/80,
+         PVRWoodTPE = PVRTPE/80
+         )%>%
+  select(-c(DROP, n))%>%
+  select(USUBJID, visit, SUBVISID,  everything())
+
+data_v2_20merged_final%>%
+  select(SUBVISID, BPAinstit)%>%
+  arrange(BPAinstit)
+```
+
+## Merge data for visit 1 and 2-20
+
+```{r}
+v_all <- bind_rows(data_v1_final, data_v2_20merged_final)
+
+colnames(v_all)[8:28] <- str_c("Prior", colnames(v_all%>% select(8:28)))
+colnames(v_all)[534:539] <- str_c("Between", colnames(v_all%>% select(534:539)))
+
+fixed_values <- function(ids) {
+  x <- as_tibble(matrix(,,3))
+  colnames(x) <- c("sex", "incdt", "btdt")
+  x0 <- x
+  for (id in ids){
+    if(id %in% data_v1_final$USUBJID){
+      x <-bind_rows(x, data_v1_final%>% filter(USUBJID == id)%>%select(sex, incdt, btdt))
+    }
+    else{
+      x <-bind_rows(x, x0)
+    }
+  }
+  return(x%>%slice(-1))
+}
+
+v_all <- v_all%>%
+  mutate(sex = fixed_values(USUBJID)$sex,
+         incdt = fixed_values(USUBJID)$incdt,
+         btdt = fixed_values(USUBJID)$btdt,
+         AgeInc = as.numeric(incdt - btdt)/365.25,
+         DBLDT = as.Date(as.POSIXct("2024-12-19 00:00:00", format = "%Y-%m-%d %H:%M:%S")))
+
+write.table(v_all, file = "./data/collected_data_241219.csv", row.names = FALSE, sep = ";", fileEncoding = "UTF-8")
+
+saveRDS(v_all, file = "./data/collected_data_241219.rds")
+```
+
+# Adding variables required for analysis
+
+Description of initial and newly addded variables you can find in specification <https://docs.google.com/spreadsheets/d/1qYlm1F1jRJb4lskIHXwyY3x6euskjHvVuWbH-WX5JT0/edit?usp=drive_link>
+
+## First dose of drugs
+
+```{r}
+
+first_tablet_date <- add_start_date <- function(data, tablet_name) {
+ 
+  start_date_col <- paste0(tablet_name, "Startdt")
+  prior_start_date_col <- paste0("Prior", tablet_name, "Startdt")
+  prior_tablet <- paste0("Prior", tablet_name)
+  
+  
+  if (start_date_col %in% colnames(data)) {
+    message(paste("Колонка", start_date_col, "уже существует в датасете. Добавление пропущено."))
+    return(data)
+  }
+  
+ 
+ summarized_data <- data %>%
+  select(
+    USUBJID, VisitDate, visit,
+    !!sym(prior_start_date_col), !!sym(tablet_name),
+     !!sym(prior_tablet)
+  ) %>%
+  group_by(USUBJID) %>%
+  mutate(
+   
+    temp_start_date = case_when(
+      visit == 1 & !is.na(!!sym(prior_start_date_col)) ~ as.Date(!!sym(prior_start_date_col)), # Если prior_start_date_col есть на первом визите
+      visit == 1 & is.na(!!sym(prior_start_date_col)) & !!sym(prior_tablet) == "Да" ~ as.Date(VisitDate), # Если prior_start_date_col нет, но есть prior_tablet = "Да"
+      visit == 1 & is.na(!!sym(prior_start_date_col)) & is.na(!!sym(prior_tablet)) & !!sym(tablet_name) == "Да" ~ as.Date(VisitDate), 
+      TRUE ~ NA_Date_ 
+    ),
+   
+    temp_start_date = if_else(
+      visit != 1 & is.na(temp_start_date) & !!sym(tablet_name) == "Да",
+      as.Date(VisitDate),
+      temp_start_date
+    )
+  ) %>%
+    summarize(
+      !!sym(start_date_col) := safe_min(temp_start_date),
+      .groups = "drop"
+    )
+  
+  data <- data %>%
+    left_join(summarized_data, by = "USUBJID")
+  
+  return(data)
+}
+```
+
+## Start of drug treatment date
+
+```{r}
+#debug(first_tablet_date)
+v_all <- first_tablet_date(v_all, 'Sildenafil')
+v_all <- first_tablet_date(v_all, 'Riociguat')
+v_all <- first_tablet_date(v_all, 'Iloprost')
+v_all <- first_tablet_date(v_all, 'Selexipag')
+v_all <- first_tablet_date(v_all, 'Bozentan')
+v_all <- first_tablet_date(v_all, 'Ambrisentan')
+v_all <- first_tablet_date(v_all, 'Macitentan')
+v_all <- first_tablet_date(v_all, 'Enoxaparin')
+v_all <- first_tablet_date(v_all, 'Warfarin')
+v_all <- first_tablet_date(v_all, 'Apixaban')
+v_all <- first_tablet_date(v_all, 'Rivaroxaban')
+v_all <- first_tablet_date(v_all, 'Dabigatran')
+v_all <- first_tablet_date(v_all, 'Other')
+v_all <- first_tablet_date(v_all, 'Furosemide')
+v_all <- first_tablet_date(v_all, 'Torasemide')
+v_all <- first_tablet_date(v_all, 'Indapamide')
+v_all <- first_tablet_date(v_all, 'Hydrochlorthiazide')
+v_all <- first_tablet_date(v_all, 'Spironolactone')
+v_all <- first_tablet_date(v_all, 'Eplerenone')
+v_all <- first_tablet_date(v_all, 'Diacarb')
+v_all <- first_tablet_date(v_all, 'Diltiazem')
+v_all <- first_tablet_date(v_all, 'Nifedipine')
+v_all <- first_tablet_date(v_all, 'Amlodipine')
+v_all <- first_tablet_date(v_all, 'Verapamil')
+v_all <- first_tablet_date(v_all, 'Digoxin')
+
+#test4 <- v_all %>% select(USUBJID, VisitDate, PriorSildenafil, PriorSildenafilStartdt, Sildenafil, SildenafilStartdt)
+```
+
+## Overall survival
+
+```{r}
+
+last_visits <- v_all %>% 
+  group_by(USUBJID) %>% 
+  summarise(last_visit = safe_max(VisitDate),
+            first_visit = safe_min(VisitDate)) %>% 
+  ungroup()
+
+v_all <- left_join(v_all, last_visits, by = "USUBJID")
+
+
+v_all <- v_all %>%
+  group_by(USUBJID) %>%
+  mutate(deathdt = as.Date(first(na.omit(BetweenDateExcept)))) %>%
+  ungroup()
+
+test3 <- v_all %>% select(USUBJID, visit, deathdt)
+
+date_curve0 <- v_all %>%
+  group_by(USUBJID) %>%
+  summarize(
+    min_trtdt = safe_min(c_across(c(
+      SildenafilStartdt, RiociguatStartdt, IloprostStartdt, SelexipagStartdt,
+      BozentanStartdt, AmbrisentanStartdt, MacitentanStartdt, DateTPE, BPAdate
+    ))),
+     min_LAGdt = safe_min(c_across(c(
+      SildenafilStartdt, RiociguatStartdt, IloprostStartdt, SelexipagStartdt,
+      BozentanStartdt, AmbrisentanStartdt, MacitentanStartdt
+    ))),
+    OS1_startdt = safe_max(c_across(c(min_trtdt, first_visit)))
+  ) %>%
+  ungroup()
+
+
+Data_new1 <- left_join(v_all, date_curve0, by = "USUBJID")
+#%>%  select (USUBJID, min_trtdt, first_visit, VisitDate, OS1_startdt, BPAdate, DateTPE, SildenafilStartdt, RiociguatStartdt, IloprostStartdt, SelexipagStartdt, BozentanStartdt, AmbrisentanStartdt, MacitentanStartdt)
+
+date_cols <- Data_new1 %>%
+  select(USUBJID, matches("(?i)(dt|Date|date)"), -PVRWoodTPE) %>%
+  mutate(across(matches("(?i)(dt|Date|date)"), ~ as.Date(., origin = "1970-01-01")))
+
+#last known date alive
+
+last_alive <- date_cols %>%
+  rowwise() %>%
+  group_by(USUBJID) %>%
+  mutate(max_value_row = safe_max(c_across(everything()))) %>%
+  summarise(last_alive = safe_max(max_value_row),
+    initBPA = if_else(any(!is.na(BPAdate) & as.Date(BPAdate) >= as.Date(OS1_startdt) & as.Date(BPAdate) <= as.Date(OS1_startdt) + 31), 1, 0),
+    initTPE = if_else(any(!is.na(DateTPE) & as.Date(DateTPE) >= as.Date(OS1_startdt) & as.Date(DateTPE) <= as.Date(OS1_startdt) + 31), 1, 0),
+    priorBPA = if_else(any(!is.na(BPAdate) & as.Date(BPAdate) <= as.Date(OS1_startdt) + 31), 1, 0),
+    priorTPE = if_else(any(!is.na(DateTPE) & as.Date(DateTPE) <= as.Date(OS1_startdt) + 31), 1, 0),
+    initLAG = if_else(any(!is.na(min_LAGdt) & as.Date(min_LAGdt) == as.Date(OS1_startdt)), 1, 0),
+    priorLAG = if_else(any(!is.na(min_LAGdt) & as.Date(min_LAGdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorSildenafil = if_else(any(!is.na(SildenafilStartdt) & as.Date(SildenafilStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorRiociguat = if_else(any(!is.na(RiociguatStartdt) & as.Date(RiociguatStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorIloprost = if_else(any(!is.na(IloprostStartdt) & as.Date(IloprostStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorSelexipag = if_else(any(!is.na(SelexipagStartdt) & as.Date(SelexipagStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorBozentan = if_else(any(!is.na(BozentanStartdt) & as.Date(BozentanStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorAmbrisentan = if_else(any(!is.na(AmbrisentanStartdt) & as.Date(AmbrisentanStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    priorMacitentan = if_else(any(!is.na(MacitentanStartdt) & as.Date(MacitentanStartdt) <= as.Date(OS1_startdt)), 1, 0),
+    .groups = "drop"
+  ) %>%
+  mutate(lastalivedt = if_else(last_alive == -Inf | last_alive == Inf, NA, last_alive)) %>%
+  select(-last_alive)
+
+
+Data_new2 <- left_join(Data_new1, last_alive, by = "USUBJID")
+
+Data_new2 <- Data_new2 %>%
+  group_by(USUBJID) %>%
+  mutate(
+    initLAG = replace_na(initLAG, 0),
+    priorLAG = replace_na(priorLAG, 0),
+    lastalivedt = safe_min(c(lastalivedt, deathdt)),
+    OS1_CNSR = if_else(is.na(deathdt), 1, 0),
+    OS1_event = 1 - OS1_CNSR,
+    OS1 = ifelse(
+      is.na(OS1_startdt) & is.na(lastalivedt),  
+      NA,
+      as.numeric(difftime(lastalivedt, OS1_startdt, units = "days"))/ 30.4375  
+    )
+  )
+
+test2 <- Data_new2 %>% select(USUBJID, VisitDate, OS1_startdt, SildenafilStartdt, RiociguatStartdt, IloprostStartdt, SelexipagStartdt, BozentanStartdt, AmbrisentanStartdt, MacitentanStartdt, initLAG, priorLAG, deathdt, lastalivedt, OS1_CNSR, OS1, initBPA, initTPE,BPAdate, DateTPE, priorBPA, priorTPE)
+```
+
+## Clinical deterioration
+
+```{r}
+symptom_names <- c(
+  "одышка при физической нагрузке",
+  "повышенная утомляемость",
+  "боли в области сердца",
+  "головокружение",
+  "синкопальные состояния",
+  "кашель",
+  "кровохарканье",
+  "отеки ног"
+)
+
+v_all$VisitDate <- as.Date(v_all$VisitDate)
+
+clin_deter0 <- Data_new2 %>% 
+  select(USUBJID, visit, VisitDate, deathdt, WHOFuncClass, Test6Dist, Test6ApneaBorg, Test6PulsOxBefore, Test6PulsOxAfter, CHFDecompensation, PulHypSymp1, PulHypSymp2, PulHypSymp3, PulHypSymp4, PulHypSymp5, PulHypSymp6, PulHypSymp7, PulHypSymp8, OS1_startdt) %>%
+  arrange(USUBJID, VisitDate) %>%
+  group_by(USUBJID) %>%
+  mutate(
+    WHOFuncClass = factor(WHOFuncClass, levels = c("I", "II", "III", "IV"), ordered = TRUE),
+    is_first_visit = row_number() == 1
+  ) %>%
+ 
+  mutate(
+    # 1. Death
+    death_event = !is.na(deathdt),
+    # 2. Increase of WHOFuncClass
+    WHO_increase = if_else(is_first_visit, FALSE, as.integer(WHOFuncClass) > as.integer(lag(WHOFuncClass))),
+    # 3. Reduction in Test6Dist
+    Test6Dist_decrease = if_else(is_first_visit, FALSE, lag(Test6Dist) - Test6Dist >= 30),
+    # 4.Increase in Test6ApneaBorg
+    Test6ApneaBorg_increase = if_else(is_first_visit, FALSE, Test6ApneaBorg - lag(Test6ApneaBorg) >= 2),
+    # 5. Saturation reduction
+    PulsOxBefore_decrease = if_else(is_first_visit, FALSE, lag(Test6PulsOxBefore) - Test6PulsOxBefore >= 3),
+    PulsOxAfter_decrease = if_else(is_first_visit, FALSE, lag(Test6PulsOxAfter) - Test6PulsOxAfter >= 3),
+    # 6. Decompensation
+    CHFDecompensation_event = if_else(is_first_visit, FALSE, CHFDecompensation == "Да" & lag(CHFDecompensation, default = "Нет") == "Нет"),
+    # 7. New disease symptoms
+    PulHypSymp1_event = if_else(is_first_visit, FALSE, PulHypSymp1 %in% symptom_names & lag(PulHypSymp1, default = "Нет") == "Нет"),
+    PulHypSymp2_event = if_else(is_first_visit, FALSE, PulHypSymp2 %in% symptom_names & lag(PulHypSymp2, default = "Нет") == "Нет"),
+    PulHypSymp3_event = if_else(is_first_visit, FALSE, PulHypSymp3 %in% symptom_names & lag(PulHypSymp3, default = "Нет") == "Нет"),
+    PulHypSymp4_event = if_else(is_first_visit, FALSE, PulHypSymp4 %in% symptom_names & lag(PulHypSymp4, default = "Нет") == "Нет"),
+    PulHypSymp5_event = if_else(is_first_visit, FALSE, PulHypSymp5 %in% symptom_names & lag(PulHypSymp5, default = "Нет") == "Нет"),
+    PulHypSymp6_event = if_else(is_first_visit, FALSE, PulHypSymp6 %in% symptom_names & lag(PulHypSymp6, default = "Нет") == "Нет"),
+    PulHypSymp7_event = if_else(is_first_visit, FALSE, PulHypSymp7 %in% symptom_names & lag(PulHypSymp7, default = "Нет") == "Нет"),
+    PulHypSymp8_event = if_else(is_first_visit, FALSE, PulHypSymp8 %in% symptom_names & lag(PulHypSymp8, default = "Нет") == "Нет"),
+    # Clinical deterioration per patient
+    clin_det = death_event | WHO_increase | Test6Dist_decrease |
+               Test6ApneaBorg_increase | PulsOxBefore_decrease |
+               PulsOxAfter_decrease | CHFDecompensation_event |
+               PulHypSymp1_event | PulHypSymp2_event | PulHypSymp3_event |
+               PulHypSymp4_event | PulHypSymp5_event | PulHypSymp6_event |
+               PulHypSymp7_event | PulHypSymp8_event
+  ) %>%
+  # Keep events only after OS1_startdt
+  filter(clin_det == TRUE & VisitDate >= OS1_startdt) %>%
+  # Adding type of event
+  mutate(
+    is_death = as.integer(death_event),
+    is_worsening = as.integer(WHO_increase | Test6Dist_decrease |
+               Test6ApneaBorg_increase | PulsOxBefore_decrease |
+               PulsOxAfter_decrease | CHFDecompensation_event |
+               PulHypSymp1_event | PulHypSymp2_event | PulHypSymp3_event |
+               PulHypSymp4_event | PulHypSymp5_event | PulHypSymp6_event |
+               PulHypSymp7_event | PulHypSymp8_event)
+  )
+
+clin_deter <- clin_deter0 %>%
+  #Number of events and date of first event
+  summarise(
+    worsening_visits = sum(is_worsening, na.rm = TRUE),
+    death_visits =  as.integer(any(is_death == 1, na.rm = TRUE)),
+    clin_det_count = sum(c(worsening_visits, death_visits), na.rm = TRUE),
+   first_clin_detdt = safe_min(
+    c(
+      if_else(is_worsening == 1, VisitDate, as.Date(NA)),
+      if_else(is_death == 1, deathdt, as.Date(NA))
+    )
+  ),
+    .groups = "drop"
+  )
+
+Data_new3 <- left_join(Data_new2, clin_deter, by = "USUBJID") %>%
+  select(-worsening_visits, death_visits)
+
+Data_new4 <- left_join(Data_new3, clin_deter0 %>% select(USUBJID, visit, is_worsening), by = c("USUBJID", "visit"))
+
+test <- Data_new4 %>% select(USUBJID, visit, is_worsening, first_clin_detdt, clin_det_count,OS1_startdt, VisitDate, deathdt, WHOFuncClass, Test6Dist, Test6ApneaBorg, Test6PulsOxBefore, Test6PulsOxAfter, CHFDecompensation, PulHypSymp1,PulHypSymp2,PulHypSymp3, PulHypSymp4,PulHypSymp5, PulHypSymp6, PulHypSymp7, PulHypSymp8)
+
+datamain <- Data_new4 %>%
+ rowwise() %>%
+ mutate(
+    clin_det_count = replace_na(clin_det_count, 0),
+    clin_det_rate = 12*clin_det_count/OS1,
+    TTCD_CNSR = if_else(is.na(first_clin_detdt), 1, 0),
+    TTCD_event = 1 - TTCD_CNSR,
+    is_worsening = replace_na(is_worsening, 0),
+    Age = floor(as.numeric(difftime(OS1_startdt, btdt, units = "days"))/ 30.4375 / 12),
+    TTCDdt = if_else(!is.na(first_clin_detdt), first_clin_detdt, lastalivedt),
+    TTCD = ifelse(
+      !is.na(OS1_startdt) & (!is.na(lastalivedt) | !is.na(first_clin_detdt)),  
+      as.numeric(
+        difftime(
+          TTCDdt,
+          OS1_startdt,
+          units = "days"
+        )
+      ) / 30.4375,
+    NA)
+  )
+
+saveRDS(datamain, file = "data/processed_data_19dec24.rds")
+
+test1 <- datamain %>%
+  mutate(dif1 = as.numeric(difftime(BPAdate, OS1_startdt, units = "days")), dif2 = as.numeric(difftime(DateTPE, OS1_startdt, units = "days"))) %>%
+   select(USUBJID, VisitDate, initBPA, initTPE, priorBPA, priorTPE, OS1_startdt, BPAdate, DateTPE, dif1,dif2, initLAG, priorLAG, is_worsening, first_clin_detdt, lastalivedt,TTCDdt, TTCD_CNSR,TTCD, deathdt,clin_det_count, OS1, clin_det_rate)
+```
+
+# Descriptive statistics
+
+```{r, fig.width= 3, fig.height = 4}
+data_summary <- datamain %>% filter(!is.na(OS1_startdt)) %>%
+  group_by(USUBJID) %>%
+  summarize(
+    death_count = any(!is.na(deathdt)),
+    TTCD_count = any(TTCD_event == 1)
+  )
+
+dem_summary <- datamain %>% 
+  filter(!is.na(OS1_startdt)) %>% 
+  group_by(USUBJID) %>% 
+  summarize(
+    sex = first(sex),  
+    age = first(Age)   
+  ) %>%
+  ungroup() %>%
+  summarize(
+    men_count = sum(sex == 'Мужской'),
+    mean_age = mean(age, na.rm = TRUE)  
+  )
+
+treatment_counts <- data_summary %>%
+  summarize(
+    'Deaths' = sum(death_count),
+    "Clinical deterioration" = sum(TTCD_count)
+  ) %>%
+  pivot_longer(cols = everything(), names_to = "Group", values_to = "Count")
+
+
+ggplot(treatment_counts, aes(x = Group, y = Count, fill = Group)) +
+  geom_bar(stat = "identity", width = 0.2) +
+  geom_text(aes(label = Count), vjust = -0.5) +
+  scale_fill_manual(values = c("Deaths" = "red", "Clinical deterioration" = "orange")) +
+  theme_minimal() +
+  labs( x = "", y = "Number of Patients") +
+  theme(legend.position = "none")
+```
+
+# Baseline factors processing
+
+```{r cars}
+data <- readRDS("./data/processed_data_19dec24.rds")
+
+xxBPA <- data%>%
+  dplyr::select(USUBJID, visit, VisitDate, DateTPE, BPAdate, OS1_startdt)%>%
+  filter(BPAdate >= OS1_startdt)%>%
+  #group_by(USUBJID)%>%
+  #summarise(minBPA = min(BPAdate))%>%
+  mutate(type = "BPA")
+
+xxTPE <- data%>%
+  dplyr::select(USUBJID, visit, VisitDate, DateTPE, BPAdate, OS1_startdt)%>%
+  filter(DateTPE >= OS1_startdt)%>%
+  #group_by(USUBJID)%>%
+  #summarise(minBPA = min(BPAdate))%>%
+  mutate(type = "TPE")
+
+BPAnames <- unique(xxBPA$USUBJID)
+TPEnames <- unique(xxTPE$USUBJID)
+
+BPE_TPE_names <- c(TPEnames, BPAnames)[duplicated(c(TPEnames, BPAnames))]
+
+TPEnames <-setdiff(TPEnames, BPE_TPE_names)
+BPAnames <-setdiff(BPAnames, BPE_TPE_names)
+
+
+operation_class <- function(id, BPE_TPE_names, TPEnames, BPAnames){
+  if(id %in% BPE_TPE_names){
+    return("both")
+  }
+  else if(id %in% TPEnames){
+    return("TPE")
+  }
+  else if(id %in% BPAnames){
+    return("BPE")
+  }
+  else{
+    return("none")
+  }
+}
+```
+
+## Interesting factors:
+
+-   Gene mutation
+
+-   Comorbidities (1-10) – at least one
+
+-   Weight
+
+-   BMI at discharge, or if unavailable, at admission
+
+-   Current symptoms (preferably listed separately)
+
+-   Functional class at the start of treatment
+
+-   Six-minute walk distance
+
+-   Borg score
+
+-   Oxygen saturation
+
+-   Signs of decompensation
+
+-   Hemoglobin
+
+-   Full blood biochemistry
+
+-   BNP
+
+-   mPAP or sPAP from catheterization or echocardiography (only one of these can be included)
+
+-   Apical or anteroposterior RV size
+
+-   Cardiac output or cardiac index
+
+-   Wood’s PVR or indexed PVR
+
+-   Both oxygen saturations
+
+-   Pulmonary angiography – level of pulmonary artery involvement
+
+-   Candidate for PEA (unknown – assessment not performed)
+
+-   Use of diuretics and anticoagulants – presence of treatment only
+
+```{r}
+fixed_values <- function(ids) {
+  x <- as.tibble(matrix(,,1))
+  colnames(x) <- c("Priormut")
+  x0 <- x
+  for (id in ids){
+    if(id %in% data$USUBJID[data$visit == "1"]){
+      x <-bind_rows(x, data%>% filter(visit == "1", USUBJID == id)%>%select(Priormut))
+    }
+    else{
+      x <-bind_rows(x, x0)
+    }
+  }
+  return(x%>%slice(-1))
+}
+
+last_visit_before_decline <- data%>%
+  filter(VisitDate <= OS1_startdt)%>%
+  group_by(USUBJID)%>%
+  summarise(max_vis = max(visit))%>%
+  ungroup()%>%
+  mutate(name_vis = paste(USUBJID, max_vis, sep = "_"))
+
+names <- last_visit_before_decline$name_vis
+
+
+anticoag_drugs_names <- c("Enoxaparin", "Warfarin", "Apixaban", "Rivaroxaban", "Dabigatran")
+diur_drugs_names <- c("Furosemide", "Torasemide", "Indapamide", "Hydrochlorthiazide", "Spironolactone", "Eplerenone", "Diacarb")
+
+data_surv <- data%>%
+  mutate(Priormut = fixed_values(USUBJID)$Priormut)%>%
+  filter(SUBVISID %in% names)%>%
+  select(USUBJID, visit, VisitDate, btdt, 
+         OS1_startdt, TTCD_CNSR, TTCD, OS1_CNSR, OS1, TTCDdt, TTCD_event, 
+         last_visit, first_visit, deathdt, min_trtdt, lastalivedt, 
+         death_visits, clin_det_count, first_clin_detdt, clin_det_rate, is_worsening,
+         DateTPE, BPAdate, sex, Priormut,  WeightEnd, BMISEnd, starts_with("medHist"), starts_with("PulHypSymp"), WHOFuncClass, starts_with("Test6"), CHFDecompensation, Hemoglobin, pro_BNP, BNP, starts_with("BloodBH"), AngiopulmonographyDamage, CPTE, CTBPA, starts_with("ECHOCG"), starts_with("RHCatheter"), anticoag_drugs_names, diur_drugs_names, initBPA, initLAG, initTPE, priorBPA, priorTPE, priorLAG)%>%
+  select(!c("medHistOther", "RHCatheterDate", "RHCatheterAccess", "RHCatheterCVMethod", "RHCatheterLCC", "RHCatheterILCC"))%>%
+  mutate(Age = as.numeric(difftime(OS1_startdt, btdt, units = "days"))/ 30.4375 / 12,  
+         Event_decrease = 1-TTCD_CNSR,
+         Time_to_decrease = TTCD,
+         Event_death = 1-OS1_CNSR,
+         Time_to_death  = OS1,
+         Priormut = ifelse(Priormut == "Не знаю",  NA, as.character(Priormut)),
+         diur_drugs = ifelse(Furosemide == "Да" | Torasemide == "Да" | Indapamide == "Да" | Hydrochlorthiazide  == "Да" | Spironolactone == "Да" | Eplerenone == "Да" | Diacarb == "Да", "Да", "Нет"),
+         anticoag_drugs = ifelse(Enoxaparin == "Да" |Warfarin == "Да" |Apixaban == "Да" |Rivaroxaban == "Да" |Dabigatran == "Да", "Да", "Нет")
+         )%>%
+  select(!c(diur_drugs_names))
+
+data_surv <- data_surv%>%
+  mutate(all_operations = operation_class(USUBJID, BPE_TPE_names, TPEnames, BPAnames))%>%
+  mutate(medHist1 = ifelse(is.na(medHist1), "Нет", as.character(medHist1)),
+           medHist2 = ifelse(is.na(medHist2), "Нет", as.character(medHist2)),
+           medHist3 = ifelse(is.na(medHist3), "Нет", as.character(medHist3)),
+           medHist4 = ifelse(is.na(medHist4), "Нет", as.character(medHist4)),
+           medHist5 = ifelse(is.na(medHist5), "Нет", as.character(medHist5)),
+           medHist6 = ifelse(is.na(medHist6), "Нет", as.character(medHist6)),
+           medHist7 = ifelse(is.na(medHist7), "Нет", as.character(medHist7)),
+           medHist8 = ifelse(is.na(medHist8), "Нет", as.character(medHist8)),
+           medHist9 = ifelse(is.na(medHist9), "Нет", as.character(medHist9)),
+           medHist10 = ifelse(is.na(medHist10), "Нет", as.character(medHist10)),
+         anticoag_drugs = ifelse(is.na(anticoag_drugs), "Нет", as.character(anticoag_drugs)),
+         diur_drugs = ifelse(is.na(diur_drugs), "Нет", as.character(diur_drugs)),)
+
+
+#data_surv <- data_surv%>%
+  #mutate(DateTPE = ifelse(DateTPE < VisitDate, NA, as.character(DateTPE)),
+         #BPAdate = ifelse(BPAdate < VisitDate, NA, as.character(BPAdate)),
+         #start_treatment = ifelse(is.na(DateTPE),ifelse(is.na(BPAdate), "drugs", "BPA"), "TPE"))
+
+
+saveRDS(data_surv, "./data/time_independent_factors241219.rds")
+```
+
+```{r}
+data_surv_new <- data_surv%>%
+  mutate(AgeCat1 = dplyr::case_when( 
+            Age < 50  ~ "<50",
+            Age >= 50 & Age <= 65 ~ "50-65",
+            Age  > 65   ~ ">65"),
+         AgeCat1 = fct_relevel(AgeCat1, "<50", "50-65", ">65"),
+         
+         BMICat1 = dplyr::case_when( 
+            BMISEnd < 25  ~ "Норма",
+            BMISEnd  >= 25 & BMISEnd < 30 ~ "Лишний вес",
+            BMISEnd  >= 30   ~ "Ожирение"),
+         BMICat1 = fct_relevel(BMICat1, "Норма", "Лишний вес", "Ожирение"),
+         
+         Test6DistCat1 = dplyr::case_when( 
+            Test6Dist < 300  ~ "<300м",
+            Test6Dist >= 300 & Test6Dist < 450 ~ "300-450м",
+            Test6Dist >= 450   ~ ">450м"),
+         Test6DistCat1 = fct_relevel(Test6DistCat1, "<300м", "300-450м", ">450м"),
+         
+         BNPCat1 = dplyr::case_when( 
+            BNP < 50  ~ "<50",
+            BNP >= 50 & BNP < 300 ~ "50-300",
+            BNP >= 300   ~ ">300"),
+         BNPCat1 = fct_relevel(BNPCat1, "<50", "50-300", ">300"),
+         
+         WHOFuncClassCat1 = ifelse(WHOFuncClass == "I" | WHOFuncClass == "II", "I/II", as.character(WHOFuncClass)),
+         WHOFuncClassCat1 = fct_relevel(WHOFuncClassCat1, "I/II", "III", "IV"),
+         
+         BloodBHTotalCholesterolCat1 = dplyr::case_when( 
+            BloodBHTotalCholesterol < 5.2 ~ "Норма",
+            BloodBHTotalCholesterol >= 5.2 & BloodBHTotalCholesterol < 6.2 ~ "Пограничный",
+            BloodBHTotalCholesterol >= 6.2   ~ "Высокий"),
+         BloodBHTotalCholesterolCat1 = fct_relevel(BloodBHTotalCholesterolCat1, "Норма", "Пограничный", "Высокий"),
+         
+         BloodBHTriglyceridesCat1 = dplyr::case_when( 
+            BloodBHTriglycerides < 1.7 ~ "Норма",
+            BloodBHTriglycerides >= 1.7 & BloodBHTriglycerides < 2.3 ~ "Пограничный",
+            BloodBHTriglycerides >= 2.3   ~ "Высокий"),
+         BloodBHTriglyceridesCat1 = fct_relevel(BloodBHTriglyceridesCat1, "Норма", "Пограничный", "Высокий"),
+         
+         BloodBHLDLtoHDLCat1 = dplyr::case_when( 
+            BloodBHLDLCholesterol/BloodBHHDLCholesterol < 3.5 ~ "Норма",
+            BloodBHLDLCholesterol/BloodBHHDLCholesterol >= 3.5 & BloodBHLDLCholesterol/BloodBHHDLCholesterol < 5 ~ "Повышенный",
+            BloodBHLDLCholesterol/BloodBHHDLCholesterol >= 5   ~ "Высокий"),
+         BloodBHLDLtoHDLCat1 = fct_relevel(BloodBHLDLtoHDLCat1, "Норма", "Повышенный", "Высокий"),
+         
+         BloodBHUricAcidCat1 = dplyr::case_when( 
+            BloodBHUricAcid < 360 ~ "Норма",
+            BloodBHUricAcid >= 360 & BloodBHUricAcid < 480 ~ "Повышенный",
+            BloodBHUricAcid >= 480   ~ "Высокий"),
+         BloodBHUricAcidCat1 = fct_relevel(BloodBHUricAcidCat1, "Норма", "Повышенный", "Высокий"),
+         
+         BloodBHGlucoseCat1 = dplyr::case_when( 
+            BloodBHGlucose < 5.6 ~ "Норма",
+            BloodBHGlucose >= 5.6   ~ "Преддиабет или диабет"),
+         BloodBHGlucoseCat1 = fct_relevel(BloodBHGlucoseCat1, "Норма", "Преддиабет или диабет"),
+         
+         HemoglobinCat1 = dplyr::case_when( 
+             Hemoglobin < 8   ~ "CTCAE степень 3",
+             Hemoglobin >= 8 & Hemoglobin < 10 ~ "CTCAE степень 2",
+             Hemoglobin >=  10 ~ "Норма"),
+         HemoglobinCat1 = fct_relevel(HemoglobinCat1, "Норма", "CTCAE степень 2", "CTCAE степень 3"),
+         
+         Test6ApneaBorgCat1= dplyr::case_when( 
+             Test6ApneaBorg <= 3   ~ "легкая одышка",
+             Test6ApneaBorg > 3  ~ "средняя или тяжелая одышка"),
+         Test6ApneaBorgCat1 = fct_relevel(Test6ApneaBorgCat1, "легкая одышка", "средняя или тяжелая одышка"),
+         
+         Test6PulsOxBeforeCat1 = dplyr::case_when( 
+             Test6PulsOxBefore < 95   ~ "Снижена",
+             Test6PulsOxBefore >= 95  ~ "Норма"),
+         Test6PulsOxBeforeCat1 = fct_relevel(Test6PulsOxBeforeCat1, "Норма", "Снижена"),
+         
+         Test6PulsOxAfterCat1 = dplyr::case_when( 
+             Test6PulsOxAfter < 95   ~ "Снижена",
+             Test6PulsOxAfter >= 95  ~ "Норма"),
+         Test6PulsOxAfterCat1 = fct_relevel(Test6PulsOxAfterCat1, "Норма", "Снижена"),
+         
+         #не берем meanDLA, потому что в нем больше пропусков и эти две величины взаимосвязаны
+         ECHOCGSDLACat1 = dplyr::case_when( 
+             ECHOCGSDLA < 35   ~ "Норма",
+             ECHOCGSDLA >= 35 & ECHOCGSDLA < 50 ~ "Умеренное нарушение",
+             ECHOCGSDLA >=  50 ~ "Тяжелое нарушение"),
+         ECHOCGSDLACat1 = fct_relevel(ECHOCGSDLACat1, "Норма", "Умеренное нарушение", "Тяжелое нарушение"),
+         
+         #не берем апикальный размер, потому что в нем больше пропусков и эти две величины взаимосвязаны
+         ECHOCGFrontBackSizeCat1 = dplyr::case_when( 
+              ECHOCGFrontBackSize <= 3   ~ "норма",
+              ECHOCGFrontBackSize > 3  ~ "увеличен"),
+         ECHOCGFrontBackSizeCat1 = fct_relevel(ECHOCGFrontBackSizeCat1, "норма", "увеличен"),
+         
+         #не берем meanDLA, потому что в нем больше пропусков и эти две величины взаимосвязаны
+         RHCatheterSDLACat1 = dplyr::case_when( 
+             RHCatheterSDLA < 35   ~ "Норма",
+             RHCatheterSDLA >= 35 & RHCatheterSDLA < 50 ~ "Умеренное нарушение",
+             RHCatheterSDLA >=  50 ~ "Тяжелое нарушение"),
+         ECHOCGSDLACat1 = fct_relevel(ECHOCGSDLACat1, "Норма", "Умеренное нарушение", "Тяжелое нарушение"),
+         
+         RHCatheterLCCVudCat1 = dplyr::case_when( 
+             RHCatheterLCCVud <= 7   ~ "Норма",
+             RHCatheterLCCVud >  7 ~ "Повышен"),
+         RHCatheterLCCVudCat1 = fct_relevel(RHCatheterLCCVudCat1, "Норма", "Повышен"),
+         
+         RHCatheterSaO2Cat1 = dplyr::case_when( 
+              RHCatheterSaO2 < 95   ~ "Снижена",
+              RHCatheterSaO2 >= 95  ~ "Норма"),
+         RHCatheterSaO2Cat1 = fct_relevel(RHCatheterSaO2Cat1, "Норма", "Снижена"),
+         
+         RHCatheterSvO2Cat1 = dplyr::case_when( 
+               RHCatheterSvO2 < 65   ~ "Снижена",
+               RHCatheterSvO2 >= 65  ~ "Норма"),
+         RHCatheterSvO2Cat1 = fct_relevel(RHCatheterSvO2Cat1, "Норма", "Снижена"),
+         
+         RHCatheterCICat1 = dplyr::case_when( 
+              RHCatheterCI < 2.5   ~ "снижен",
+              RHCatheterCI >= 2.5  ~ "норма"),
+         RHCatheterCICat1 = fct_relevel(RHCatheterCICat1, "норма", "снижен"),
+         
+         
+         AngiopulmonographyDamageCat1 = ifelse(AngiopulmonographyDamage == "субсегментарные артерии" | AngiopulmonographyDamage == "дистальнее субсегментарных артерии", "Дистальное поражение", "Проксимальное поражение"),
+         AngiopulmonographyDamageCat1 = fct_relevel(AngiopulmonographyDamageCat1, "Проксимальное поражение", "Дистальное поражение"),
+  
+         Priormut = fct_relevel(Priormut, "Нет", "Да"),
+         CPTE = fct_relevel(CPTE, "Нет", "Да"),
+         CTBPA = fct_relevel(CTBPA, "Нет", "Да"),
+         medHist1 = fct_relevel(medHist1, "Нет", "гипертоническая болезнь"),
+         medHist2 = fct_relevel(medHist2, "Нет", "ишемическая болезнь сердца"),
+         medHist3 = fct_relevel(medHist3, "Нет", "хроническая обструктивная болезнь легких"),
+         medHist4 = fct_relevel(medHist4, "Нет", "бронхиальная астма"),
+         medHist5 = fct_relevel(medHist5, "Нет", "синдром обструктивного апноэ сна"),
+         medHist6 = fct_relevel(medHist6, "Нет", "антифосфолипидный синдром"),
+         medHist7 = fct_relevel(medHist7, "Нет", "системная красная волчанка"),
+         medHist8 = fct_relevel(medHist8, "Нет", "СД или нарушение толерантности к глюкозе"),
+         medHist9 = fct_relevel(medHist9, "Нет", "ХБП 3А стадии или выше"),
+         medHist10 = fct_relevel(medHist10, "Нет", "ФП или ТП (любая форма)"),
+         PulHypSymp1 = fct_relevel(PulHypSymp1, "Нет", "одышка при физической нагрузке"),
+         PulHypSymp2 = fct_relevel(PulHypSymp2, "Нет", "повышенная утомляемость"),
+         PulHypSymp3 = fct_relevel(PulHypSymp3, "Нет", "боли в области сердца"),
+         PulHypSymp4 = fct_relevel(PulHypSymp4, "Нет", "головокружение"),
+         PulHypSymp5 = fct_relevel(PulHypSymp5, "Нет", "синкопальные состояния"),
+         PulHypSymp6 = fct_relevel(PulHypSymp6, "Нет", "кашель"),
+         PulHypSymp7 = fct_relevel(PulHypSymp7, "Нет", "кровохарканье"),
+         PulHypSymp8 = fct_relevel(PulHypSymp8, "Нет", "отеки ног"),
+         ECHOCGTricReg = fct_relevel(ECHOCGTricReg, "I", "II", "III", "IV"),
+         ECHOCGPericEffus = fct_relevel(ECHOCGPericEffus, "Нет", "Да"),
+         
+         diur_drugs = as.factor(diur_drugs),
+         anticoag_drugs = as.factor(anticoag_drugs),
+         
+         Enoxaparin = ifelse(is.na(Enoxaparin), "Нет", as.character(Enoxaparin)),
+         Warfarin = ifelse(is.na(Warfarin), "Нет", as.character(Warfarin)),
+         Apixaban = ifelse(is.na(Apixaban), "Нет", as.character(Apixaban)),
+         Rivaroxaban = ifelse(is.na(Rivaroxaban), "Нет", as.character(Rivaroxaban)),
+         Dabigatran = ifelse(is.na(Dabigatran), "Нет", as.character(Dabigatran)),
+         
+         Enoxaparin = as.factor(Enoxaparin),
+         Warfarin = as.factor(Warfarin),
+         Apixaban = as.factor(Apixaban),
+         Rivaroxaban = as.factor(Rivaroxaban),
+         Dabigatran = as.factor(Dabigatran)
+         )%>%
+  rename(AgeNum1 = Age,
+         BMINum1 = BMISEnd,
+         Test6DistNum1 = Test6Dist,
+         BNPNum1 = BNP,
+         BloodBHTotalCholesterolNum1 = BloodBHTotalCholesterol,
+         BloodBHTriglyceridesNum1 = BloodBHTriglycerides,
+         BloodBHLDLCholesterolNum1 = BloodBHLDLCholesterol, 
+         BloodBHHDLCholesterolNum1 = BloodBHHDLCholesterol,
+         BloodBHUricAcidNum1 = BloodBHUricAcid,
+         BloodBHGlucoseNum1 = BloodBHGlucose,
+         HemoglobinNum1 = Hemoglobin,
+         Test6ApneaBorgNum1 = Test6ApneaBorg,
+         Test6PulsOxBeforeNum1 = Test6PulsOxBefore,
+         Test6PulsOxAfterNum1 = Test6PulsOxAfter,
+         ECHOCGSDLANum1 = ECHOCGSDLA,
+         ECHOCGFrontBackSizeNum1 = ECHOCGFrontBackSize,
+         RHCatheterSDLANum1 = RHCatheterSDLA,
+         RHCatheterLCCVudNum1 = RHCatheterLCCVud,
+         RHCatheterSaO2Num1 = RHCatheterSaO2,
+         RHCatheterSvO2Num1 = RHCatheterSvO2,
+         RHCatheterCINum1 = RHCatheterCI,
+         #Переменные для которых определили новые категории
+         WHOFuncClassCat2 = WHOFuncClass,
+         AngiopulmonographyDamageCat2 = AngiopulmonographyDamage,
+         #Переменные для которых не вводили новых обозначений
+         SexCat0 = sex,
+         CHFDecompensationCat0 = CHFDecompensation,
+         MutationCat0 = Priormut,
+         CPTECat0 = CPTE,
+         CTBPACat0 =  CTBPA,
+         DiurDrugCat0 = diur_drugs,
+         AntiCoagDrugCat0 = anticoag_drugs,
+         ECHOCGTapseNum0 = ECHOCGTapse,
+         ECHOCGPPareaNum0 = ECHOCGPParea,
+         ECHOCGDZLANum0 = ECHOCGDZLA,
+         ECHOCGTricRegCat0 = ECHOCGTricReg,
+         ECHOCGPericEffusCat0 = ECHOCGPericEffus,
+         RHCatheterDPPmeanNum0 = RHCatheterDPPmean,
+         RHCatheterDZLANum0 = RHCatheterDZLA,
+         DabigatranCat0 = Dabigatran,
+         EnoxaparinCat0 = Enoxaparin,
+         WarfarinCat0 = Warfarin,
+         ApixabanCat0 = Apixaban,
+         RivaroxabanCat0 = Rivaroxaban,
+         medHist1Cat0 = medHist1,
+         medHist2Cat0 = medHist2,
+         medHist3Cat0 = medHist3,
+         medHist4Cat0 = medHist4,
+         medHist5Cat0 = medHist5,
+         medHist6Cat0 = medHist6,
+         medHist7Cat0 = medHist7,
+         medHist8Cat0 = medHist8,
+         medHist9Cat0 = medHist9,
+         medHist10Cat0 = medHist10,
+         PulHypSymp1Cat0 = PulHypSymp1,
+         PulHypSymp2Cat0 = PulHypSymp2,
+         PulHypSymp3Cat0 = PulHypSymp3,
+         PulHypSymp4Cat0 = PulHypSymp4,
+         PulHypSymp5Cat0 = PulHypSymp5,
+         PulHypSymp6Cat0 = PulHypSymp6,
+         PulHypSymp7Cat0 = PulHypSymp7,
+         PulHypSymp8Cat0 = PulHypSymp8,
+         Event_decreaseCox = Event_decrease,
+         Event_deathCox = Event_death, 
+         Time_to_deathCox = Time_to_death,
+         Time_to_decreaseCox = Time_to_decrease
+         )%>%
+  select(!c(ECHOCGmeanDLA, ECHOCGApicalSize, RHCathetermeanDLA, RHCatheterDDLA, RHCatheterCV, RHCatheterOLCC, pro_BNP, WeightEnd, all_operations, BPAdate, DateTPE, btdt))%>%
+  select(USUBJID, visit, VisitDate, 
+         OS1_startdt, TTCD_CNSR, TTCD, OS1_CNSR, OS1, TTCDdt, TTCD_event, 
+         last_visit, first_visit, deathdt, min_trtdt, lastalivedt, 
+         death_visits, clin_det_count, first_clin_detdt, clin_det_rate, is_worsening, ends_with("Cox"), everything())
+
+data_surv_new <- droplevels(data_surv_new)
+
+
+data_surv_new <- data_surv_new%>%
+  mutate(BNPCat1 = factor(BNPCat1, levels = c("<50", "50-300", ">300"), ordered = TRUE),
+         WHOFuncClassCat1 = factor(WHOFuncClassCat1, levels = c("I/II", "III", "IV"), ordered = TRUE),
+         BloodBHTriglyceridesCat1 = factor(BloodBHTriglyceridesCat1, levels = c("Норма", "Пограничный", "Высокий"), ordered = TRUE),
+         Test6ApneaBorgCat1 = factor(Test6ApneaBorgCat1, levels = c("легкая одышка", "средняя или тяжелая одышка"), ordered = TRUE),
+         Test6PulsOxBeforeCat1 = factor(Test6PulsOxBeforeCat1, levels = c("Норма", "Снижена"), ordered = TRUE),
+         Test6PulsOxAfterCat1 = factor(Test6PulsOxAfterCat1, levels = c("Норма", "Снижена"), ordered = TRUE),
+         ECHOCGFrontBackSizeCat1 = factor(ECHOCGFrontBackSizeCat1, levels = c("норма", "увеличен"), ordered = TRUE),
+         RHCatheterSvO2Cat1 = factor(RHCatheterSvO2Cat1, levels = c("Норма", "Снижена"), ordered = TRUE),
+         RHCatheterCICat1 = factor(RHCatheterCICat1, levels = c("норма", "снижен"), ordered = TRUE))
+
+saveRDS(data_surv_new, "./data/time_independent_factors241219_full.rds")
+```

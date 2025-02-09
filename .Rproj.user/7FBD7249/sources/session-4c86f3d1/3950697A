@@ -1,0 +1,32 @@
+{
+    "id": "3950697A",
+    "path": "~/CTEPH/step 1 parsing.Rmd",
+    "project_path": "step 1 parsing.Rmd",
+    "type": "r_markdown",
+    "hash": "3273424433",
+    "contents": "",
+    "dirty": false,
+    "created": 1738950799685.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "rmdVisualMode": "true",
+        "rmdVisualWrapConfigured": "true",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "29212:14404.7998046875",
+        "last_setup_crc32": "4c86f3d1a81a295b",
+        "cursorPosition": "809,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1739103435,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1739103435107,
+    "read_only": false,
+    "read_only_alternatives": []
+}

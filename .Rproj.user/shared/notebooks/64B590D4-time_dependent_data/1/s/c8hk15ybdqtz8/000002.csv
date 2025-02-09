@@ -1,0 +1,16 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZWRlcDAgPC0gZGF0YW1haW4gJT4lIFxuICBzZWxlY3QgKFVTVUJKSUQsVmlzaXREYXRlLCBEYXRlVFBFLCBCUEFkYXRlLCBPUzFfc3RhcnRkdCwgVFRDRGR0LCBidGR0LCBUVENEX2V2ZW50LCBkZWF0aGR0LCBpc193b3JzZW5pbmcsIGxhc3RhbGl2ZWR0LCBcIlNpbGRlbmFmaWxcIiwgXCJSaW9jaWd1YXRcIiwgXCJJbG9wcm9zdFwiLCBcIlNlbGV4aXBhZ1wiLCBcbiAgICAgICAgICAgXCJCb3plbnRhblwiLCBcIkFtYnJpc2VudGFuXCIsIFwiTWFjaXRlbnRhblwiLCBQQUhDLCBwcmlvclNpbGRlbmFmaWwsIHByaW9yUmlvY2lndWF0LCBwcmlvcklsb3Byb3N0LCBwcmlvclNlbGV4aXBhZywgcHJpb3JCb3plbnRhbiwgcHJpb3JBbWJyaXNlbnRhbiwgcHJpb3JNYWNpdGVudGFuKSAgXG5gYGAifQ== -->
+
+```r
+timedep0 <- datamain %>% 
+  select (USUBJID,VisitDate, DateTPE, BPAdate, OS1_startdt, TTCDdt, btdt, TTCD_event, deathdt, is_worsening, lastalivedt, \"Sildenafil\", \"Riociguat\", \"Iloprost\", \"Selexipag\", 
+           \"Bozentan\", \"Ambrisentan\", \"Macitentan\", PAHC, priorSildenafil, priorRiociguat, priorIloprost, priorSelexipag, priorBozentan, priorAmbrisentan, priorMacitentan)  
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+timedep0 <- datamain %>% 
+  select (USUBJID,VisitDate, DateTPE, BPAdate, OS1_startdt, TTCDdt, btdt, TTCD_event, deathdt, is_worsening, lastalivedt, \"Sildenafil\", \"Riociguat\", \"Iloprost\", \"Selexipag\", 
+           \"Bozentan\", \"Ambrisentan\", \"Macitentan\", PAHC, priorSildenafil, priorRiociguat, priorIloprost, priorSelexipag, priorBozentan, priorAmbrisentan, priorMacitentan)  
+```"

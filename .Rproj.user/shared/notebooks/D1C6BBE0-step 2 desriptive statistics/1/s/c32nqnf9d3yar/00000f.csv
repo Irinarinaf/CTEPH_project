@@ -1,0 +1,27 @@
+"0","ggsave(""outputs/sex_distribution_29.png"", plot = sex_vis1, width = 16, height = 10, dpi = 300)"
+"0","ggsave(""outputs/age_distribution_29.png"", plot = data_age_visit1, width = 16, height = 10, dpi = 300)"
+"2","Warning:"
+"2"," [38;5;232mRemoved 2 rows containing non-finite outside the scale range (`stat_density()`).[39m
+"
+"0","ggsave(""outputs/age_sex_distribution_29.png"", plot = data_age_sex_visit1, width = 16, height = 10, dpi = 300)"
+"0","ggsave(""outputs/Timelines_plot_29.png"", plot = Timelines_plot, width = 10, height = 10, dpi = 300)"
+"2","Warning:"
+"2"," [38;5;232mRemoved 358 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 359 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 60 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 89 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"2","Warning:"
+"2"," [38;5;232mRemoved 195 rows containing missing values or values outside the scale range (`geom_point()`).[39m
+"
+"0","ggsave(""outputs/pheatmap_cor_29.png"", plot = pheatmap_cor, width = 8, height = 8, dpi = 300)"
+"0",""
+"0","saveRDS(num_var_table, file = ""outputs/num_var_table_29.rds"")"
+"0","saveRDS(cat_var_table, file = ""outputs/cat_var_table_29.rds"")"
+"0",""

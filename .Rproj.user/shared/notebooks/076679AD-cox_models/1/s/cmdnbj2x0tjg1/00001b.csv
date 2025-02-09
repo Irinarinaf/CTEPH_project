@@ -1,0 +1,11 @@
+"0",""
+"0","univ_formulas <- sapply(vars_for_table[14:17], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))"
+"0",""
+"0","univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})"
+"0",""
+"0","forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)"
+"2","Warning in recalculate_width_panels(panel_positions, mapped_text = mapped_text,  :"
+"2","
+ "
+"2"," Unable to resize forest panel to be smaller than its heading; consider a smaller text size
+"

@@ -1,0 +1,120 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGFnX2N0ZXBoIDwtIGRhZ2l0dHkoXCJcbmRhZyB7XG4gICMgRXhwb3N1cmVcbiAgVG90YWxDaG9sZXN0ZXJvbCAtPiBDVEVQSF9EZWF0aFxuXG4gICMgQ29uZm91bmRlcnNcbiAgQWdlIC0+IFRvdGFsQ2hvbGVzdGVyb2xcbiAgQWdlIC0+IENURVBIX0RlYXRoXG4gIFNleCAtPiBUb3RhbENob2xlc3Rlcm9sXG4gIFNleCAtPiBDVEVQSF9EZWF0aFxuICBCTUkgLT4gVG90YWxDaG9sZXN0ZXJvbFxuICBCTUkgLT4gQ1RFUEhfRGVhdGhcbiAgU21va2luZyAtPiBUb3RhbENob2xlc3Rlcm9sXG4gIFNtb2tpbmcgLT4gQ1RFUEhfRGVhdGhcbiAgRGlhYmV0ZXMgLT4gVG90YWxDaG9sZXN0ZXJvbFxuICBEaWFiZXRlcyAtPiBDVEVQSF9EZWF0aFxuICBIeXBlcnRlbnNpb24gLT4gVG90YWxDaG9sZXN0ZXJvbFxuICBIeXBlcnRlbnNpb24gLT4gQ1RFUEhfRGVhdGhcbiAgQ0tEIC0+IFRvdGFsQ2hvbGVzdGVyb2xcbiAgQ0tEIC0+IENURVBIX0RlYXRoXG4gIENBRCAtPiBUb3RhbENob2xlc3Rlcm9sXG4gIENBRCAtPiBDVEVQSF9EZWF0aFxuXG4gICMgUHVsbW9uYXJ5IFZhc2N1bGFyIExlc2lvbnNcbiAgRGlzdGFsX1Rocm9tYm9zaXMgLT4gQ1RFUEhfRGVhdGhcbiAgUHJveGltYWxfVGhyb21ib3NpcyAtPiBDVEVQSF9EZWF0aFxuICBUb3RhbENob2xlc3Rlcm9sIC0+IERpc3RhbF9UaHJvbWJvc2lzXG4gIFRvdGFsQ2hvbGVzdGVyb2wgLT4gUHJveGltYWxfVGhyb21ib3Npc1xuXG4gICMgTWVkaWF0b3JzXG4gIExETCAtPiBUb3RhbENob2xlc3Rlcm9sXG4gIFRyaWdseWNlcmlkZXMgLT4gVG90YWxDaG9sZXN0ZXJvbFxuICBSVl9GdW5jdGlvbiAtPiBDVEVQSF9EZWF0aFxuICBCTlAgLT4gQ1RFUEhfRGVhdGhcbiAgUFZSIC0+IENURVBIX0RlYXRoXG4gIENPIC0+IENURVBIX0RlYXRoXG4gIFBBUCAtPiBDVEVQSF9EZWF0aFxuICBGaWJyaW5vZ2VuIC0+IENURVBIX0RlYXRoXG4gIEluZmxhbW1hdGlvbiAtPiBDVEVQSF9EZWF0aFxuXG4gICMgRWZmZWN0IE1vZGlmaWVyc1xuICBQQUhfVHJlYXRtZW50IC0+IENURVBIX0RlYXRoXG4gIFBFQV9CUEEgLT4gQ1RFUEhfRGVhdGhcbiAgTGlwaWRfTG93ZXJpbmcgLT4gVG90YWxDaG9sZXN0ZXJvbFxuICBMaXBpZF9Mb3dlcmluZyAtPiBDVEVQSF9EZWF0aFxuXG4gICMgQ29tcGV0aW5nIFJpc2tzXG4gIENhbmNlciAtPiBDVEVQSF9EZWF0aFxuICBTdHJva2UgLT4gQ1RFUEhfRGVhdGhcbiAgU2Vwc2lzIC0+IENURVBIX0RlYXRoXG4gIENPUEQgLT4gQ1RFUEhfRGVhdGhcbn1cblwiKVxuYGBgIn0= -->
+
+```r
+dag_cteph <- dagitty(\"
+dag {
+  # Exposure
+  TotalCholesterol -> CTEPH_Death
+
+  # Confounders
+  Age -> TotalCholesterol
+  Age -> CTEPH_Death
+  Sex -> TotalCholesterol
+  Sex -> CTEPH_Death
+  BMI -> TotalCholesterol
+  BMI -> CTEPH_Death
+  Smoking -> TotalCholesterol
+  Smoking -> CTEPH_Death
+  Diabetes -> TotalCholesterol
+  Diabetes -> CTEPH_Death
+  Hypertension -> TotalCholesterol
+  Hypertension -> CTEPH_Death
+  CKD -> TotalCholesterol
+  CKD -> CTEPH_Death
+  CAD -> TotalCholesterol
+  CAD -> CTEPH_Death
+
+  # Pulmonary Vascular Lesions
+  Distal_Thrombosis -> CTEPH_Death
+  Proximal_Thrombosis -> CTEPH_Death
+  TotalCholesterol -> Distal_Thrombosis
+  TotalCholesterol -> Proximal_Thrombosis
+
+  # Mediators
+  LDL -> TotalCholesterol
+  Triglycerides -> TotalCholesterol
+  RV_Function -> CTEPH_Death
+  BNP -> CTEPH_Death
+  PVR -> CTEPH_Death
+  CO -> CTEPH_Death
+  PAP -> CTEPH_Death
+  Fibrinogen -> CTEPH_Death
+  Inflammation -> CTEPH_Death
+
+  # Effect Modifiers
+  PAH_Treatment -> CTEPH_Death
+  PEA_BPA -> CTEPH_Death
+  Lipid_Lowering -> TotalCholesterol
+  Lipid_Lowering -> CTEPH_Death
+
+  # Competing Risks
+  Cancer -> CTEPH_Death
+  Stroke -> CTEPH_Death
+  Sepsis -> CTEPH_Death
+  COPD -> CTEPH_Death
+}
+\")
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+dag_cteph <- dagitty(\"
+dag {
+  # Exposure
+  TotalCholesterol -> CTEPH_Death
+
+  # Confounders
+  Age -> TotalCholesterol
+  Age -> CTEPH_Death
+  Sex -> TotalCholesterol
+  Sex -> CTEPH_Death
+  BMI -> TotalCholesterol
+  BMI -> CTEPH_Death
+  Smoking -> TotalCholesterol
+  Smoking -> CTEPH_Death
+  Diabetes -> TotalCholesterol
+  Diabetes -> CTEPH_Death
+  Hypertension -> TotalCholesterol
+  Hypertension -> CTEPH_Death
+  CKD -> TotalCholesterol
+  CKD -> CTEPH_Death
+  CAD -> TotalCholesterol
+  CAD -> CTEPH_Death
+
+  # Pulmonary Vascular Lesions
+  Distal_Thrombosis -> CTEPH_Death
+  Proximal_Thrombosis -> CTEPH_Death
+  TotalCholesterol -> Distal_Thrombosis
+  TotalCholesterol -> Proximal_Thrombosis
+
+  # Mediators
+  LDL -> TotalCholesterol
+  Triglycerides -> TotalCholesterol
+  RV_Function -> CTEPH_Death
+  BNP -> CTEPH_Death
+  PVR -> CTEPH_Death
+  CO -> CTEPH_Death
+  PAP -> CTEPH_Death
+  Fibrinogen -> CTEPH_Death
+  Inflammation -> CTEPH_Death
+
+  # Effect Modifiers
+  PAH_Treatment -> CTEPH_Death
+  PEA_BPA -> CTEPH_Death
+  Lipid_Lowering -> TotalCholesterol
+  Lipid_Lowering -> CTEPH_Death
+
+  # Competing Risks
+  Cancer -> CTEPH_Death
+  Stroke -> CTEPH_Death
+  Sepsis -> CTEPH_Death
+  COPD -> CTEPH_Death
+}
+\")
+```"
+"1","Error in ct$eval : $ operator is invalid for atomic vectors
+"
+"1","Error in .getJSContext()$eval : $ operator is invalid for atomic vectors
+"

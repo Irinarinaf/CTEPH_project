@@ -1,0 +1,32 @@
+{
+    "id": "EA28F0EB",
+    "path": "~/CTEPH/Step 5 baseline factors analysis.Rmd",
+    "project_path": "Step 5 baseline factors analysis.Rmd",
+    "type": "r_markdown",
+    "hash": "2550523140",
+    "contents": "",
+    "dirty": false,
+    "created": 1739102589083.0,
+    "source_on_save": false,
+    "relative_order": 7,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "658,10",
+        "scrollLine": "1009",
+        "rmdVisualMode": "true",
+        "rmdVisualWrapConfigured": "true",
+        "docOutlineVisible": "1",
+        "rmdVisualCollapsedChunks": "",
+        "rmdVisualModeLocation": "18349:18442.400390625",
+        "last_setup_crc32": "4c86f3d1e53b3a4"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1739104652,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1739104652779,
+    "read_only": false,
+    "read_only_alternatives": []
+}

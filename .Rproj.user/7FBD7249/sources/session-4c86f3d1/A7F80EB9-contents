@@ -1,0 +1,277 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(conflicted)
+library(flextable)
+
+library(htmltools)
+library(kableExtra)
+
+library(knitr)
+library(MASS)
+library(pscl)
+library(stringr)
+
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("summarize", "dplyr")
+conflict_prefer("lag", "dplyr")
+conflict_prefer("year", "lubridate")
+conflict_prefer("recode", "dplyr")
+```
+
+```{r}
+data_set <- readRDS("data/time_independent_factors241219_full.rds")
+data_imp <- readRDS("data/imputation_result_all_60.rds")
+```
+
+```{r}
+var_labels <- c(
+"AgeNum1" = "Age",
+"AngiopulmonographyDamageCat1Дистальное поражение" = "Angiopulmonography Damage_Yes",
+"AntiCoagDrugCat0Да" = "Anticoagulant Therapy_Yes",
+"ApixabanCat0Да" = "Apixaban_Yes",
+"BloodBHGlucoseNum1" = "Blood Glucose",
+"BloodBHHDLCholesterolNum1" = "HDL Cholesterol",
+"BloodBHLDLCholesterolNum1" = "LDL Cholesterol",
+"BloodBHTotalCholesterolNum1" = "Total Cholesterol",
+"BloodBHTriglyceridesNum1" = "Triglycerides",
+"BMINum1" = "Body Mass Index",
+"CHFDecompensationCat0Да" = "CHF Decompensation_Yes",
+"CPTECat0Да" = "CTPE Diagnosis_Yes",
+"CTBPACat0Да" = "CTBPA Diagnosis_Yes",
+"DabigatranCat0Да" = "Dabigatran_Yes",
+"DiurDrugCat0Да" = "Diuretics Therapy_Yes",
+"ECHOCGDZLANum0" = "ECHO DZLA",
+"ECHOCGFrontBackSizeNum1" = "ECHO Front-Back Size",
+"ECHOCGPericEffusCat0Да" = "ECHO Pericardium Effusion_Yes",
+"ECHOCGPPareaNum0" = "ECHO PP area",
+"ECHOCGSDLANum0" = "ECHO SDL Area",
+"ECHOCGTapseNum0" = "ECHO Tapse",
+"ECHOCGTricRegCat0II" = "Tricuspid regurgitation_III",
+"ECHOCGTricRegCat0III" = "Tricuspid regurgitation_II",
+"ECHOCGTricRegCat0IV" = "Tricuspid regurgitation_IV",
+"EnoxaparinCat0Да" = "Enoxaparin_Yes",
+"HemoglobinNum1" = "Hemoglobin Level",
+"medHist10Cat0ФП или ТП (любая форма)" = "Atrial Fibrillation or Flutter_Yes",
+"medHist1Cat0гипертоническая болезнь" = "Hypertension_Yes",
+"medHist2Cat0ишемическая болезнь сердца" = "Ischemic Heart Disease_Yes",
+"medHist3Cat0хроническая обструктивная болезнь легких" = "Chronic Obstructive Pulmonary Disease_Yes",
+"medHist6Cat0антифосфолипидный синдром" = "Antiphospholipid Syndrome_Yes",
+"medHist7Cat0системная красная волчанка" = "Systemic Lupus Erythematosus_Yes",
+"medHist8Cat0СД или нарушение толерантности к глюкозе" = "Diabetes or Impaired Glucose Tolerance_Yes",
+"medHist9Cat0ХБП 3А стадии или выше" = "Chronic Kidney Disease Stage 3A or Higher_Yes",
+"MutationCat0Да" = "Genetic Mutation_Yes",
+"PulHypSymp2Cat0повышенная утомляемость" = "Increased fatigue_Yes",
+"PulHypSymp3Cat0боли в области сердца" = "Chest pain_Yes",
+"PulHypSymp4Cat0головокружение" = "Dizziness_Yes",
+"PulHypSymp5Cat0синкопальные состояния" = "Syncope_Yes",
+"PulHypSymp6Cat0кашель" = "Cough_Yes",
+"PulHypSymp7Cat0кровохарканье" = "Hemoptysis_Yes",
+"PulHypSymp8Cat0отеки ног" = "Leg edema_Yes",
+"RHCatheterCINum1" = "RH Catheter CI",
+"RHCatheterDPPmeanNum0" = "RH Catheter DPP mean",
+"RHCatheterLCCVudNum1" = "RH Catheter LCC
+Vud",
+"RHCatheterSaO2Num1" = "RH Catheter SaO2",
+"RHCatheterSDLANum1" = "RH Catheter SDLA",
+"RHCatheterSvO2Num1" = "RH Catheter SvO2",
+"RivaroxabanCat0Да" = "Rivaroxaban_Yes",
+"SexCat0Женский" = "Sex_Female",
+"Test6ApneaBorgNum1" = "Apnea Borg Scale",
+"Test6DistNum1" = "6-Min Walk Distance",
+"WarfarinCat0Да" = "Warfarin_Yes",
+"WHOFuncClassCat1III" = "WHO Functional Class_III",
+"WHOFuncClassCat1IV" = "WHO Functional Class_IV")
+```
+
+```{r, fig.width= 7, fig.height = 4}
+
+final <- lapply(1:10, function(x) complete(data_imp , x))
+final <- lapply(final, function(x) mutate(x, across(where(is.factor), ~ factor(.x, ordered = F))))
+
+
+vars_for_table_imp <- lapply(final, function(df) {
+  select(df, matches("Num0$|Num1$|Cat0$"), AngiopulmonographyDamageCat1, WHOFuncClassCat1) %>%
+    colnames()
+})
+
+
+vars_for_table_imp <- unique(unlist(vars_for_table_imp))
+
+
+univ_formulas <- sapply(vars_for_table_imp[2:length(vars_for_table_imp)], function(x) as.formula(paste('clin_det_count ~', x, '+ offset(log(OS1))')))
+
+univ_formulas <- lapply(vars_for_table_imp, function(x) as.formula(paste('clin_det_count ~', x, '+ offset(log(OS1))')))
+
+# Создаем список для хранения результатов
+table_imp_list <- list()
+
+for (form in univ_formulas) {
+  models <- lapply(final, function(x) glm.nb(form, data = x))
+  pooled_results <- tidy(pool(models), conf.int = TRUE) %>%
+    mutate(
+      RR = exp(estimate),
+      conf.low = exp(conf.low),
+      conf.high = exp(conf.high),
+      RR_with_CI = paste0(
+        round(RR, 2), 
+        " (", 
+        round(conf.low, 2), 
+        "-", 
+        round(conf.high, 2), 
+        ")"
+      ))
+  table_imp_list <- append(table_imp_list, list(pooled_results))
+}
+
+# Объединяем результаты в один датафрейм
+table_imp <- bind_rows(table_imp_list) %>% filter(term != '(Intercept)')
+
+# Данные для графика
+forest_data_plot_imp <- table_imp %>%
+  mutate(
+     raw_p_value = as.character(ifelse(p.value < 0.001, "<0.001", round(as.numeric(p.value), 3))),
+      adj_p_value = as.character(ifelse(p.adjust(as.numeric(p.value), method = "BH") < 0.001, 
+                                        "<0.001", 
+                                        round(p.adjust(as.numeric(p.value), method = "BH"), 3))),
+    RR = as.numeric(sub(" .*", "", RR_with_CI)), # Извлекаем RR
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", RR_with_CI)), # Извлекаем lower CI
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", RR_with_CI)),      # Извлекаем upper CI
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
+  ) %>%
+  arrange(p.value)
+
+# Обновляем подписи переменных в таблице перед визуализацией
+forest_data_plot_imp <- forest_data_plot_imp %>%
+  mutate(term_clean = recode(term, !!!var_labels)) %>%  # Меняем на читаемые названия
+  slice(1:10)
+
+# Создаем таблицу для подписей
+labeltext_imp <- rbind(
+  c("Covariate", "RR (95% CI)", "P-values"),  # Заголовок
+  forest_data_plot_imp %>% select(term_clean, RR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+
+mean_values_imp <- forest_data_plot_imp$RR
+lower_values_imp <- forest_data_plot_imp$lower_95
+upper_values_imp <- forest_data_plot_imp$upper_95
+
+forestplot::forestplot(
+  labeltext = labeltext_imp,
+  mean = c(NA, mean_values_imp), 
+  lower = c(NA, lower_values_imp),
+  upper = c(NA, upper_values_imp),
+  xlog = TRUE,
+  xlim = c(0.01, 100),
+  title = "Forest Plot for Negative Binomial Univariate Models for Deterioration-free Survival",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot_imp))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(
+    label = gpar(cex = 0.8),
+    ticks = gpar(cex = 0.7),
+    xlab = gpar(cex = 0.8)
+  ),
+  align = "l",
+  clip = c(0.01, 100),
+  graph.pos = 2
+)
+```
+
+```{r}
+dag_cteph <- dagitty("
+dag {
+  # Exposure
+  TotalCholesterol -> CTEPH_Death
+
+  # Confounders
+  Age -> TotalCholesterol
+  Age -> CTEPH_Death
+  Sex -> TotalCholesterol
+  Sex -> CTEPH_Death
+  BMI -> TotalCholesterol
+  BMI -> CTEPH_Death
+  Smoking -> TotalCholesterol
+  Smoking -> CTEPH_Death
+  Diabetes -> TotalCholesterol
+  Diabetes -> CTEPH_Death
+  Hypertension -> TotalCholesterol
+  Hypertension -> CTEPH_Death
+  CKD -> TotalCholesterol
+  CKD -> CTEPH_Death
+  CAD -> TotalCholesterol
+  CAD -> CTEPH_Death
+
+  # Pulmonary Vascular Lesions
+  Distal_Thrombosis -> CTEPH_Death
+  Proximal_Thrombosis -> CTEPH_Death
+  TotalCholesterol -> Distal_Thrombosis
+  TotalCholesterol -> Proximal_Thrombosis
+
+  # Mediators
+  LDL -> TotalCholesterol
+  Triglycerides -> TotalCholesterol
+  RV_Function -> CTEPH_Death
+  BNP -> CTEPH_Death
+  PVR -> CTEPH_Death
+  CO -> CTEPH_Death
+  PAP -> CTEPH_Death
+  Fibrinogen -> CTEPH_Death
+  Inflammation -> CTEPH_Death
+
+  # Effect Modifiers
+  PAH_Treatment -> CTEPH_Death
+  PEA_BPA -> CTEPH_Death
+  Lipid_Lowering -> TotalCholesterol
+  Lipid_Lowering -> CTEPH_Death
+
+  # Competing Risks
+  Cancer -> CTEPH_Death
+  Stroke -> CTEPH_Death
+  Sepsis -> CTEPH_Death
+  COPD -> CTEPH_Death
+}
+")
+
+# Преобразуем DAG в формат для ggdag
+dag_tidy <- tidy_dagitty(dag_cteph)
+
+# Определяем категории узлов для цветового оформления
+dag_tidy <- dag_tidy %>%
+  mutate(
+    node_type = case_when(
+      name == "TotalCholesterol" ~ "Exposure",
+      name == "CTEPH_Death" ~ "Outcome",
+      name %in% c("Age", "Sex", "BMI", "Smoking", "Diabetes", "Hypertension",
+                  "CKD", "CAD", "Distal_Thrombosis", "Proximal_Thrombosis",
+                  "LDL", "Triglycerides", "RV_Function", "BNP", "PVR",
+                  "CO", "PAP", "Fibrinogen", "Inflammation", "PAH_Treatment",
+                  "PEA_BPA", "Lipid_Lowering", "Cancer", "Stroke", "Sepsis", "COPD") ~ "Confounder"
+    )
+  )
+
+# Определяем цвета для узлов
+node_colors <- c(
+  "Exposure" = "yellow",
+  "Outcome" = "blue",
+  "Confounder" = "red"
+)
+
+# Визуализация DAG с цветами
+ggdag(dag_tidy, text = TRUE) +
+  geom_dag_point(aes(color = node_type, fill = node_type), size = 5, alpha = 0.8) +
+  scale_color_manual(values = node_colors) +
+  scale_fill_manual(values = node_colors) +
+  theme_minimal() +
+  ggtitle("DAG: Total Cholesterol & CTEPH Mortality with Colors")
+```

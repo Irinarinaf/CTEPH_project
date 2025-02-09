@@ -1,0 +1,44 @@
+"1","
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGltZV9kZXBfYmFzZV9PUyA8LSB0aW1lZGVwX21hbnVhbDEgJT4lXG4gICBmaWx0ZXIobGFzdGFsaXZlZHQgPiBPUzFfc3RhcnRkdCkgJT4lXG4gICAgYXJyYW5nZShVU1VCSklELCBWaXNpdERhdGUpICU+JSAgIyDQodC+0YDRgtC40YDRg9C10Lwg0L/QviDQv9Cw0YbQuNC10L3RgtGDINC4INC00LDRgtC1INCy0LjQt9C40YLQsFxuICBncm91cF9ieShVU1VCSklEKSAlPiVcbiAgIG11dGF0ZShcbiAgICAjINCU0L7QsdCw0LLQu9GP0LXQvCDQv9C10YDQtdC80LXQvdC90YPRjiBldmVudFxuICAgIGV2ZW50ID0gY2FzZV93aGVuKFxuICAgICAgIWlzLm5hKGRlYXRoZHQpICYgVmlzaXREYXRlID09IG1heChWaXNpdERhdGUsIG5hLnJtID0gVFJVRSkgfiAxLCAjINCf0L7RgdC70LXQtNC90LjQuSDQstC40LfQuNGCLCDQtdGB0LvQuCBkZWF0aGR0INC90LUgTkFcbiAgICAgICFpcy5uYShkZWF0aGR0KSB+IDAsICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICMg0JLRgdC1INC+0YHRgtCw0LvRjNC90YvQtSDQstC40LfQuNGC0YssINC10YHQu9C4IGRlYXRoZHQg0L3QtSBOQVxuICAgICAgaXMubmEoZGVhdGhkdCkgfiAwICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjINCS0YHQtSDQstC40LfQuNGC0YssINC10YHQu9C4IGRlYXRoZHQgTkFcbiAgICApLFxuICAgICMg0J/QtdGA0LXRgdGH0LjRgtGL0LLQsNC10LwgdHN0YXJ0INC4IHRzdG9wINCyINC60L7Qu9C40YfQtdGB0YLQstC+INC00L3QtdC5INC+0YLQvdC+0YHQuNGC0LXQu9GM0L3QviBPUzFfc3RhcnRkdFxuICAgIHRzdGFydCA9IGFzLm51bWVyaWMoYXMuRGF0ZSh0c3RhcnQpIC0gYXMuRGF0ZShPUzFfc3RhcnRkdCkpLFxuICAgIHRzdG9wID0gYXMubnVtZXJpYyhhcy5EYXRlKHRzdG9wKSAtIGFzLkRhdGUoT1MxX3N0YXJ0ZHQpKVxuICApICU+JVxuICBzZWxlY3QoVVNVQkpJRCwgdHN0YXJ0LCB0c3RvcCwgZXZlbnQsIGV2ZXJ5dGhpbmcoKSwgLVZpc2l0RGF0ZSwgLURhdGVUUEUsIC1CUEFkYXRlLCAtT1MxX3N0YXJ0ZHQsIC1UVENEZHQsIC1UVENEX2V2ZW50LCAtZGVhdGhkdCwgLVBBSEMsIC1zdGFydHNfd2l0aCgncHJpb3InKSwgLWxhc3RhbGl2ZWR0LCAtaXNfd29yc2VuaW5nKSAlPiVcbiAgdW5ncm91cCgpXG5gYGAifQ== -->
+
+```r
+time_dep_base_OS <- timedep_manual1 %>%
+   filter(lastalivedt > OS1_startdt) %>%
+    arrange(USUBJID, VisitDate) %>%  # Сортируем по пациенту и дате визита
+  group_by(USUBJID) %>%
+   mutate(
+    # Добавляем переменную event
+    event = case_when(
+      !is.na(deathdt) & VisitDate == max(VisitDate, na.rm = TRUE) ~ 1, # Последний визит, если deathdt не NA
+      !is.na(deathdt) ~ 0,                                           # Все остальные визиты, если deathdt не NA
+      is.na(deathdt) ~ 0                                            # Все визиты, если deathdt NA
+    ),
+    # Пересчитываем tstart и tstop в количество дней относительно OS1_startdt
+    tstart = as.numeric(as.Date(tstart) - as.Date(OS1_startdt)),
+    tstop = as.numeric(as.Date(tstop) - as.Date(OS1_startdt))
+  ) %>%
+  select(USUBJID, tstart, tstop, event, everything(), -VisitDate, -DateTPE, -BPAdate, -OS1_startdt, -TTCDdt, -TTCD_event, -deathdt, -PAHC, -starts_with('prior'), -lastalivedt, -is_worsening) %>%
+  ungroup()
+```
+
+<!-- rnb-source-end -->
+"
+"0","```r
+time_dep_base_OS <- timedep_manual1 %>%
+   filter(lastalivedt > OS1_startdt) %>%
+    arrange(USUBJID, VisitDate) %>%  # Сортируем по пациенту и дате визита
+  group_by(USUBJID) %>%
+   mutate(
+    # Добавляем переменную event
+    event = case_when(
+      !is.na(deathdt) & VisitDate == max(VisitDate, na.rm = TRUE) ~ 1, # Последний визит, если deathdt не NA
+      !is.na(deathdt) ~ 0,                                           # Все остальные визиты, если deathdt не NA
+      is.na(deathdt) ~ 0                                            # Все визиты, если deathdt NA
+    ),
+    # Пересчитываем tstart и tstop в количество дней относительно OS1_startdt
+    tstart = as.numeric(as.Date(tstart) - as.Date(OS1_startdt)),
+    tstop = as.numeric(as.Date(tstop) - as.Date(OS1_startdt))
+  ) %>%
+  select(USUBJID, tstart, tstop, event, everything(), -VisitDate, -DateTPE, -BPAdate, -OS1_startdt, -TTCDdt, -TTCD_event, -deathdt, -PAHC, -starts_with('prior'), -lastalivedt, -is_worsening) %>%
+  ungroup()
+```"
