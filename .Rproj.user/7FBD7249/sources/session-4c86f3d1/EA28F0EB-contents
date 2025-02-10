@@ -35,13 +35,13 @@ conflict_prefer("lag", "dplyr")
 conflict_prefer("year", "lubridate")
 ```
 
-## Добавление категориальных переменных, исправление уровней факторов:
+## Removing categorical factors that have less than 2 groups with at least 5 records
 
 ```{r}
 data_surv_new <- readRDS("data/time_independent_factors241219_full.rds")
 
 
-#Код для удаления категориальных факторов, у которых меньше 2 групп с хотя бы 5 записями
+#Removing categorical factors that have less than 2 groups with at least 5 records
 drop_names <- c()
 for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))){
   x <- data_surv_new%>%
@@ -58,124 +58,780 @@ for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") 
 
 data_surv_new <- data_surv_new%>%
   select(!any_of(drop_names))
-            
 ```
 
-## Модели для нового датасета, старый способ рисовать графики, лучше следующий
+# Kaplan-Meier curves
+
+## Total dynamics for two outcomes
 
 ```{r}
+# model
+linelistsurv_fit_source <-  survfit(
+  Surv(Time_to_deathCox, Event_deathCox) ~ 1,
+  data = data_surv_new
+  )
 
-vars_for_table <- colnames(data_surv_new%>%select(ends_with("Num0") | ends_with("Cat2")))
+# plot
+Kaplan_Meier_plot_death <- ggsurvplot( 
+  linelistsurv_fit_source,
+  data = data_surv_new,
+  size = 1, linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Overall Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = T,
+  legend.title = "",
+  legend.labs = c(""),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
 
-length(vars_for_table)
-
-univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-
-
-
-
-vars_for_table <- colnames(data_surv_new%>%select(ends_with("Num1")))
-
-length(vars_for_table)
-
-univ_formulas <- sapply(vars_for_table[2:11], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-univ_formulas <- sapply(vars_for_table[12:22], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-
-
-vars_for_table <- colnames(data_surv_new%>%select(ends_with("Cat1")))
-                          
-                          
-length(vars_for_table)
+# model 
+linelistsurv_fit_source <-  survfit(
+    Surv(Time_to_decreaseCox, Event_decreaseCox) ~ 1,
+  data = data_surv_new
+  )
 
 
-univ_formulas <- sapply(vars_for_table[2:9], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+# plot
+Kaplan_Meier_plot_decr <-ggsurvplot( 
+  linelistsurv_fit_source,
+  data = data_surv_new,
+  size = 1, linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = T,
+  legend.title = "",
+  legend.labs = c(""),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
 
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-univ_formulas <- sapply(vars_for_table[10:18], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
+Kaplan_Meier_plot_death 
+Kaplan_Meier_plot_decr
 
 
-vars_for_table <- colnames(data_surv_new%>%select(ends_with("Cat0")))
-                          
+# save plots 
+ggexport(filename = "outputs/Kaplan_Meier_death_all.png",
+         plot = Kaplan_Meier_plot_death, device = "png")
 
-data_surv_new%>%select(ends_with("Cat0"))%>%summary()
-                          
-length(vars_for_table)
-
-
-univ_formulas <- sapply(vars_for_table[2:13], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-univ_formulas <- sapply(vars_for_table[14:17], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-univ_formulas <- sapply(vars_for_table[19:26], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
-
-univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
-
-forest_model(model_list = univ_models, covariates = vars_for_table, merge_models =F)
-
-vars_for_table[18]
+ggexport(filename = "outputs/Kaplan_Meier_decr_all.png",
+         plot = Kaplan_Meier_plot_decr, device = "png")
 ```
 
-## Однофакторные модели для всех ковариат без импутации (график для лучших)
+## Association between prior or initial therapy and TTCD outcome
 
 ```{r}
-vars_for_table <- colnames(data_surv_new%>%select(ends_with("Cat0")|ends_with("Cat1")|ends_with("Num0")|ends_with("Cat2")|ends_with("Num1")))
-                          
-length(vars_for_table)
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(USUBJID, starts_with("prior")| starts_with("init")))[-1]){
+  
+  
+# model 
+linelistsurv <-  survfit(
+  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
 
-univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = i,
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+
+}
+
+arrange_ggsurvplots(li, ncol = 1 )
+```
+
+## Association between prior or initial therapy and OS outcome
+
+```{r}
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(USUBJID, starts_with("prior")| starts_with("init")))[-1]){
+  
+  
+# model
+linelistsurv <-  survfit(
+  Surv(Time_to_deathCox, Event_deathCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Overall Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = i,
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+
+}
+
+arrange_ggsurvplots(li, ncol = 1)
+```
+
+## Association between prognostic factors and TTCD outcome
+
+```{r}
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))[-1]){
+  
+# model
+linelistsurv <-  survfit(
+  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = gsub('.{4}$', '', i),
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+
+}
+
+arrange_ggsurvplots(li, ncol = 1)
+```
+
+## Association between prognostic factors and OS outcome
+
+```{r}
+data_surv_new <- droplevels(data_surv_new)
+
+li <- list()
+ct <- 1
+for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))[-1]){
+  
+# model
+linelistsurv <-  survfit(
+  Surv(Time_to_deathCox, Event_deathCox) ~ data_surv_new[[i]],
+  data = data_surv_new
+  )
+
+# plot
+li[[ct]] <-  ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Overall Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = gsub('.{4}$', '', i),
+  legend.labs = levels(as.factor(data_surv_new[[i]])),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+
+ct <- ct+1
+ 
+}
+
+arrange_ggsurvplots(li, ncol = 1)
+```
+
+## Graph for presentation
+
+```{r}
+data_surv_new_new <- data_surv_new%>%
+  filter (!is.na(CHFDecompensationCat0))%>%
+  mutate(CHFDecompensationCat0 = as.factor(ifelse(CHFDecompensationCat0 == "Да", "Yes", "No")))
+
+# model
+  linelistsurv <-  survfit(
+  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ CHFDecompensationCat0,
+  data = data_surv_new_new
+  )
+
+# plot
+ggsurvplot( 
+  linelistsurv,
+  data = data_surv_new_new,
+  size = 1, 
+  linetype = "strata",   # line types
+  conf.int = T,
+  surv.scale = "percent",  
+  break.time.by = 10, 
+  xlab = "Follow-up months",
+  ylab= "Survival Probability",
+  title = "Kaplan-Meier curve for Deterioration-free Survival",
+  pval = T,
+  pval.coord = c(40,.91),
+  risk.table = F,
+  legend.title = "CHF Decompensation",
+  legend.labs = c("No", "Yes"),
+  font.legend = 10,
+  surv.median.line = "hv", 
+  ggtheme = theme_light()
+)
+```
+
+# Cox Regression, association with prognostic factors
+
+## Cox Regression, data with imputation, TTCD outcome, best models
+
+```{r}
+data_imp <- readRDS("data/imputation_result_all_60.rds")
+
+final <- lapply(1:10, function(x) complete(data_imp , x))
+final <- lapply(final, function(x) mutate(x, TTCD_event = as.numeric(TTCD_event)))
+final <- lapply(final, function(x) mutate(x, across(where(is.factor), ~ factor(.x, ordered = F))))
+
+vars_for_table_imp <- lapply(final, function(df) {
+  colnames(select(df, c(ends_with("Num0") | ends_with("Num1") |ends_with("Cat0"), AngiopulmonographyDamageCat1, WHOFuncClassCat1)))
+})
+vars_for_table_imp <- unique(unlist(vars_for_table_imp))
+
+univ_formulas <- lapply(vars_for_table_imp, function(x) as.formula(paste('Surv(TTCD, TTCD_event) ~', x)))
+
+# Create a list to store the results
+table_imp_list <- list()
+
+for (form in univ_formulas) {
+  models <- lapply(final, function(x) coxph(form, data = x))
+  pooled_results <- tidy(pool(models), conf.int = TRUE) %>%
+    mutate(
+      HR = exp(estimate),
+      lower_95 = exp(estimate - 1.96 * std.error),
+      upper_95 = exp(estimate + 1.96 * std.error),
+      HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          )
+    )
+  table_imp_list <- append(table_imp_list, list(pooled_results))
+}
+
+# Combine the results into one dataframe
+table_imp <- bind_rows(table_imp_list) %>% 
+  mutate(raw_p_value = as.character(ifelse(p.value < 0.001, "<0.001", round(as.numeric(p.value), 3))),
+      adj_p_value = as.numeric(p.adjust(as.numeric(p.value), method = "BH")),
+      adj_p_value = as.character(ifelse(adj_p_value < 0.001, 
+                                        "<0.001", 
+                                        round(adj_p_value, 3))))%>%
+  filter(term != '(Intercept)')
+
+var_labels <- c(
+"AgeNum1" = "Age",
+"AngiopulmonographyDamageCat1Дистальное поражение" = "Angiopulmonography Damage_Yes",
+"AntiCoagDrugCat0Да" = "Anticoagulant Therapy_Yes",
+"ApixabanCat0Да" = "Apixaban_Yes",
+"BloodBHGlucoseNum1" = "Blood Glucose",
+"BloodBHHDLCholesterolNum1" = "HDL Cholesterol",
+"BloodBHLDLCholesterolNum1" = "LDL Cholesterol",
+"BloodBHTotalCholesterolNum1" = "Total Cholesterol",
+"BloodBHTriglyceridesNum1" = "Triglycerides",
+"BMINum1" = "Body Mass Index",
+"CHFDecompensationCat0Да" = "CHF Decompensation_Yes",
+"CPTECat0Да" = "CTPE Diagnosis_Yes",
+"CTBPACat0Да" = "CTBPA Diagnosis_Yes",
+"DabigatranCat0Да" = "Dabigatran_Yes",
+"DiurDrugCat0Да" = "Diuretics Therapy_Yes",
+"ECHOCGDZLANum0" = "ECHO DZLA",
+"ECHOCGFrontBackSizeNum1" = "ECHO Front-Back Size",
+"ECHOCGPericEffusCat0Да" = "ECHO Pericardium Effusion_Yes",
+"ECHOCGPPareaNum0" = "ECHO PP area",
+"ECHOCGSDLANum0" = "ECHO SDL Area",
+"ECHOCGTapseNum0" = "ECHO Tapse",
+"ECHOCGTricRegCat0II" = "Tricuspid regurgitation_III",
+"ECHOCGTricRegCat0III" = "Tricuspid regurgitation_II",
+"ECHOCGTricRegCat0IV" = "Tricuspid regurgitation_IV",
+"EnoxaparinCat0Да" = "Enoxaparin_Yes",
+"HemoglobinNum1" = "Hemoglobin Level",
+"medHist10Cat0ФП или ТП (любая форма)" = "Atrial Fibrillation or Flutter_Yes",
+"medHist1Cat0гипертоническая болезнь" = "Hypertension_Yes",
+"medHist2Cat0ишемическая болезнь сердца" = "Ischemic Heart Disease_Yes",
+"medHist3Cat0хроническая обструктивная болезнь легких" = "Chronic Obstructive Pulmonary Disease_Yes",
+"medHist6Cat0антифосфолипидный синдром" = "Antiphospholipid Syndrome_Yes",
+"medHist7Cat0системная красная волчанка" = "Systemic Lupus Erythematosus_Yes",
+"medHist8Cat0СД или нарушение толерантности к глюкозе" = "Diabetes or Impaired Glucose Tolerance_Yes",
+"medHist9Cat0ХБП 3А стадии или выше" = "Chronic Kidney Disease Stage 3A or Higher_Yes",
+"MutationCat0Да" = "Genetic Mutation_Yes",
+"PulHypSymp2Cat0повышенная утомляемость" = "Increased fatigue_Yes",
+"PulHypSymp3Cat0боли в области сердца" = "Chest pain_Yes",
+"PulHypSymp4Cat0головокружение" = "Dizziness_Yes",
+"PulHypSymp5Cat0синкопальные состояния" = "Syncope_Yes",
+"PulHypSymp6Cat0кашель" = "Cough_Yes",
+"PulHypSymp7Cat0кровохарканье" = "Hemoptysis_Yes",
+"PulHypSymp8Cat0отеки ног" = "Leg edema_Yes",
+"RHCatheterCINum1" = "RH Catheter CI",
+"RHCatheterDPPmeanNum0" = "RH Catheter DPP mean",
+"RHCatheterLCCVudNum1" = "RH Catheter LCC Vud",
+"RHCatheterSaO2Num1" = "RH Catheter SaO2",
+"RHCatheterSDLANum1" = "RH Catheter SDLA",
+"RHCatheterSvO2Num1" = "RH Catheter SvO2",
+"RivaroxabanCat0Да" = "Rivaroxaban_Yes",
+"SexCat0Женский" = "Sex_Female",
+"Test6ApneaBorgNum1" = "Apnea Borg Scale",
+"Test6DistNum1" = "6-Min Walk Distance",
+"WarfarinCat0Да" = "Warfarin_Yes",
+"WHOFuncClassCat1III" = "WHO Functional Class_III",
+"WHOFuncClassCat1IV" = "WHO Functional Class_IV")
+
+# Data for the graph
+forest_data_plot_imp <- table_imp %>%
+    mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)), 
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)),
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      
+  ) %>%
+  arrange(p.value)%>%
+  mutate(term_clean = dplyr::recode(term, !!!var_labels)) %>% 
+  slice(1:10)%>% arrange(term_clean)
+
+# Create a table for signatures
+labeltext_imp <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"),
+  forest_data_plot_imp %>% select(term_clean, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+
+n_rows <- nrow(labeltext_imp) 
+mean_values_imp <- c(NA, exp(forest_data_plot_imp$estimate))[1:n_rows] 
+lower_values_imp <- c(NA, exp(forest_data_plot_imp$conf.low))[1:n_rows]
+upper_values_imp <- c(NA, exp(forest_data_plot_imp$conf.high))[1:n_rows]
+
+# plot
+plot_forest_imp_decr <- forestplot(
+  labeltext = labeltext_imp,
+  mean = mean_values_imp,
+  lower = lower_values_imp,
+  upper = upper_values_imp,
+  xlog = TRUE,
+  xlim = c(exp(-4), exp(4)),
+  title = "Forest Plot for Cox Models for Deterioration-free Survival",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot_imp))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(
+    label = gpar(cex = 0.8),
+    ticks = gpar(cex = 0.7),
+    xlab = gpar(cex = 0.8)
+  ),
+  align = "l",
+  clip = c(exp(-4), exp(4)),
+  graph.pos = 2
+)
+
+plot_forest_imp_decr
+
+top_10_models_imp_data <- forest_data_plot_imp$term
+```
+
+## The same models on data without imputation
+
+```{r}
+vars_for_table <- colnames(data_surv_new%>%ungroup%>%select(ends_with("Num0") | ends_with("Num1") |ends_with("Cat0"), AngiopulmonographyDamageCat1, WHOFuncClassCat1))
+
+
+univ_formulas <- sapply(vars_for_table[1:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
 
 univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
 
 table0 <- data.frame()
-test0 <- c()
-i <- 2
+i <- 1
 
 for (model in univ_models){
-  table0 <- bind_rows(table0, tidy(model))
+  table0 <- bind_rows(table0, tidy(model)%>%mutate(Covar = vars_for_table[i]))
   test <- cox.zph(model)
-  test0 <- c(test0, test$table[1, "p"])
-  names <- vars_for_table[i]
   i <- i+1
 }
 
+table0 <- table0 %>%
+  mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          ),
+          raw_p_value = ifelse(p.value == "N.A.", NA, round(as.numeric(p.value), 2)),
+          adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
+        )
 
-#test <- cox.zph(model)
-#p_value <- test$table[1, 3]
 
-#ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+# Data for the graph
+forest_data_plot <- table0 %>%
+  filter(term %in% top_10_models_imp_data)%>%
+  mutate(term_clean = dplyr::recode(term, !!!var_labels)) %>%  
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)),
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), 
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)    
+  ) %>% arrange(term_clean)
 
-#ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
-  #theme_bw()
+# signatures
+labeltext <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"),  
+  forest_data_plot %>% select(term_clean, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+# Values for Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+
+plot_forest_no_imp_decr <- forestplot::forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                   
+  title = "Forest Plot for Time-Independent Cox Models for Deterioration-free Survival before imputation",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = "l",                       
+  clip = c(0.01, 100),                
+  graph.pos = 2)     
+
+plot_forest_no_imp_decr
+```
+
+## data without imputation, TTCD outcome, best models
+
+```{r}
+vars_for_table <- colnames(data_surv_new%>%ungroup%>%select(ends_with("Num0") | ends_with("Num1") |ends_with("Cat0"), AngiopulmonographyDamageCat1, WHOFuncClassCat1))
+
+
+univ_formulas <- sapply(vars_for_table[1:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+table0 <- data.frame()
+i <- 1
+
+for (model in univ_models){
+  table0 <- bind_rows(table0, tidy(model)%>%mutate(Covar = vars_for_table[i]))
+  test <- cox.zph(model)
+  i <- i+1
+}
+
+table0 <- table0 %>%
+  mutate(
+          HR = exp(estimate),
+          lower_95 = exp(estimate - 1.96 * std.error),
+          upper_95 = exp(estimate + 1.96 * std.error),
+          HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          ),
+          raw_p_value = ifelse(p.value == "N.A.", NA, round(as.numeric(p.value), 2)),
+          adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
+        )
+
+
+# Data for the graph
+forest_data_plot <- table0 %>%
+  mutate(term_clean = dplyr::recode(term, !!!var_labels)) %>%  
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)),
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), 
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      
+  ) %>% 
+  arrange(p.value)%>% slice(1:10)
+
+# signatures
+labeltext <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"), 
+  forest_data_plot %>% select(term_clean, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+# Values for Forest Plot
+mean_values <- forest_data_plot$HR
+lower_values <- forest_data_plot$lower_95
+upper_values <- forest_data_plot$upper_95
+
+
+plot_forest_best_no_imp_decr <- forestplot::forestplot(
+  labeltext = labeltext,
+  mean = c(NA, mean_values),
+  lower = c(NA, lower_values),
+  upper = c(NA, upper_values),
+  xlog = TRUE,
+  xlim = c(0.01, 100),                  
+  title = "Forest Plot for Time-Independent Cox Models for Deterioration-free Survival before imputation",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
+  align = "l",                        
+  clip = c(0.01, 100),                  
+  graph.pos = 2)    
+
+plot_forest_best_no_imp_decr
+```
+
+## data with imputation, OS outcome, best models for prognostic factors
+
+```{r}
+data_imp <- readRDS("data/imputation_result_all_60.rds")
+
+final <- lapply(1:10, function(x) complete(data_imp , x))
+final <- lapply(final, function(x) mutate(x, OS1_event = as.numeric(1 - as.numeric(OS1_CNSR))))
+final <- lapply(final, function(x) mutate(x, across(where(is.factor), ~ factor(.x, ordered = F))))
+
+vars_for_table_imp <- lapply(final, function(df) {
+  colnames(select(df, c(ends_with("Num0") | ends_with("Num1") |ends_with("Cat0"), AngiopulmonographyDamageCat1, WHOFuncClassCat1)))
+})
+vars_for_table_imp <- unique(unlist(vars_for_table_imp))
+
+univ_formulas <- lapply(vars_for_table_imp, function(x) as.formula(paste('Surv(OS1, OS1_event) ~', x)))
+
+#Create a list to store the results
+table_imp_list <- list()
+
+for (form in univ_formulas) {
+  models <- lapply(final, function(x) coxph(form, data = x))
+  pooled_results <- tidy(pool(models), conf.int = TRUE) %>%
+    mutate(
+      HR = exp(estimate),
+      lower_95 = exp(estimate - 1.96 * std.error),
+      upper_95 = exp(estimate + 1.96 * std.error),
+      HR_with_CI = paste0(
+            round(HR, 2), 
+            " (", 
+            round(lower_95, 2), 
+            "-", 
+            round(upper_95, 2), 
+            ")"
+          )
+    )
+  table_imp_list <- append(table_imp_list, list(pooled_results))
+}
+
+# Combine the results into one dataframe
+table_imp <- bind_rows(table_imp_list) %>% 
+  mutate(raw_p_value = as.character(ifelse(p.value < 0.001, "<0.001", round(as.numeric(p.value), 3))),
+      adj_p_value = as.numeric(p.adjust(as.numeric(p.value), method = "BH")),
+      adj_p_value = as.character(ifelse(adj_p_value < 0.001, 
+                                        "<0.001", 
+                                        round(adj_p_value, 3))))%>%
+  filter(term != '(Intercept)')
+
+var_labels <- c(
+"AgeNum1" = "Age",
+"AngiopulmonographyDamageCat1Дистальное поражение" = "Angiopulmonography Damage_Yes",
+"AntiCoagDrugCat0Да" = "Anticoagulant Therapy_Yes",
+"ApixabanCat0Да" = "Apixaban_Yes",
+"BloodBHGlucoseNum1" = "Blood Glucose",
+"BloodBHHDLCholesterolNum1" = "HDL Cholesterol",
+"BloodBHLDLCholesterolNum1" = "LDL Cholesterol",
+"BloodBHTotalCholesterolNum1" = "Total Cholesterol",
+"BloodBHTriglyceridesNum1" = "Triglycerides",
+"BMINum1" = "Body Mass Index",
+"CHFDecompensationCat0Да" = "CHF Decompensation_Yes",
+"CPTECat0Да" = "CTPE Diagnosis_Yes",
+"CTBPACat0Да" = "CTBPA Diagnosis_Yes",
+"DabigatranCat0Да" = "Dabigatran_Yes",
+"DiurDrugCat0Да" = "Diuretics Therapy_Yes",
+"ECHOCGDZLANum0" = "ECHO DZLA",
+"ECHOCGFrontBackSizeNum1" = "ECHO Front-Back Size",
+"ECHOCGPericEffusCat0Да" = "ECHO Pericardium Effusion_Yes",
+"ECHOCGPPareaNum0" = "ECHO PP area",
+"ECHOCGSDLANum0" = "ECHO SDL Area",
+"ECHOCGTapseNum0" = "ECHO Tapse",
+"ECHOCGTricRegCat0II" = "Tricuspid regurgitation_III",
+"ECHOCGTricRegCat0III" = "Tricuspid regurgitation_II",
+"ECHOCGTricRegCat0IV" = "Tricuspid regurgitation_IV",
+"EnoxaparinCat0Да" = "Enoxaparin_Yes",
+"HemoglobinNum1" = "Hemoglobin Level",
+"medHist10Cat0ФП или ТП (любая форма)" = "Atrial Fibrillation or Flutter_Yes",
+"medHist1Cat0гипертоническая болезнь" = "Hypertension_Yes",
+"medHist2Cat0ишемическая болезнь сердца" = "Ischemic Heart Disease_Yes",
+"medHist3Cat0хроническая обструктивная болезнь легких" = "Chronic Obstructive Pulmonary Disease_Yes",
+"medHist6Cat0антифосфолипидный синдром" = "Antiphospholipid Syndrome_Yes",
+"medHist7Cat0системная красная волчанка" = "Systemic Lupus Erythematosus_Yes",
+"medHist8Cat0СД или нарушение толерантности к глюкозе" = "Diabetes or Impaired Glucose Tolerance_Yes",
+"medHist9Cat0ХБП 3А стадии или выше" = "Chronic Kidney Disease Stage 3A or Higher_Yes",
+"MutationCat0Да" = "Genetic Mutation_Yes",
+"PulHypSymp2Cat0повышенная утомляемость" = "Increased fatigue_Yes",
+"PulHypSymp3Cat0боли в области сердца" = "Chest pain_Yes",
+"PulHypSymp4Cat0головокружение" = "Dizziness_Yes",
+"PulHypSymp5Cat0синкопальные состояния" = "Syncope_Yes",
+"PulHypSymp6Cat0кашель" = "Cough_Yes",
+"PulHypSymp7Cat0кровохарканье" = "Hemoptysis_Yes",
+"PulHypSymp8Cat0отеки ног" = "Leg edema_Yes",
+"RHCatheterCINum1" = "RH Catheter CI",
+"RHCatheterDPPmeanNum0" = "RH Catheter DPP mean",
+"RHCatheterLCCVudNum1" = "RH Catheter LCC Vud",
+"RHCatheterSaO2Num1" = "RH Catheter SaO2",
+"RHCatheterSDLANum1" = "RH Catheter SDLA",
+"RHCatheterSvO2Num1" = "RH Catheter SvO2",
+"RivaroxabanCat0Да" = "Rivaroxaban_Yes",
+"SexCat0Женский" = "Sex_Female",
+"Test6ApneaBorgNum1" = "Apnea Borg Scale",
+"Test6DistNum1" = "6-Min Walk Distance",
+"WarfarinCat0Да" = "Warfarin_Yes",
+"WHOFuncClassCat1III" = "WHO Functional Class_III",
+"WHOFuncClassCat1IV" = "WHO Functional Class_IV")
+
+# Data for the graph
+forest_data_plot_imp <- table_imp %>%
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)),
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)),
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)     
+  ) %>%
+  arrange(p.value)%>%
+  mutate(term_clean = dplyr::recode(term, !!!var_labels)) %>%
+  slice(1:10)%>% arrange(term_clean)
+
+# signatures
+labeltext_imp <- rbind(
+  c("Covariate", "HR (95% CI)", "P-values"), 
+  forest_data_plot_imp %>% select(term_clean, HR_with_CI, p_and_adj_p) %>% as.matrix()
+)
+
+
+n_rows <- nrow(labeltext_imp) 
+mean_values_imp <- c(NA, exp(forest_data_plot_imp$estimate))[1:n_rows]
+lower_values_imp <- c(NA, exp(forest_data_plot_imp$conf.low))[1:n_rows]
+upper_values_imp <- c(NA, exp(forest_data_plot_imp$conf.high))[1:n_rows]
+
+# plot
+plot_forest_imp_death <- forestplot(
+  labeltext = labeltext_imp,
+  mean = mean_values_imp,
+  lower = lower_values_imp,
+  upper = upper_values_imp,
+  xlog = TRUE,
+  xlim = c(exp(-4), exp(4)),
+  title = "Forest Plot for Cox Models for Overall Survival",
+  new_page = TRUE,
+  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot_imp))),
+  boxsize = 0.2,
+  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
+  txt_gp = fpTxtGp(
+    label = gpar(cex = 0.8),
+    ticks = gpar(cex = 0.7),
+    xlab = gpar(cex = 0.8)
+  ),
+  align = "l",
+  clip = c(exp(-4), exp(4)),
+  graph.pos = 2
+)
+
+plot_forest_imp_death
+
+top_10_models_imp_data <- forest_data_plot_imp$term
+```
+
+## The same models on data without imputation
+
+```{r}
+vars_for_table <- colnames(data_surv_new%>%ungroup%>%select(ends_with("Num0") |ends_with("Cat0"), AngiopulmonographyDamageCat1, WHOFuncClassCat1, BloodBHTotalCholesterolNum1, BloodBHHDLCholesterolNum1, BloodBHLDLCholesterolNum1, HemoglobinNum1))
+
+
+univ_formulas <- sapply(vars_for_table[1:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_deathCox, Event_deathCox)~', x)))
+
+univ_models <- lapply(univ_formulas, function(x){coxph(x, data = data_surv_new)})
+
+table0 <- data.frame()
+i <- 1
+
+for (model in univ_models){
+  table0 <- bind_rows(table0, tidy(model)%>%mutate(Covar = vars_for_table[i]))
+  test <- cox.zph(model)
+  i <- i+1
+}
 
 
 table0 <- table0 %>%
@@ -195,48 +851,53 @@ table0 <- table0 %>%
           adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
         )
 
-# Данные для графика
-forest_data_plot <- table0 %>%
-  filter((lower_95 < 1 & upper_95 <1)|(lower_95 > 1 & upper_95 >1))%>% # оставляет только модели, у которых CI не включает 1 
-  mutate(
-    HR = as.numeric(sub(" .*", "", HR_with_CI)), # Извлекаем HR
-    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), # Извлекаем lower CI
-    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      # Извлекаем upper CI
-    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
-  ) %>%
-  arrange(p.value)
 
-# Таблица для подписи
+# Data for the graph
+forest_data_plot <- table0 %>%
+  filter(term %in% top_10_models_imp_data)%>%
+  mutate(term_clean = dplyr::recode(term, !!!var_labels)) %>% 
+  mutate(
+    HR = as.numeric(sub(" .*", "", HR_with_CI)), 
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), 
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),     
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)     
+  ) %>% arrange(term_clean)
+
+# signatures
 labeltext <- rbind(
-  c("Covariate", "HR (95% CI)", "P-values"),  # Добавляем колонку для p-values
-  forest_data_plot %>% select(term, HR_with_CI, p_and_adj_p) %>% as.matrix()
+  c("Covariate", "HR (95% CI)", "P-values"),  
+  forest_data_plot %>% select(term_clean, HR_with_CI, p_and_adj_p) %>% as.matrix()
 )
 
-# Значения для Forest Plot
+# Values for Forest Plot
 mean_values <- forest_data_plot$HR
 lower_values <- forest_data_plot$lower_95
 upper_values <- forest_data_plot$upper_95
 
 
-forestplot::forestplot(
+plot_forest_no_imp_death <- forestplot::forestplot(
   labeltext = labeltext,
   mean = c(NA, mean_values),
   lower = c(NA, lower_values),
   upper = c(NA, upper_values),
   xlog = TRUE,
-  xlim = c(0.01, 100),                   # Настройка диапазона оси X
-  title = "Forest Plot for the best Time-Independent Cox Models for Deterioration-free Survival",
+  xlim = c(0.01, 100),                  
+  title = "Forest Plot for Time-Independent Cox Models for Overall Survival before imputation",
   new_page = TRUE,
   is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
   boxsize = 0.2,
   col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
   txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
-  align = "l",                        # Выравнивание текста слева
-  clip = c(0.01, 100),                   # Обрезка значений
-  graph.pos = 2)                         # Позиция графика
+  align = "l",                        
+  clip = c(0.01, 100),                   
+  graph.pos = 2)    
+
+plot_forest_no_imp_death
 ```
 
-## Модели для лечения (однофакторные)
+# Cox regression, association with prior or initial treatment
+
+## Univariable models, TTCD outcome
 
 ```{r}
 vars_for_table <- colnames(data_surv_new%>%select(starts_with("init")|starts_with("prior")))
@@ -272,24 +933,24 @@ table0 <- table0 %>%
         )
 
 
-# Данные для графика
+# data for the graph
 forest_data_plot <- table0 %>%
   mutate(
-    HR = as.numeric(sub(" .*", "", HR_with_CI)), # Извлекаем HR
-    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), # Извлекаем lower CI
-    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      # Извлекаем upper CI
-    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
+    HR = as.numeric(sub(" .*", "", HR_with_CI)),
+    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), 
+    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),     
+    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)     
   ) %>%
   arrange(p.value)%>%
   select(term, p.value, adj_p_value, HR_with_CI, everything())
 
-# Таблица для подписи
+# Signatures
 labeltext <- rbind(
-  c("Covariate", "HR (95% CI)", "P-values"),  # Добавляем колонку для p-values
+  c("Covariate", "HR (95% CI)", "P-values"),
   forest_data_plot %>% select(term, HR_with_CI, p_and_adj_p) %>% as.matrix()
 )
 
-# Значения для Forest Plot
+# Values for Forest Plot
 mean_values <- forest_data_plot$HR
 lower_values <- forest_data_plot$lower_95
 upper_values <- forest_data_plot$upper_95
@@ -301,25 +962,22 @@ forestplot::forestplot(
   lower = c(NA, lower_values),
   upper = c(NA, upper_values),
   xlog = TRUE,
-  xlim = c(0.01, 100),                   # Настройка диапазона оси X
+  xlim = c(0.01, 100),                  
   title = "Forest Plot for Time-Independent Cox Models for Deterioration-free Survival",
   new_page = TRUE,
   is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
   boxsize = 0.2,
   col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
   txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
-  align = "l",                        # Выравнивание текста слева
-  clip = c(0.01, 100),                   # Обрезка значений
-  graph.pos = 2)                         # Позиция графика
-
+  align = "l",                       
+  clip = c(0.01, 100),                   
+  graph.pos = 2)                         
 ```
 
-## Модели с поправкой на ковариаты (1 вид лечения)
+## Covariates adgjustment, TTCD outcome
 
 ```{r}
 vars_for_table <- colnames(data_surv_new%>%select(starts_with("init")|starts_with("prior")))
-                          
-length(vars_for_table)
 
 univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(Time_to_decreaseCox, Event_decreaseCox)~ SexCat0 + AgeNum1 + MutationCat0 +', x)))
 
@@ -331,7 +989,6 @@ list(width = 0.03),
 list(width = 0.1, display = ~variable, fontface = "bold", heading = "Variable"),
 list(width = 0.1, display = ~level),
 list(width = 0.05, display = ~n, hjust = 1, heading = "N"),
-#list(width = 0.05, display = ~n_events, width = 0.05, hjust = 1, heading = "Events"),
 list(width = 0.03, item = "vline", hjust = 0.5),
 list(
 width = 0.55, item = "forest", hjust = 0.5, heading = "Hazard ratio", linetype = "dashed",
@@ -352,10 +1009,9 @@ list(width = 0.03)
 
 
 forest_model(model_list = univ_models, covariates = vars_for_table, merge_models = F, panels =  panels)
-
 ```
 
-## Модель для лечения (многофакторная)
+## Multivariable model: three types of treatment with or without covariates, TTCD outcome
 
 ```{r}
 linelistsurv_cox <-  survival::coxph(
@@ -363,7 +1019,8 @@ linelistsurv_cox <-  survival::coxph(
               data = as.data.frame(data_surv_new)
               )
 
-ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new),
+         main = "Initial Treatment and Deterioration-free Survival (Without Covariates)")
 
 ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
   theme_bw()
@@ -378,7 +1035,8 @@ linelistsurv_cox <-  survival::coxph(
               data = as.data.frame(data_surv_new)
               )
 
-ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new))
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new),
+         main = "Prior Treatment and Deterioration-free Survival (Without Covariates)")
 
 ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
   theme_bw()
@@ -421,322 +1079,45 @@ ggcoxzph(test.ph)
 print(test.ph)
 ```
 
-#Каплан майер, новый датасет: все для смерти\\ухудшения
+## Graph for presentation
 
 ```{r}
-linelistsurv_fit_source <-  survfit(
-  Surv(Time_to_deathCox, Event_deathCox) ~ 1,
-  data = data_surv_new
-  )
+data_surv_new_new <- data_surv_new%>%
+  rename(Sex = SexCat0,
+         Age = AgeNum1,
+         Mutation = MutationCat0)%>%
+  mutate(Sex = ifelse(as.character(Sex) == "Мужской", "Male", "Female"),
+         Mutation = ifelse(as.character(Mutation) == "Да", "Yes", "No"))
 
+linelistsurv_cox <-  survival::coxph(
+              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ Sex + Age + Mutation +priorLAG + priorBPA + priorTPE, 
+              data = as.data.frame(data_surv_new_new)
+              )
 
-# plot
-ggsurvplot( 
-  linelistsurv_fit_source,
-  data = data_surv_new,
-  size = 1, linetype = "strata",   # line types
-  conf.int = T,
-  surv.scale = "percent",  
-  break.time.by = 10, 
-  xlab = "Follow-up months",
-  ylab= "Survival Probability",
-  title = "Kaplan-Meier curve for Overall Survival",
-  pval = T,
-  pval.coord = c(40,.91),
-  risk.table = T,
-  legend.title = "",
-  legend.labs = c(""),
-  font.legend = 10,
-  #palette = c("#E7B800","#3E606F"),
-  surv.median.line = "hv", 
-  ggtheme = theme_light()
-)
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new_new),
+         main = "Prior Treatment and Deterioration-free Survival (With Covariates)")
 
-linelistsurv_fit_source <-  survfit(
-    Surv(Time_to_decreaseCox, Event_decreaseCox) ~ 1,
-  data = data_surv_new
-  )
+ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  theme_bw()
 
-
-# plot
-ggsurvplot( 
-  linelistsurv_fit_source,
-  data = data_surv_new,
-  size = 1, linetype = "strata",   # line types
-  conf.int = T,
-  surv.scale = "percent",  
-  break.time.by = 10, 
-  xlab = "Follow-up months",
-  ylab= "Survival Probability",
-  title = "Kaplan-Meier curve for Deterioration-free Survival",
-  pval = T,
-  pval.coord = c(40,.91),
-  risk.table = T,
-  legend.title = "",
-  legend.labs = c(""),
-  font.legend = 10,
-  #palette = c("#E7B800","#3E606F"),
-  surv.median.line = "hv", 
-  ggtheme = theme_light()
-)
-
-```
-
-```{r}
-li <- list()
-ct <- 1
-for (i in colnames(data_surv_new%>%select(USUBJID, starts_with("prior")| starts_with("init")))[-1]){
-  
-linelistsurv <-  survfit(
-  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ data_surv_new[[i]],
-  data = data_surv_new
-  )
-
-# plot
-li[[ct]] <-  ggsurvplot( 
-  linelistsurv,
-  data = data_surv_new,
-  size = 1, 
-  linetype = "strata",   # line types
-  conf.int = T,
-  surv.scale = "percent",  
-  break.time.by = 10, 
-  xlab = "Follow-up months",
-  ylab= "Survival Probability",
-  title = "Kaplan-Meier curve for Deterioration-free Survival",
-  pval = T,
-  pval.coord = c(40,.91),
-  risk.table = F,
-  legend.title = i,
-  legend.labs = levels(as.factor(data_surv_new[[i]])),
-  font.legend = 10,
-  #palette = c("#E7B800","#3E606F"),
-  surv.median.line = "hv", 
-  ggtheme = theme_light()
-)
-
-ct <- ct+1
-
-}
-
-arrange_ggsurvplots(li, ncol = 1 )
-
-```
-
-```{r}
-li <- list()
-ct <- 1
-for (i in colnames(data_surv_new%>%select(USUBJID, starts_with("prior")| starts_with("init")))[-1]){
-  
-linelistsurv <-  survfit(
-  Surv(Time_to_deathCox, Event_deathCox) ~ data_surv_new[[i]],
-  data = data_surv_new
-  )
-
-# plot
-li[[ct]] <-  ggsurvplot( 
-  linelistsurv,
-  data = data_surv_new,
-  size = 1, 
-  linetype = "strata",   # line types
-  conf.int = T,
-  surv.scale = "percent",  
-  break.time.by = 10, 
-  xlab = "Follow-up months",
-  ylab= "Survival Probability",
-  title = "Kaplan-Meier curve for Overall Survival",
-  pval = T,
-  pval.coord = c(40,.91),
-  risk.table = F,
-  legend.title = i,
-  legend.labs = levels(as.factor(data_surv_new[[i]])),
-  font.legend = 10,
-  #palette = c("#E7B800","#3E606F"),
-  surv.median.line = "hv", 
-  ggtheme = theme_light()
-)
-
-ct <- ct+1
-
-}
-
-arrange_ggsurvplots(li, ncol = 1)
-
-```
-
-#Каплан Майер: категориальные переменные + время до ухудшения
-
-```{r}
-li <- list()
-ct <- 1
-for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))[-1]){
-  
-
-linelistsurv <-  survfit(
-  Surv(Time_to_decreaseCox, Event_decreaseCox) ~ data_surv_new[[i]],
-  data = data_surv_new
-  )
-
-# plot
-li[[ct]] <-  ggsurvplot( 
-  linelistsurv,
-  data = data_surv_new,
-  size = 1, 
-  linetype = "strata",   # line types
-  conf.int = T,
-  surv.scale = "percent",  
-  break.time.by = 10, 
-  xlab = "Follow-up months",
-  ylab= "Survival Probability",
-  title = "Kaplan-Meier curve for Deterioration-free Survival",
-  pval = T,
-  pval.coord = c(40,.91),
-  risk.table = F,
-  legend.title = gsub('.{4}$', '', i),
-  legend.labs = levels(as.factor(data_surv_new[[i]])),
-  font.legend = 10,
-  #palette = c("#E7B800","#3E606F"),
-  surv.median.line = "hv", 
-  ggtheme = theme_light()
-)
-
-ct <- ct+1
-
-}
-
-arrange_ggsurvplots(li, ncol = 1)
-
-```
-
-#Каплан Майер: категориальные переменные + время до смерти
-
-```{r}
-data_surv_new <- droplevels(data_surv_new)
-
-li <- list()
-ct <- 1
-for (i in colnames(data_surv_new%>%select(ends_with("Cat1") | ends_with("Cat0") |ends_with("Cat2")))[-1]){
-  
-
-linelistsurv <-  survfit(
-  Surv(Time_to_deathCox, Event_deathCox) ~ data_surv_new[[i]],
-  data = data_surv_new
-  )
-
-# plot
-li[[ct]] <-  ggsurvplot( 
-  linelistsurv,
-  data = data_surv_new,
-  size = 1, 
-  linetype = "strata",   # line types
-  conf.int = T,
-  surv.scale = "percent",  
-  break.time.by = 10, 
-  xlab = "Follow-up months",
-  ylab= "Survival Probability",
-  title = "Kaplan-Meier curve for Overall Survival",
-  pval = T,
-  pval.coord = c(40,.91),
-  risk.table = F,
-  legend.title = gsub('.{4}$', '', i),
-  legend.labs = levels(as.factor(data_surv_new[[i]])),
-  font.legend = 10,
-  #palette = c("#E7B800","#3E606F"),
-  surv.median.line = "hv", 
-  ggtheme = theme_light()
-)
-
-ct <- ct+1
- 
-}
-
-arrange_ggsurvplots(li, ncol = 1)
-
-```
-
-## Модели кокса на импутированных данных
-
-```{r chunk1}
-data_imp <- readRDS("data/imputation_result_all_60.rds")
-
-all_sets <- lapply(1:10, function(x) complete(data_imp , x))
-final <- lapply(all_sets, function(x) select(x, !c(clin_det_count, OS1)))
-final <- lapply(final, function(x) mutate(x, TTCD_event = as.numeric(TTCD_event)))
-
-vars_for_table <- colnames(final[[1]]%>%select(ends_with("Cat0")|ends_with("Cat1")|ends_with("Num0")|ends_with("Cat2")|ends_with("Num1")))
-                          
-length(vars_for_table)
-
-univ_formulas <- sapply(vars_for_table[2:length(vars_for_table)], function(x) as.formula(paste('Surv(TTCD, TTCD_event) ~', x)))
-
-
-table0 <- data.frame()
-for (form in univ_formulas){
-  models <- lapply(final, function(x) {coxph(form, data = x)})
-  table0 <- bind_rows(table0, tidy(pool(models)))
-}
-
-
-table0 <- table0 %>%
-  arrange(p.value)%>%
-  mutate(
-          HR = exp(estimate),
-          lower_95 = exp(estimate - 1.96 * std.error),
-          upper_95 = exp(estimate + 1.96 * std.error),
-          HR_with_CI = paste0(
-            round(HR, 2), 
-            " (", 
-            round(lower_95, 2), 
-            "-", 
-            round(upper_95, 2), 
-            ")"
-          ),
-          raw_p_value = ifelse(p.value == "N.A.", NA, round(as.numeric(p.value), 2)),
-          adj_p_value = round(p.adjust(as.numeric(p.value), method = "BH"), 2)
-        )
+test.ph <- cox.zph(linelistsurv_cox)
+ggcoxzph(test.ph)
+print(test.ph)
 
 
 
-# Данные для графика
-forest_data_plot <- table0 %>%
-  filter((lower_95 < 1 & upper_95 <1)|(lower_95 > 1 & upper_95 >1))%>%
-  mutate(
-    HR = as.numeric(sub(" .*", "", HR_with_CI)), # Извлекаем HR
-    lower_95 = as.numeric(sub(".*\\((.*)-.*\\)", "\\1", HR_with_CI)), # Извлекаем lower CI
-    upper_95 = as.numeric(sub(".*-(.*)\\)", "\\1", HR_with_CI)),      # Извлекаем upper CI
-    p_and_adj_p = paste0("p: ", raw_p_value, "; adj: ", adj_p_value)      # Объединяем p-value
-  ) %>%
-  arrange(p.value)
+linelistsurv_cox <-  survival::coxph(
+              Surv(Time_to_decreaseCox, Event_decreaseCox) ~ Sex + Age + Mutation + initLAG +  initBPA +  initTPE, 
+              data = as.data.frame(data_surv_new_new)
+              )
 
-# Таблица для подписи
-labeltext <- rbind(
-  c("Covariate", "HR (95% CI)", "P-values"),  # Добавляем колонку для p-values
-  forest_data_plot %>% select(term, HR_with_CI, p_and_adj_p) %>% as.matrix()
-)
+ggforest(linelistsurv_cox, data = as.data.frame(data_surv_new_new),
+         main = "Initial Treatment and Deterioration-free Survival (With Covariates)")
 
-# Значения для Forest Plot
-mean_values <- forest_data_plot$HR
-lower_values <- forest_data_plot$lower_95
-upper_values <- forest_data_plot$upper_95
+ggcoxdiagnostics(linelistsurv_cox, type = "schoenfeld") +
+  theme_bw()
 
-
-forestplot::forestplot(
-  labeltext = labeltext,
-  mean = c(NA, mean_values),
-  lower = c(NA, lower_values),
-  upper = c(NA, upper_values),
-  xlog = TRUE,
-  xlim = c(0.01, 100),                   # Настройка диапазона оси X
-  title = "Forest Plot for Time-Independent Cox Models for Deterioration-free Survival (top models)",
-  new_page = TRUE,
-  is.summary = c(TRUE, rep(FALSE, nrow(forest_data_plot))),
-  boxsize = 0.2,
-  col = fpColors(box = "darkblue", line = "black", summary = "darkblue"),
-  txt_gp = fpTxtGp(label = gpar(cex = 0.8), ticks = gpar(cex = 0.7), xlab = gpar(cex = 0.8)),
-  align = "l",                        # Выравнивание текста слева
-  clip = c(0.01, 100),                   # Обрезка значений
-  graph.pos = 2)  
-
-
-
+test.ph <- cox.zph(linelistsurv_cox)
+ggcoxzph(test.ph)
+print(test.ph)
 ```

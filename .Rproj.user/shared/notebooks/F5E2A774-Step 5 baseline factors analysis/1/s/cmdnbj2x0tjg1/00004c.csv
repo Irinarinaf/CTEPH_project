@@ -1,0 +1,8 @@
+"0","ggexport(filename = ""outputs/Kaplan_Meier_decr_all.png"","
+"0","         plot = Kaplan_Meier_plot_decr, device = ""png"")"
+"1","[1]"
+"1"," ""outputs/Kaplan_Meier_decr_all%03d.png"""
+"1","
+"
+"2","file saved to outputs/Kaplan_Meier_decr_all%03d.png
+"

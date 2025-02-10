@@ -1,0 +1,11 @@
+"0",""
+"0",""
+"0","# save plots "
+"0","ggexport(filename = ""outputs/Kaplan_Meier_death_all.png"","
+"0","         plot = Kaplan_Meier_plot_death, device = ""png"")"
+"1","[1]"
+"1"," ""outputs/Kaplan_Meier_death_all%03d.png"""
+"1","
+"
+"2","file saved to outputs/Kaplan_Meier_death_all%03d.png
+"
